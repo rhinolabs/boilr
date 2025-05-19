@@ -1,13 +1,12 @@
-import { 
-  validatorCompiler, 
-  serializerCompiler, 
+import {
+  validatorCompiler,
+  serializerCompiler,
   ZodTypeProvider,
   jsonSchemaTransform,
   createJsonSchemaTransformObject
 } from 'fastify-type-provider-zod';
 
-// Export all the necessary components
-export { 
+export {
   ZodTypeProvider,
   validatorCompiler,
   serializerCompiler,

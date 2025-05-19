@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { ZodTypeProvider } from '../../../../../src/validation';
 
 // Define schemas with Zod
 export const schema = {
@@ -54,7 +53,7 @@ const users = [
 export async function get(
   request: FastifyRequest<{
     Params: z.infer<typeof schema.get.params>;
-  }, ZodTypeProvider>,
+  }>,
   reply: FastifyReply
 ) {
   const { id } = request.params;
@@ -75,7 +74,7 @@ export async function put(
   request: FastifyRequest<{
     Params: z.infer<typeof schema.put.params>;
     Body: z.infer<typeof schema.put.body>;
-  }, ZodTypeProvider>,
+  }>,
   reply: FastifyReply
 ) {
   const { id } = request.params;

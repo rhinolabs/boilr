@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 export const schema = {
   get: {
@@ -13,7 +12,7 @@ export const schema = {
 };
 
 export async function get(
-  request: FastifyRequest<{}, ZodTypeProvider>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
   return { message: 'Welcome to noboil!' };

@@ -1,8 +1,9 @@
-import { FastifyInstance, FastifyListenOptions } from 'fastify';
+import { FastifyInstance, FastifyListenOptions, FastifyRequest, FastifyReply } from 'fastify';
 import { NoboilConfig } from './config';
 
 export interface NoboilInstance extends FastifyInstance {
   start: (options?: NoboilStartOptions) => Promise<{ app: FastifyInstance; address: string }>;
+  registerMiddleware: (name: string, handler: (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void) => void;
 }
 
 export interface NoboilStartOptions {

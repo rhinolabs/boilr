@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from 'fastify';
+import fastify, { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { mergeConfig, NoboilConfig } from './core/config';
 import { decorateServer, NoboilInstance } from './core/server';
 import { plugins } from './plugins';
@@ -30,29 +30,29 @@ export function createApp(userConfig: NoboilConfig = {}): NoboilInstance {
   
   // Register plugins
   if (config.plugins?.helmet !== false) {
-    const options = config.plugins?.helmet === true ? {} : config.plugins?.helmet;
-    typedApp.register(plugins.helmet, options);
+    const helmetOptions = config.plugins?.helmet === true ? {} : (config.plugins?.helmet || {});
+    typedApp.register(plugins.helmet, helmetOptions as FastifyPluginOptions);
   }
   
   if (config.plugins?.rateLimit !== false) {
-    const options = config.plugins?.rateLimit === true ? {} : config.plugins?.rateLimit;
-    typedApp.register(plugins.rateLimit, options);
+    const rateLimitOptions = config.plugins?.rateLimit === true ? {} : (config.plugins?.rateLimit || {});
+    typedApp.register(plugins.rateLimit, rateLimitOptions as FastifyPluginOptions);
   }
   
   if (config.plugins?.cors !== false) {
-    const options = config.plugins?.cors === true ? {} : config.plugins?.cors;
-    typedApp.register(plugins.cors, options);
+    const corsOptions = config.plugins?.cors === true ? {} : (config.plugins?.cors || {});
+    typedApp.register(plugins.cors, corsOptions as FastifyPluginOptions);
   }
   
   if (config.plugins?.swagger !== false) {
     // Configure Swagger with Zod transformation
-    const swaggerOptions = config.plugins?.swagger === true ? {} : config.plugins?.swagger;
+    const swaggerOptions = config.plugins?.swagger === true ? {} : (config.plugins?.swagger || {});
     const options = {
       ...swaggerOptions,
       transform: jsonSchemaTransform
     };
     
-    typedApp.register(plugins.swagger, options);
+    typedApp.register(plugins.swagger, options as FastifyPluginOptions);
   }
   
   // Register middleware

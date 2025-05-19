@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
 
 export const helmetPlugin = fp(async function (
   fastify: FastifyInstance,
@@ -23,6 +23,12 @@ export const helmetPlugin = fp(async function (
   await fastify.register(helmet, mergedOptions);
 });
 
+interface RateLimitContext {
+  after: string;
+  max: number;
+  [key: string]: any;
+}
+
 export const rateLimitPlugin = fp(async function (
   fastify: FastifyInstance,
   options: FastifyPluginOptions = {}
@@ -30,7 +36,10 @@ export const rateLimitPlugin = fp(async function (
   const defaultOptions = {
     max: 100,
     timeWindow: '1 minute',
-    errorResponseBuilder: (req, context) => ({
+    errorResponseBuilder: (
+      req: FastifyRequest, 
+      context: RateLimitContext
+    ) => ({
       statusCode: 429,
       error: 'Too Many Requests',
       message: `Rate limit exceeded, retry in ${context.after}`

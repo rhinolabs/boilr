@@ -1,5 +1,6 @@
 import { createApp } from '../../src';
 import path from 'path';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
 const app = createApp({
   server: {
@@ -17,7 +18,7 @@ const app = createApp({
 });
 
 // Register custom middleware (optional)
-app.registerMiddleware('timeLogger', async (request, reply) => {
+app.registerMiddleware('timeLogger', async (request: FastifyRequest, reply: FastifyReply) => {
   request.log.info(`Request received at ${new Date().toISOString()}`);
 });
 

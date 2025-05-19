@@ -11,15 +11,7 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "index.ts",
-    "core/**/*",
-    "plugins/**/*",
-    "middleware/**/*",
-    "hooks/**/*",
-    "validation/**/*"
+    "src/**/*"
   ],
-  "exclude": ["node_modules", "dist",
-    "examples",
-    "tests"
-  ]
+  "exclude": ["node_modules", "dist", "examples", "tests"]
 }

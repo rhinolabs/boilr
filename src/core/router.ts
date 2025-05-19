@@ -1,29 +1,36 @@
-import { FastifyInstance, FastifyPluginOptions, RouteOptions } from 'fastify';
+import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
-import autoload from '@fastify/autoload';
+import autoload, { AutoloadPluginOptions } from '@fastify/autoload';
 import path from 'path';
 
-export const routerPlugin = fp(async function(
+interface ExtendedPluginOptions extends FastifyPluginOptions {
+  routesDir?: string;
+  prefix?: string;
+}
+
+export const routerPlugin = fp<ExtendedPluginOptions>(async function(
   fastify: FastifyInstance, 
-  options: FastifyPluginOptions
+  options: ExtendedPluginOptions
 ) {
-  const routeOptions = {
+  const routeOptions: AutoloadPluginOptions = {
     dir: path.join(process.cwd(), options.routesDir || './routes'),
     options: {
       prefix: options.prefix || ''
-    }
-  };
-  
-  fastify.register(autoload, {
-    ...routeOptions,
+    },
     autoHooks: true,
     cascadeHooks: true,
     routeParams: true,
     ignorePattern: /spec|test|__test__|node_modules/,
-    dirNameRoutePrefix: true,
-    routeNameCharacterLimit: 50,
-    pathToRoute: getRoutePath
-  });
+    dirNameRoutePrefix: true
+  };
+  
+  // Custom path transformation if needed
+  if (typeof getRoutePath === 'function') {
+    // @ts-ignore - Ignoring this as the type definition doesn't include this property
+    routeOptions.pathToRoute = getRoutePath;
+  }
+  
+  fastify.register(autoload, routeOptions);
 });
 
 function getRoutePath(path: string): string {

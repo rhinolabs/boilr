@@ -4,12 +4,13 @@ import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 import { helmetPlugin, rateLimitPlugin } from './security';
+import { SwaggerOptions } from '@fastify/swagger';
 
 export const swaggerPlugin = fp(async function(
   fastify: FastifyInstance,
   options: FastifyPluginOptions = {}
 ) {
-  const defaultOptions = {
+  const defaultOptions: SwaggerOptions = {
     openapi: {
       info: {
         title: 'API Documentation',
@@ -30,7 +31,7 @@ export const swaggerPlugin = fp(async function(
 
   const mergedOptions = { ...defaultOptions, ...options };
   
-  await fastify.register(swagger, mergedOptions);
+  await fastify.register(swagger, mergedOptions as SwaggerOptions);
   
   await fastify.register(swaggerUI, {
     routePrefix: '/docs',
