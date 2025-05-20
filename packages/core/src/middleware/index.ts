@@ -1,13 +1,13 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-export type NoboilMiddlewareFunction = (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void;
+export type BoilrMiddlewareFunction = (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void;
 
-export type NoboilMiddlewareHandler = {
+export type BoilrMiddlewareHandler = {
   name: string;
-  handler: NoboilMiddlewareFunction;
+  handler: BoilrMiddlewareFunction;
 };
 
-export const middlewares: Record<string, NoboilMiddlewareHandler> = {
+export const middlewares: Record<string, BoilrMiddlewareHandler> = {
   logger: {
     name: "logger",
     handler: async (request, reply) => {
@@ -54,7 +54,7 @@ export function applyGlobalMiddleware(app: FastifyInstance, middlewareName: stri
   return app;
 }
 
-export function createRouteMiddleware(...middlewareNames: string[]): Record<string, NoboilMiddlewareFunction[]> {
+export function createRouteMiddleware(...middlewareNames: string[]): Record<string, BoilrMiddlewareFunction[]> {
   const handlers = middlewareNames.map((name) => {
     const middleware = middlewares[name];
     if (!middleware) {
@@ -68,6 +68,6 @@ export function createRouteMiddleware(...middlewareNames: string[]): Record<stri
   };
 }
 
-export function registerMiddleware(name: string, handler: NoboilMiddlewareFunction): void {
+export function registerMiddleware(name: string, handler: BoilrMiddlewareFunction): void {
   middlewares[name] = { name, handler };
 }

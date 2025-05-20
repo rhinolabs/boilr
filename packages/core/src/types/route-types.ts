@@ -8,7 +8,7 @@ export type HttpMethod = "get" | "post" | "put" | "delete" | "patch" | "head" | 
 export interface RouteSchema {
   // Common schemas for all methods
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    params?: ZodType<any>;
+  params?: ZodType<any>;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   querystring?: ZodType<any>;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>

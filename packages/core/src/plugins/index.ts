@@ -11,7 +11,7 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: Fastif
     openapi: {
       info: {
         title: "API Documentation",
-        description: "API documentation generated with noboil",
+        description: "API documentation generated with boilr",
         version: "1.0.0",
       },
       components: {
