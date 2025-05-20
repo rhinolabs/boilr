@@ -36,11 +36,9 @@ export const middlewares: Record<string, NoboilMiddlewareHandler> = {
       });
     },
   },
-
   commonHeaders: {
     name: "commonHeaders",
     handler: async (request, reply) => {
-      reply.header("X-Powered-By", "noboil");
       reply.header("X-Request-ID", request.id);
     },
   },

@@ -1,19 +1,19 @@
-import type { FastifyInstance, FastifyListenOptions, FastifyReply, FastifyRequest } from "fastify";
-import type { NoboilConfig } from "./config";
+import type { FastifyInstance, FastifyListenOptions } from "fastify";
+import type { BoilrConfig } from "./config";
 
-export interface NoboilInstance extends FastifyInstance {
-  start: (options?: NoboilStartOptions) => Promise<{ app: FastifyInstance; address: string }>;
+export interface BoilrInstance extends FastifyInstance {
+  start: (options?: BoilrStartOptions) => Promise<{ app: FastifyInstance; address: string }>;
 }
 
-export interface NoboilStartOptions {
+export interface BoilrStartOptions {
   port?: number;
   host?: string;
 }
 
-export function decorateServer(app: FastifyInstance, config: NoboilConfig): NoboilInstance {
-  const noboilApp = app as NoboilInstance;
+export function decorateServer(app: FastifyInstance, config: BoilrConfig): BoilrInstance {
+  const boilrApp = app as BoilrInstance;
 
-  noboilApp.start = async function (options: NoboilStartOptions = {}) {
+  boilrApp.start = async function (options: BoilrStartOptions = {}) {
     const port = options.port || config.server?.port || 3000;
     const host = options.host || config.server?.host || "0.0.0.0";
 
@@ -25,7 +25,7 @@ export function decorateServer(app: FastifyInstance, config: NoboilConfig): Nobo
     };
 
     try {
-      console.log(`Calling listen with options:`, listenOptions);
+      console.log("Calling listen with options:", listenOptions);
       const address = await this.listen(listenOptions);
       console.log(`Server started on ${address}`);
       this.log.info(`Server started on ${address}`);
@@ -38,5 +38,5 @@ export function decorateServer(app: FastifyInstance, config: NoboilConfig): Nobo
     }
   };
 
-  return noboilApp;
+  return boilrApp;
 }

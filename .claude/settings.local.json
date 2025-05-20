@@ -21,7 +21,11 @@
       "Bash(pnpm --filter @noboil/core build)",
       "Bash(pnpm demo:*)",
       "Bash(NODE_OPTIONS=--trace-uncaught npx ts-node src/server.ts)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash([ -f \"/Users/chrisllontop/Projects/rhinolabs/framework/packages/core/src/core/route-adapter.ts\" ])",
+      "WebFetch(domain:node-file-router.js.org)",
+      "Bash(cat:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

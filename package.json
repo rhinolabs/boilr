@@ -1,7 +1,7 @@
 {
-  "name": "noboil-monorepo",
+  "name": "boilr-monorepo",
   "version": "0.1.0",
-  "description": "Monorepo for noboil framework",
+  "description": "Monorepo for boilr framework",
   "private": true,
   "scripts": {
     "build": "pnpm -r build",

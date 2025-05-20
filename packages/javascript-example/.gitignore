@@ -1,6 +1,6 @@
 # Compiled output
 /dist
-/build
+/lib
 
 # Dependencies
 /node_modules
@@ -30,9 +30,8 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 
-# Local database/files
-*.sqlite
-/uploads
-
 # Type definitions
 *.tsbuildinfo
+
+# Cache files
+.eslintcache

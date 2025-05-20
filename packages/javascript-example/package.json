@@ -1,0 +1,29 @@
+{
+  "name": "javascript-example",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JavaScript example of a Todo CRUD using @rhinolabs/boilr",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@rhinolabs/boilr": "workspace:*",
+    "fastify": "^5.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "fastify",
+    "boilr",
+    "todos",
+    "crud",
+    "example"
+  ],
+  "license": "MIT"
+}

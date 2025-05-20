@@ -19,5 +19,8 @@
     "formatter": {
       "semicolons": "always"
     }
+  },
+  "files": {
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.next/**", "**/*.min.js"]
   }
 }

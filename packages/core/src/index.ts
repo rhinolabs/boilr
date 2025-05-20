@@ -1,15 +1,15 @@
-import fastify, { type FastifyInstance, type FastifyPluginOptions } from "fastify";
-import { type NoboilConfig, mergeConfig } from "./core/config";
-import { routerPlugin } from "./core/router";
-import { type NoboilInstance, decorateServer } from "./core/server";
-import { applyGlobalMiddleware, registerMiddleware } from "./middleware";
-import { plugins } from "./plugins";
-import { type ZodTypeProvider, jsonSchemaTransform, serializerCompiler, validatorCompiler } from "./validation";
+import fastify, {type FastifyInstance, type FastifyPluginOptions} from "fastify";
+import {mergeConfig, type BoilrConfig} from "./core/config";
+import {routerPlugin} from "./core/router";
+import {decorateServer, type BoilrInstance} from "./core/server";
+import {applyGlobalMiddleware} from "./middleware";
+import {plugins} from "./plugins";
+import {jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider} from "./validation";
 
 /**
- * Creates a noboil application instance
+ * Creates a boilr application instance
  */
-export function createApp(userConfig: NoboilConfig = {}): NoboilInstance {
+export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   const config = mergeConfig(userConfig);
 
   const app = fastify(config.fastify);
@@ -63,15 +63,13 @@ export function createApp(userConfig: NoboilConfig = {}): NoboilInstance {
     prefix: config.routes?.prefix,
   });
 
-  // Decorate with additional methods
-  const noboilApp = decorateServer(typedApp as unknown as FastifyInstance, config);
-
-  return noboilApp;
+  return decorateServer(typedApp as unknown as FastifyInstance, config);
 }
 
-export { NoboilConfig } from "./core/config";
+export { BoilrConfig } from "./core/config";
 export { registerMiddleware, createRouteMiddleware } from "./middleware";
-export { NoboilInstance } from "./core/server";
+export { BoilrInstance } from "./core/server";
+export { registerFileRoutes } from "./core/route-adapter";
 export {
   ZodTypeProvider,
   validatorCompiler,
