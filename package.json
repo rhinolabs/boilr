@@ -9,8 +9,7 @@
     "test": "pnpm -r test",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe",
-    "format": "biome format --write .",
-    "demo": "pnpm --filter demo-app start"
+    "format": "biome format . --fix"
   },
   "workspaces": ["packages/*"],
   "devDependencies": {

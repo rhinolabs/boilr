@@ -22,4 +22,4 @@ exports.get = async (request, reply) => {
     api: `${serverAddress}/api/todos`,
     documentation: `${serverAddress}/docs`,
   };
-}
+};

@@ -1,8 +1,8 @@
-import { pathToFileURL } from 'node:url';
-import * as fs from 'node:fs';
-import path from 'node:path';
-import type { RouteInfo, RouteModule, HttpMethod, RouteHandler, FastifyInstance } from './types';
-import type { RouteOptions } from 'fastify';
+import { pathToFileURL } from "node:url";
+import * as fs from "node:fs";
+import path from "node:path";
+import type { RouteInfo, RouteModule, HttpMethod, RouteHandler, FastifyInstance } from "./types";
+import type { RouteOptions } from "fastify";
 
 /**
  * Load a route module dynamically
@@ -74,11 +74,11 @@ function detectESM(filePath: string): boolean {
     let currentDir = dir;
 
     while (currentDir !== path.parse(currentDir).root) {
-      const pkgPath = path.join(currentDir, 'package.json');
+      const pkgPath = path.join(currentDir, "package.json");
 
       if (fs.existsSync(pkgPath)) {
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-        if (pkg.type === 'module') {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+        if (pkg.type === "module") {
           return true;
         }
         break;
@@ -88,16 +88,17 @@ function detectESM(filePath: string): boolean {
     }
 
     // Check if file has mjs extension
-    if (filePath.endsWith('.mjs')) {
+    if (filePath.endsWith(".mjs")) {
       return true;
     }
 
     // Check if file has import/export statements
-    const content = fs.readFileSync(filePath, 'utf8');
-    return (/\bimport\s+[^;]+\s+from\s+/.test(content) ||
-            /\bexport\s+(default|const|let|var|function|class)\b/.test(content));
+    const content = fs.readFileSync(filePath, "utf8");
+    return (
+      /\bimport\s+[^;]+\s+from\s+/.test(content) || /\bexport\s+(default|const|let|var|function|class)\b/.test(content)
+    );
   } catch (error) {
-    console.error('Error detecting module type:', error);
+    console.error("Error detecting module type:", error);
     return false;
   }
 }
@@ -109,32 +110,29 @@ function detectESM(filePath: string): boolean {
  * @param filePath - The file path (for logging)
  * @returns Map of HTTP methods to handlers
  */
-export function extractMethodHandlers(
-  routeModule: RouteModule,
-  filePath: string
-): Map<HttpMethod, RouteHandler> {
+export function extractMethodHandlers(routeModule: RouteModule, filePath: string): Map<HttpMethod, RouteHandler> {
   const handlers = new Map<HttpMethod, RouteHandler>();
 
   // Check for named exports matching HTTP methods
-  const methods: HttpMethod[] = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
+  const methods: HttpMethod[] = ["get", "post", "put", "delete", "patch", "head", "options"];
 
   for (const method of methods) {
-    if (typeof routeModule[method] === 'function') {
+    if (typeof routeModule[method] === "function") {
       handlers.set(method, routeModule[method] as RouteHandler);
     }
   }
 
   // Handle default export as function
-  if (typeof routeModule.default === 'function') {
+  if (typeof routeModule.default === "function") {
     // If no other handlers are defined, use default for GET
     if (handlers.size === 0) {
-      handlers.set('get', routeModule.default as RouteHandler);
+      handlers.set("get", routeModule.default as RouteHandler);
     }
   }
   // Handle default export as object with method handlers
-  else if (routeModule.default && typeof routeModule.default === 'object') {
+  else if (routeModule.default && typeof routeModule.default === "object") {
     for (const [key, value] of Object.entries(routeModule.default)) {
-      if (isHttpMethod(key) && typeof value === 'function') {
+      if (isHttpMethod(key) && typeof value === "function") {
         handlers.set(key as HttpMethod, value as RouteHandler);
       }
     }
@@ -150,7 +148,7 @@ export function extractMethodHandlers(
  * @returns Whether the string is a valid HTTP method
  */
 function isHttpMethod(method: string): method is HttpMethod {
-  return ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'].includes(method);
+  return ["get", "post", "put", "delete", "patch", "head", "options"].includes(method);
 }
 
 /**
@@ -163,7 +161,7 @@ function isHttpMethod(method: string): method is HttpMethod {
 export async function registerRoutes(
   fastify: FastifyInstance,
   routes: RouteInfo[],
-  globalHooks: Partial<RouteOptions> = {}
+  globalHooks: Partial<RouteOptions> = {},
 ): Promise<void> {
   for (const route of routes) {
     try {

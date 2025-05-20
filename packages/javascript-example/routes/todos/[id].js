@@ -59,7 +59,7 @@ exports.schema = {
 // We'll get it from the other module
 let todos;
 try {
-  todos = require('./index').todos;
+  todos = require("./index").todos;
 } catch (err) {
   // Fallback if we can't import
   todos = [
