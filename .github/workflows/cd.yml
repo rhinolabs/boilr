@@ -11,31 +11,31 @@ jobs:
     steps:
       - name: 🛠 Checkout code
         uses: actions/checkout@v4
-          
+
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
-          
+
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-          
+
       - name: 🏷️ Get version from release
         id: get_version
         run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/cli@//')" >> $GITHUB_OUTPUT
-          
+
       - name: 🔄 Update package version
         run: npx tsx scripts/version.ts cli ${{ steps.get_version.outputs.VERSION }}
-          
+
       - name: 📦 Install dependencies
         run: pnpm install
-        
+
       - name: 🛠️ Build CLI package
-        run: pnpm --filter @rhinolabs/boilr-cli run build
+        run: pnpm --filter @rhinolabs/boilr-cli build
 
       - name: ✏️ Fix linting issues
         run: pnpm lint:fix
@@ -59,35 +59,35 @@ jobs:
     steps:
       - name: 🛠 Checkout code
         uses: actions/checkout@v4
-          
+
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
-          
+
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-          
+
       - name: 🏷️ Get version from release
         id: get_version
         run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/boilr@//')" >> $GITHUB_OUTPUT
-          
+
       - name: 🔄 Update package version
         run: npx tsx scripts/version.ts boilr ${{ steps.get_version.outputs.VERSION }}
-          
+
       - name: 📦 Install dependencies
         run: pnpm install
-        
+
       - name: 🛠️ Build Core package
-        run: pnpm --filter @rhinolabs/boilr run build
+        run: pnpm --filter @rhinolabs/boilr build
 
       - name: ✏️ Fix linting issues
         run: pnpm lint:fix
-        
+
       - name: 📢 Publish Core package
         run: cd packages/boilr && npm publish --access public
         env:
