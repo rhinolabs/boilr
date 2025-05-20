@@ -1,19 +1,15 @@
-import { z } from 'zod';
-import { todos } from './index.js';
+import { type DeleteHandler, type GetHandler, type PutHandler, defineSchema } from "@rhinolabs/boilr";
+import { z } from "zod";
+import { TodoSchema, todos } from "./index";
 
 // Define schema for todo API with ID parameter
-export const schema = {
+export const schema = defineSchema({
   get: {
     params: z.object({
       id: z.string().transform((val) => Number.parseInt(val, 10)),
     }),
     response: {
-      200: z.object({
-        id: z.number(),
-        title: z.string(),
-        completed: z.boolean(),
-        createdAt: z.string().datetime(),
-      }),
+      200: TodoSchema,
       404: z.object({
         error: z.string(),
         message: z.string(),
@@ -29,11 +25,7 @@ export const schema = {
       completed: z.boolean().optional(),
     }),
     response: {
-      200: z.object({
-        id: z.number(),
-        title: z.string(),
-        completed: z.boolean(),
-        createdAt: z.string().datetime(),
+      200: TodoSchema.extend({
         updatedAt: z.string().datetime(),
       }),
       404: z.object({
@@ -54,11 +46,11 @@ export const schema = {
       }),
     },
   },
-};
+});
 
-// GET /api/todos/:id - Get a single todo
-export async function get(request, reply) {
-  const { id } = request.params;
+// GET /api/todos/:id - Get a single todo with type safety
+export const get: GetHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // id is typed as number due to transform
 
   const todo = todos.find((t) => t.id === id);
 
@@ -70,11 +62,11 @@ export async function get(request, reply) {
   }
 
   return todo;
-}
+};
 
-// PUT /api/todos/:id - Update a todo
-export async function put(request, reply) {
-  const { id } = request.params;
+// PUT /api/todos/:id - Update a todo with type safety
+export const put: PutHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // id is typed as number
   const updates = request.body;
 
   const todoIndex = todos.findIndex((t) => t.id === id);
@@ -95,11 +87,11 @@ export async function put(request, reply) {
   todos[todoIndex] = updatedTodo;
 
   return updatedTodo;
-}
+};
 
-// DELETE /api/todos/:id - Delete a todo
-export async function del(request, reply) {
-  const { id } = request.params;
+// DELETE /api/todos/:id - Delete a todo with type safety
+export const del: DeleteHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // id is typed as number
 
   const todoIndex = todos.findIndex((t) => t.id === id);
 
@@ -113,5 +105,5 @@ export async function del(request, reply) {
   // Remove the todo from the array
   todos.splice(todoIndex, 1);
 
-  return reply.code(204).send();
-}
+  return reply.code(204).send(null);
+};

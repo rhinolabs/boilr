@@ -40,32 +40,49 @@ app.start();
 ```typescript
 // routes/users/[id].ts
 import { z } from 'zod';
+import { defineSchema, GetHandler, PostHandler } from '@rhinolabs/core';
 
-// Schema definition (optional)
-export const schema = {
+// Enhanced schema definition with type inference
+export const schema = defineSchema({
   get: {
     params: z.object({
-      id: z.string(),
+      id: z.string().transform(val => parseInt(val, 10)),
     }),
     response: {
       200: z.object({
-        id: z.string(),
+        id: z.number(),
         name: z.string(),
       }),
     },
   },
-};
+  post: {
+    params: z.object({
+      id: z.string().transform(val => parseInt(val, 10)),
+    }),
+    body: z.object({
+      name: z.string().min(1),
+    }),
+    response: {
+      201: z.object({
+        id: z.number(),
+        created: z.boolean(),
+      }),
+    },
+  },
+});
 
-// GET handler
-export async function get(request, reply) {
-  const { id } = request.params;
+// GET handler with strong typing
+export const get: GetHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // id is typed as number due to transform
   return { id, name: `User ${id}` };
 }
 
-// POST handler
-export async function post(request, reply) {
-  const { id } = request.params;
-  return reply.status(201).send({ id, created: true });
+// POST handler with strong typing
+export const post: PostHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // id is typed as number
+  const { name } = request.body; // name is typed as string
+  
+  return { id, created: true };
 }
 ```
 
@@ -77,6 +94,302 @@ Boilr uses Next.js style file-based routing with these features:
 - **Catch-all routes** - Use `[...param]` syntax for catch-all routes
 - **Optional catch-all** - Use `[[...param]]` syntax for optional catch-all parameters
 - **Dynamic segments** - Use `[param]` syntax for dynamic route parameters
+
+### Type-Safe Catch-All Routes
+
+Work with catch-all routes in a type-safe way using the provided utilities:
+
+```typescript
+// routes/products/[...path].ts
+import { z } from 'zod';
+import { defineSchema, GetHandler, catchAllSchema, getCatchAllParam } from '@rhinolabs/core';
+
+export const schema = defineSchema({
+  get: {
+    params: z.object({
+      path: catchAllSchema(z.string()), // Special schema for catch-all params
+    }),
+    response: {
+      200: z.object({
+        segments: z.array(z.string()),
+        fullPath: z.string(),
+      }),
+    },
+  },
+});
+
+export const get: GetHandler<typeof schema> = async (request, reply) => {
+  // Safely extract the catch-all parameter with proper typing
+  const path = getCatchAllParam(request.params, 'path');
+  
+  // path is properly typed as string[] | string
+  const segments = Array.isArray(path) ? path : [path];
+  const fullPath = segments.join('/');
+  
+  return {
+    segments,
+    fullPath,
+  };
+};
+```
+
+## Complete Todo API Example with Type Safety
+
+Here's a complete example showing how to build a type-safe Todo API:
+
+```typescript
+// Todo type definition
+import { z } from 'zod';
+import { defineSchema, GetHandler, PostHandler, PutHandler, DeleteHandler } from '@rhinolabs/core';
+
+// Define the Todo type using Zod
+const TodoSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  completed: z.boolean(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime().optional(),
+});
+
+// Export the inferred TypeScript type
+type Todo = z.infer<typeof TodoSchema>;
+
+// routes/todos/index.ts
+export const schema = defineSchema({
+  get: {
+    querystring: z.object({
+      completed: z.string().optional().transform(val => 
+        val ? val === 'true' : undefined
+      ),
+    }),
+    response: {
+      200: z.array(TodoSchema),
+    },
+  },
+  post: {
+    body: z.object({
+      title: z.string().min(1),
+      completed: z.boolean().optional().default(false),
+    }),
+    response: {
+      201: TodoSchema,
+    },
+  },
+});
+
+// In-memory database for simplicity
+const todos: Todo[] = [
+  {
+    id: 1,
+    title: "Learn rhinolabs framework",
+    completed: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    title: "Build a CRUD API",
+    completed: false,
+    createdAt: new Date().toISOString(),
+  },
+];
+
+// Type-safe GET handler
+export const get: GetHandler<typeof schema> = async (request, reply) => {
+  // Type-safe access to query parameters
+  const { completed } = request.query;
+  
+  // Filter by completed status if provided
+  const filteredTodos = completed !== undefined
+    ? todos.filter(todo => todo.completed === completed)
+    : todos;
+    
+  return filteredTodos;
+};
+
+// Type-safe POST handler
+export const post: PostHandler<typeof schema> = async (request, reply) => {
+  // Type-safe access to the request body
+  const { title, completed = false } = request.body;
+  
+  const newTodo: Todo = {
+    id: todos.length + 1,
+    title,
+    completed,
+    createdAt: new Date().toISOString(),
+  };
+  
+  todos.push(newTodo);
+  return reply.code(201).send(newTodo);
+};
+```
+
+```typescript
+// routes/todos/[id].ts
+import { z } from 'zod';
+import { defineSchema, GetHandler, PutHandler, DeleteHandler } from '@rhinolabs/core';
+// Import the Todo type and in-memory database from index
+import { TodoSchema, todos } from './index';
+
+export const schema = defineSchema({
+  get: {
+    params: z.object({
+      id: z.string().transform(val => Number.parseInt(val, 10)),
+    }),
+    response: {
+      200: TodoSchema,
+      404: z.object({
+        error: z.string(),
+        message: z.string(),
+      }),
+    },
+  },
+  put: {
+    params: z.object({
+      id: z.string().transform(val => Number.parseInt(val, 10)),
+    }),
+    body: z.object({
+      title: z.string().min(1).optional(),
+      completed: z.boolean().optional(),
+    }),
+    response: {
+      200: TodoSchema,
+      404: z.object({
+        error: z.string(),
+        message: z.string(),
+      }),
+    },
+  },
+  delete: {
+    params: z.object({
+      id: z.string().transform(val => Number.parseInt(val, 10)),
+    }),
+    response: {
+      204: z.null(),
+      404: z.object({
+        error: z.string(),
+        message: z.string(),
+      }),
+    },
+  },
+});
+
+// Type-safe GET handler for a specific todo
+export const get: GetHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // Typed as number thanks to transform
+  
+  const todo = todos.find(t => t.id === id);
+  
+  if (!todo) {
+    return reply.code(404).send({
+      error: "Not Found",
+      message: `Todo with id ${id} not found`,
+    });
+  }
+  
+  return todo;
+};
+
+// Type-safe PUT handler to update a todo
+export const put: PutHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // Typed as number
+  const updates = request.body; // Typed with optional fields
+  
+  const todoIndex = todos.findIndex(t => t.id === id);
+  
+  if (todoIndex === -1) {
+    return reply.code(404).send({
+      error: "Not Found",
+      message: `Todo with id ${id} not found`,
+    });
+  }
+  
+  // Type-safe update with proper typing
+  const updatedTodo = {
+    ...todos[todoIndex],
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+  
+  todos[todoIndex] = updatedTodo;
+  
+  return updatedTodo;
+};
+
+// Type-safe DELETE handler
+export const delete_: DeleteHandler<typeof schema> = async (request, reply) => {
+  const { id } = request.params; // Typed as number
+  
+  const todoIndex = todos.findIndex(t => t.id === id);
+  
+  if (todoIndex === -1) {
+    return reply.code(404).send({
+      error: "Not Found",
+      message: `Todo with id ${id} not found`,
+    });
+  }
+  
+  todos.splice(todoIndex, 1);
+  
+  return reply.code(204).send();
+};
+```
+
+## Type-Safe Request Handling
+
+The framework provides utilities to help extract and validate request data with proper type inference:
+
+```typescript
+import { z } from 'zod';
+import { 
+  defineSchema, 
+  GetHandler,
+  getTypedParams,
+  getTypedQuery,
+  getTypedBody 
+} from '@rhinolabs/core';
+
+export const schema = defineSchema({
+  get: {
+    params: z.object({
+      id: z.string().transform(val => parseInt(val, 10)),
+    }),
+    querystring: z.object({
+      filter: z.string().optional(),
+      page: z.string().transform(val => parseInt(val, 10)).optional(),
+    }),
+    response: { /* ... */ },
+  },
+  post: {
+    body: z.object({
+      name: z.string(),
+      email: z.string().email(),
+    }),
+    response: { /* ... */ },
+  }
+});
+
+// Example usage of utilities in handlers
+export const get: GetHandler<typeof schema> = async (request, reply) => {
+  // These utilities provide validation and proper typing
+  const params = getTypedParams(request, schema, 'get');
+  const query = getTypedQuery(request, schema, 'get');
+  
+  // params.id is now properly typed as number
+  // query.filter is typed as string | undefined
+  // query.page is typed as number | undefined
+  
+  return { /* ... */ };
+};
+
+export const post = async (request, reply) => {
+  // Body validation with proper typing
+  const body = getTypedBody(request, schema, 'post');
+  
+  // body.name and body.email are properly typed as string
+  
+  return { /* ... */ };
+};
+```
 
 ## Configuration
 
@@ -110,6 +423,30 @@ interface BoilrConfig {
   fastify?: FastifyServerOptions;
 }
 ```
+
+## Type Safety and Inference
+
+The framework provides strong type inference for all aspects of your API:
+
+- **Route Parameters** - Automatically inferred from your schema definitions
+- **Request Body** - Full type safety for request body schemas with proper validation
+- **Response Types** - Return types are enforced based on your schema
+- **Query Parameters** - Type safety for query strings with automatic parsing
+- **Path Parameters** - Full support for dynamic segments and catch-all routes
+
+### Benefits of Type Safety
+
+- **Catches Errors Early** - TypeScript will catch type errors during development
+- **Better IDE Support** - Get autocompletion and inline documentation
+- **Self-Documenting APIs** - Your schemas serve as both validation and documentation
+- **Refactoring Confidence** - Change your data structures with confidence
+
+## Example Projects
+
+Check out the example projects in the packages directory to see complete implementations:
+
+- **typescript-example** - Full TypeScript example with type-safe routes 
+- **javascript-example** - JavaScript example that still benefits from the framework's features
 
 ## License
 

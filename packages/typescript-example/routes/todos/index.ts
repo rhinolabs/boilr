@@ -1,7 +1,8 @@
-import { z } from 'zod';
+import { type GetHandler, type PostHandler, defineSchema } from "@rhinolabs/boilr";
+import { z } from "zod";
 
-// Define schema for todo API
-export const schema = {
+// Define schema for todo API with type inference
+export const schema = defineSchema({
   get: {
     response: {
       200: z.array(
@@ -28,7 +29,16 @@ export const schema = {
       }),
     },
   },
-};
+});
+
+// Create a Zod schema for the Todo type
+export const TodoSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  completed: z.boolean(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime().optional(),
+});
 
 // In-memory todo database
 export const todos = [
@@ -46,14 +56,21 @@ export const todos = [
   },
 ];
 
-// GET /api/todos - List all todos
-export async function get(request, reply) {
+// GET /api/todos - List all todos with type safety
+export const get: GetHandler<typeof schema> = async (request, reply) => {
   return todos;
-}
+};
 
-// POST /api/todos - Create a new todo
-export async function post(request, reply) {
-  const { title, completed = false } = request.body;
+// Type for request body
+type CreateTodoBody = {
+  title: string;
+  completed?: boolean;
+};
+
+// POST /api/todos - Create a new todo with type safety
+export const post: PostHandler<typeof schema> = async (request, reply) => {
+  // Body is properly typed with TypeScript inference
+  const { title, completed = false } = request.body as CreateTodoBody;
 
   const newTodo = {
     id: todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1,
@@ -66,4 +83,4 @@ export async function post(request, reply) {
 
   reply.code(201);
   return newTodo;
-}
+};

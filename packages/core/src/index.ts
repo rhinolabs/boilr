@@ -77,3 +77,30 @@ export {
   jsonSchemaTransform,
   createJsonSchemaTransformObject,
 } from "./validation";
+
+// Export route types and utils
+export {
+  RouteSchema,
+  HttpMethod,
+  MethodSchema,
+  TypedRequest,
+  RouteHandler,
+  GetHandler,
+  PostHandler,
+  PutHandler,
+  DeleteHandler,
+  PatchHandler,
+  HeadHandler,
+  OptionsHandler,
+  defineSchema,
+  PathSegments,
+  CatchAllParam,
+  catchAllSchema,
+} from "./types/route-types";
+
+export {
+  getTypedParams,
+  getTypedQuery,
+  getTypedBody,
+  getCatchAllParam,
+} from "./utils/route-utils";
