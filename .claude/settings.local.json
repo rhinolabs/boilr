@@ -28,7 +28,12 @@
       "Bash(find:*)",
       "Bash(git clone:*)",
       "Bash(pnpm start:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(npx boilr build)",
+      "Bash(npm link)",
+      "Bash(pnpm link:*)",
+      "Bash(boilr build:*)",
+      "Bash(pnpm exec:*)"
     ],
     "deny": []
   }

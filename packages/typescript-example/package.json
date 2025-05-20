@@ -6,9 +6,9 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "ts-node-dev --esm --respawn --transpile-only src/server.ts",
+    "build": "boilr build",
+    "start": "boilr start",
+    "dev": "boilr dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -21,8 +21,15 @@
     "@types/node": "^20.11.30",
     "nodemon": "^3.0.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   },
-  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript"],
+  "keywords": [
+    "fastify",
+    "boilr",
+    "todos",
+    "crud",
+    "example",
+    "typescript"
+  ],
   "license": "MIT"
 }

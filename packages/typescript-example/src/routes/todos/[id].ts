@@ -1,6 +1,6 @@
 import { type DeleteHandler, type GetHandler, type PutHandler, defineSchema } from "@rhinolabs/boilr";
 import { z } from "zod";
-import { TodoSchema, todos } from "./index";
+import { TodoSchema, todos } from "./index.js";
 
 // Define schema for endpoints
 export const schema = defineSchema({

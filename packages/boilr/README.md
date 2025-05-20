@@ -9,15 +9,21 @@ A convention-based Fastify framework with batteries included. Boilr takes the po
 - **Plugins included** - Common plugins like cors, helmet, and rate limiting are included and pre-configured
 - **Middleware support** - Easy way to add global and route-specific middleware
 - **Swagger documentation** - Automatically generated API documentation
+- **CLI tool** - Command line interface for creating and managing projects
 
 ## Installation
 
 ```bash
+# Create a new project using the CLI
+npm init -y
 npm install @rhinolabs/boilr
-# or
-yarn add @rhinolabs/boilr
-# or
-pnpm add @rhinolabs/boilr
+npx boilr new my-api
+cd my-api
+npm install
+npm run dev
+
+# Or add to an existing project
+npm install @rhinolabs/boilr
 ```
 
 ## Quick Start
@@ -40,7 +46,7 @@ app.start();
 ```typescript
 // routes/users/[id].ts
 import { z } from 'zod';
-import { defineSchema, GetHandler, PostHandler } from '@rhinolabs/core';
+import { defineSchema, GetHandler, PostHandler } from '@rhinolabs/boilr';
 
 // Enhanced schema definition with type inference
 export const schema = defineSchema({
@@ -102,7 +108,7 @@ Work with catch-all routes in a type-safe way using the provided utilities:
 ```typescript
 // routes/products/[...path].ts
 import { z } from 'zod';
-import { defineSchema, GetHandler, catchAllSchema, getCatchAllParam } from '@rhinolabs/core';
+import { defineSchema, GetHandler, catchAllSchema, getCatchAllParam } from '@rhinolabs/boilr';
 
 export const schema = defineSchema({
   get: {
@@ -140,7 +146,7 @@ Here's a complete example showing how to build a type-safe Todo API:
 ```typescript
 // Todo type definition
 import { z } from 'zod';
-import { defineSchema, GetHandler, PostHandler, PutHandler, DeleteHandler } from '@rhinolabs/core';
+import { defineSchema, GetHandler, PostHandler, PutHandler, DeleteHandler } from '@rhinolabs/boilr';
 
 // Define the Todo type using Zod
 const TodoSchema = z.object({
@@ -226,7 +232,7 @@ export const post: PostHandler<typeof schema> = async (request, reply) => {
 ```typescript
 // routes/todos/[id].ts
 import { z } from 'zod';
-import { defineSchema, GetHandler, PutHandler, DeleteHandler } from '@rhinolabs/core';
+import { defineSchema, GetHandler, PutHandler, DeleteHandler } from '@rhinolabs/boilr';
 // Import the Todo type and in-memory database from index
 import { TodoSchema, todos } from './index';
 
@@ -346,7 +352,7 @@ import {
   getTypedParams,
   getTypedQuery,
   getTypedBody 
-} from '@rhinolabs/core';
+} from '@rhinolabs/boilr';
 
 export const schema = defineSchema({
   get: {
@@ -389,6 +395,27 @@ export const post = async (request, reply) => {
   
   return { /* ... */ };
 };
+```
+
+## CLI Usage
+
+Boilr comes with a command-line interface that helps you build and run your applications:
+
+```bash
+# Create a new project
+npx boilr new my-api
+
+# Start development server with hot reloading
+npx boilr dev
+
+# Build the project for production
+npx boilr build
+
+# Start the production server
+npx boilr start
+
+# Show help
+npx boilr help
 ```
 
 ## Configuration
