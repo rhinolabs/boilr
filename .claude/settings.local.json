@@ -25,7 +25,9 @@
       "Bash([ -f \"/Users/chrisllontop/Projects/rhinolabs/framework/packages/core/src/core/route-adapter.ts\" ])",
       "WebFetch(domain:node-file-router.js.org)",
       "Bash(cat:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git clone:*)",
+      "Bash(pnpm start:*)"
     ],
     "deny": []
   }

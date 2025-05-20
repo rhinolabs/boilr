@@ -8,7 +8,7 @@
     "dev": "pnpm -r --parallel dev",
     "test": "pnpm -r test",
     "lint": "biome check .",
-    "lint:fix": "biome check --apply .",
+    "lint:fix": "biome check . --fix --unsafe",
     "format": "biome format --write .",
     "demo": "pnpm --filter demo-app start"
   },

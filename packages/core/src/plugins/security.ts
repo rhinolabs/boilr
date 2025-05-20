@@ -23,7 +23,6 @@ export const helmetPlugin = fp(async (fastify: FastifyInstance, options: Fastify
 interface RateLimitContext {
   after: string;
   max: number;
-  [key: string]: any;
 }
 
 export const rateLimitPlugin = fp(async (fastify: FastifyInstance, options: FastifyPluginOptions = {}) => {

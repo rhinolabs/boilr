@@ -9,6 +9,19 @@ export interface BoilrServerConfig {
 export interface BoilrRoutesConfig {
   dir?: string;
   prefix?: string;
+  /**
+   * Options for the Next.js style router
+   */
+  options?: {
+    /**
+     * Patterns of files to ignore
+     */
+    ignore?: RegExp[];
+    /**
+     * File extensions to include
+     */
+    extensions?: string[];
+  };
 }
 
 export interface BoilrPluginsConfig {
