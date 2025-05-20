@@ -1,0 +1,13 @@
+version-resolver:
+  major:
+    labels:
+      - "breaking"
+  minor:
+    labels:
+      - "enhancement"
+  default: "patch"
+
+template: |
+  ## Changes
+
+  $CHANGES
