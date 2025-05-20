@@ -5,7 +5,7 @@ import pc from "picocolors";
 
 /**
  * Create a new Boilr project
- * 
+ *
  * @param name The name of the project
  */
 export async function createProject(name: string) {
@@ -63,10 +63,10 @@ export async function createProject(name: string) {
 
     // 6. Create example TypeScript routes and server file
     await createExampleFiles(projectDir);
-    
-    // 7. Create README.md 
+
+    // 7. Create README.md
     await createReadmeFile(projectDir, name);
-    
+
     steps[3].done = true;
 
     s.stop(`${pc.green("✓")} Project ${pc.cyan(name)} created successfully!`);
@@ -89,7 +89,7 @@ export async function createProject(name: string) {
 
 /**
  * Create the project directory structure
- * 
+ *
  * @param projectDir The project directory path
  */
 async function createProjectStructure(projectDir: string) {
@@ -101,7 +101,7 @@ async function createProjectStructure(projectDir: string) {
 
 /**
  * Create package.json for the project
- * 
+ *
  * @param projectDir The project directory path
  * @param name The project name
  */
@@ -109,31 +109,31 @@ async function createPackageJson(projectDir: string, name: string) {
   // Read package.json template
   const packageJsonTemplateFile = path.join(__dirname, "../templates/package.json.template");
   let packageJsonContent = await fs.readFile(packageJsonTemplateFile, "utf-8");
-  
+
   // Replace project name placeholder
   packageJsonContent = packageJsonContent.replace("<%PROJECT_NAME%>", name);
-  
+
   // Write package.json
   await fs.writeFile(path.join(projectDir, "package.json"), packageJsonContent);
 }
 
 /**
  * Create tsconfig.json for the project
- * 
+ *
  * @param projectDir The project directory path
  */
 async function createTsConfig(projectDir: string) {
   // Read tsconfig.json template
   const tsconfigTemplateFile = path.join(__dirname, "../templates/tsconfig.json.template");
   const tsconfigContent = await fs.readFile(tsconfigTemplateFile, "utf-8");
-  
+
   // Write tsconfig.json
   await fs.writeFile(path.join(projectDir, "tsconfig.json"), tsconfigContent);
 }
 
 /**
  * Create README.md for the project
- * 
+ *
  * @param projectDir The project directory path
  * @param name The project name
  */
@@ -141,17 +141,17 @@ async function createReadmeFile(projectDir: string, name: string) {
   // Read README.md template
   const readmeTemplateFile = path.join(__dirname, "../templates/README.md.template");
   let readmeContent = await fs.readFile(readmeTemplateFile, "utf-8");
-  
+
   // Replace project name placeholder
   readmeContent = readmeContent.replace("<%PROJECT_NAME%>", name);
-  
+
   // Write README.md
   await fs.writeFile(path.join(projectDir, "README.md"), readmeContent);
 }
 
 /**
  * Create example files for the project
- * 
+ *
  * @param projectDir The project directory path
  */
 async function createExampleFiles(projectDir: string) {

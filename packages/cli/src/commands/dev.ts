@@ -20,7 +20,7 @@ export async function startDev() {
     // Read nodemon.json template
     const nodemonTemplateFile = path.join(__dirname, "../templates/nodemon.json.template");
     const nodemonContent = await fs.readFile(nodemonTemplateFile, "utf-8");
-    
+
     const nodemonConfigPath = path.join(process.cwd(), "nodemon.json");
 
     // Write the nodemon config

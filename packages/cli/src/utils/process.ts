@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 
 /**
  * Run a shell command
- * 
+ *
  * @param command Command to run
  * @param args Command arguments
  * @returns Promise that resolves when the command finishes

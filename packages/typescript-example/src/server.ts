@@ -13,7 +13,7 @@ const app = createApp({
     },
   },
   routes: {
-    dir: './routes',
+    dir: "./routes",
     prefix: "/api",
   },
   plugins: {
@@ -28,7 +28,8 @@ const app = createApp({
 });
 
 // Start the server
-app.start()
+app
+  .start()
   .then(({ address }) => {
     console.log(`✨ Server running at ${address}`);
     console.log(`📚 API docs available at ${address}/docs`);

@@ -2,13 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { 
-  detectProjectStructure, 
-  pathExists, 
-  copyDir, 
-  usesPnpm, 
-  findCompiledServerFile
-} from "../utils/filesystem.js";
+import { copyDir, detectProjectStructure, findCompiledServerFile, pathExists, usesPnpm } from "../utils/filesystem.js";
 import { runCommand } from "../utils/process.js";
 
 /**

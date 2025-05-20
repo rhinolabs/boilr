@@ -1,14 +1,7 @@
 #!/usr/bin/env node
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { 
-  build, 
-  createProject, 
-  promptForProjectName, 
-  showHelp, 
-  start, 
-  startDev 
-} from "./commands/index.js";
+import { build, createProject, promptForProjectName, showHelp, start, startDev } from "./commands/index.js";
 
 /**
  * Main entry point for the CLI
@@ -29,7 +22,7 @@ async function main() {
 
 /**
  * Handle a specific command
- * 
+ *
  * @param command Command to handle
  * @param args Command arguments
  */

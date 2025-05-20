@@ -8,9 +8,7 @@
   "bin": {
     "boilr": "dist/index.js"
   },
-  "files": [
-    "dist/**/*"
-  ],
+  "files": ["dist/**/*"],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -26,12 +24,6 @@
     "@types/node": "^20.11.30",
     "typescript": "^5.4.5"
   },
-  "keywords": [
-    "boilr",
-    "cli",
-    "framework",
-    "api",
-    "fastify"
-  ],
+  "keywords": ["boilr", "cli", "framework", "api", "fastify"],
   "license": "MIT"
 }

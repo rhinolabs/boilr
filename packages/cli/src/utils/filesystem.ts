@@ -15,7 +15,7 @@ export interface ProjectStructure {
 
 /**
  * Check if a path exists
- * 
+ *
  * @param filePath Path to check
  * @returns True if the path exists, false otherwise
  */
@@ -186,7 +186,7 @@ export async function detectProjectStructure(): Promise<ProjectStructure> {
 
 /**
  * Copy a directory recursively
- * 
+ *
  * @param src Source directory
  * @param dest Destination directory
  */
