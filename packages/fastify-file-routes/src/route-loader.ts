@@ -1,8 +1,8 @@
-import { pathToFileURL } from "node:url";
 import * as fs from "node:fs";
 import path from "node:path";
-import type { RouteInfo, RouteModule, HttpMethod, RouteHandler, FastifyInstance } from "./types";
+import { pathToFileURL } from "node:url";
 import type { RouteOptions } from "fastify";
+import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "./types";
 
 /**
  * Load a route module dynamically
