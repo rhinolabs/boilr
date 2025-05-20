@@ -1,0 +1,35 @@
+{
+  "name": "typescript-example",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript example of a Todo CRUD using @rhinolabs/boilr",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --esm --respawn --transpile-only src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@rhinolabs/boilr": "workspace:*",
+    "fastify": "^5.0.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "nodemon": "^3.0.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  },
+  "keywords": [
+    "fastify",
+    "boilr",
+    "todos",
+    "crud",
+    "example",
+    "typescript"
+  ],
+  "license": "MIT"
+}
