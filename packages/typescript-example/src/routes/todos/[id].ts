@@ -52,7 +52,7 @@ export const schema = defineSchema({
 export const get: GetHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
 
-  const todo = todos.find((t) => t.id === id);
+  const todo = todos.find((t: { id: number }) => t.id === id);
 
   if (!todo) {
     return reply.code(404).send({
@@ -69,7 +69,7 @@ export const put: PutHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
   const updates = request.body;
 
-  const todoIndex = todos.findIndex((t) => t.id === id);
+  const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
   if (todoIndex === -1) {
     return reply.code(404).send({
@@ -93,7 +93,7 @@ export const put: PutHandler<typeof schema> = async (request, reply) => {
 export const del: DeleteHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
 
-  const todoIndex = todos.findIndex((t) => t.id === id);
+  const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
   if (todoIndex === -1) {
     return reply.code(404).send({

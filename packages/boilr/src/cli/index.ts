@@ -27,7 +27,6 @@ async function main() {
     case 'new':
       await createProject(args[1] || 'my-boilr-app');
       break;
-    case 'help':
     default:
       showHelp();
   }
@@ -103,38 +102,68 @@ async function startDev() {
   // Find the server file
   const serverFile = await findServerFile();
 
-  // Check if the project uses pnpm
-  const usesPnpmProject = await usesPnpm();
+  // Create a temporary nodemon.json config file
+  const nodemonConfig = {
+    watch: ["src"],
+    ext: "ts,json",
+    ignore: ["src/**/*.spec.ts"],
+    exec: "npm run build && npm run start"
+  };
 
-  // Command and args to run - always using ESM
-  let command = 'npx';
-  let args = [
-    'ts-node-dev',
-    '--esm', // Always use ESM mode
-    '--respawn',
-    '--transpile-only',
-    serverFile
-  ];
+  const nodemonConfigPath = path.join(process.cwd(), 'nodemon.json');
 
-  // If the project uses pnpm, use 'pnpm exec' instead
-  if (usesPnpmProject) {
-    console.log('Using pnpm instead of npx...');
-    command = 'pnpm';
-    args = ['exec', 'ts-node-dev', '--esm', '--respawn', '--transpile-only', serverFile];
-  }
+  try {
+    // Write the nodemon config
+    await fs.writeFile(nodemonConfigPath, JSON.stringify(nodemonConfig, null, 2));
 
-  console.log('Starting TypeScript with ESM modules...');
+    // Check if the project uses pnpm
+    const usesPnpmProject = await usesPnpm();
 
-  // Run ts-node-dev with proper configuration
-  const proc = spawn(command, args, {
-    stdio: 'inherit',
-    shell: true
-  });
+    // Command to run nodemon
+    let command, args;
 
-  proc.on('error', (err) => {
+    if (usesPnpmProject) {
+      console.log('Using pnpm with nodemon...');
+      command = 'pnpm';
+      args = ['exec', 'nodemon'];
+    } else {
+      command = 'npx';
+      args = ['nodemon'];
+    }
+
+    console.log('Starting nodemon with auto-rebuild and restart...');
+
+    // Run nodemon process
+    const proc = spawn(command, args, {
+      stdio: 'inherit',
+      shell: true
+    });
+
+    proc.on('error', (err) => {
+      console.error('Failed to start development server:', err);
+      process.exit(1);
+    });
+
+    // Clean up nodemon.json when the process exits
+    process.on('SIGINT', async () => {
+      try {
+        await fs.unlink(nodemonConfigPath);
+      } catch (err) {
+        // Ignore errors during cleanup
+      }
+      process.exit(0);
+    });
+
+  } catch (err) {
     console.error('Failed to start development server:', err);
+    try {
+      // Try to clean up the config file
+      await fs.unlink(nodemonConfigPath);
+    } catch {
+      // Ignore errors during cleanup
+    }
     process.exit(1);
-  });
+  }
 }
 
 async function build() {
@@ -272,24 +301,6 @@ async function runCommand(command: string, args: string[]) {
             resolve();
           } else {
             reject(new Error(`Command "pnpm exec tsc" failed with exit code ${code}`));
-          }
-        });
-
-        proc.on('error', reject);
-      });
-    } else {
-      // For other commands, use 'pnpm exec <command>'
-      return new Promise<void>((resolve, reject) => {
-        const proc = spawn('pnpm', ['exec', ...args], {
-          stdio: 'inherit',
-          shell: true
-        });
-
-        proc.on('close', (code) => {
-          if (code === 0) {
-            resolve();
-          } else {
-            reject(new Error(`Command "pnpm exec ${args.join(' ')}" failed with exit code ${code}`));
           }
         });
 
@@ -599,7 +610,7 @@ async function createPackageJson(projectDir: string, name: string) {
     },
     devDependencies: {
       '@types/node': '^20.11.30',
-      'ts-node-dev': '^2.0.0',
+      'nodemon': '^3.0.1',
       'typescript': '^5.4.5'
     },
     engines: {
