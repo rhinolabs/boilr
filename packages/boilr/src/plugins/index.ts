@@ -26,7 +26,7 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: Fastif
       },
     },
     // Enable Swagger on all routes by default
-    mode: 'dynamic',
+    mode: "dynamic",
     hideUntagged: false,
   };
 

@@ -23,13 +23,6 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
-  "keywords": [
-    "fastify",
-    "boilr",
-    "todos",
-    "crud",
-    "example",
-    "typescript"
-  ],
+  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript"],
   "license": "MIT"
 }

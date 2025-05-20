@@ -13,7 +13,7 @@ console.log("Routes directory:", path.join(__dirname, "../routes"));
 try {
   const app = createApp({
     server: {
-      port: 3002,
+      port: 3003,
       host: "localhost",
       logger: {
         level: "info",

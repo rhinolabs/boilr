@@ -4,7 +4,12 @@ import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
 import { applyGlobalMiddleware } from "./middleware/index.js";
 import { plugins } from "./plugins/index.js";
-import { type ZodTypeProvider, jsonSchemaTransform, serializerCompiler, validatorCompiler } from "./validation/index.js";
+import {
+  type ZodTypeProvider,
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from "./validation/index.js";
 
 /**
  * Creates a boilr application instance
