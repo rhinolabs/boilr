@@ -1,4 +1,4 @@
-# boilr
+# @rhinolabs/boilr
 
 A convention-based Fastify framework with file-based routing, schema validation, and powerful developer tools. Designed to simplify API development by reducing boilerplate code while maintaining full type safety.
 
