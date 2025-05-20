@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-/// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
-
 /**
  * Script for updating package versions
  * Usage: node scripts/version.ts <package-name> <version>
