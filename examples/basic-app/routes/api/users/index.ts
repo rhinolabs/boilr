@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
 
 export const schema = {
   get: {
@@ -8,19 +8,16 @@ export const schema = {
         z.object({
           id: z.number(),
           name: z.string(),
-          email: z.string().email()
-        })
-      )
-    }
-  }
+          email: z.string().email(),
+        }),
+      ),
+    },
+  },
 };
 
-export async function get(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function get(request: FastifyRequest, reply: FastifyReply) {
   return [
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+    { id: 1, name: "John Doe", email: "john@example.com" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com" },
   ];
 }

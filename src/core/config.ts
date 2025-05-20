@@ -1,4 +1,4 @@
-import { FastifyServerOptions } from 'fastify';
+import type { FastifyServerOptions } from "fastify";
 
 export interface NoboilServerConfig {
   port?: number;
@@ -37,23 +37,23 @@ export interface NoboilConfig {
 export const defaultConfig: NoboilConfig = {
   server: {
     port: 3000,
-    host: '0.0.0.0',
-    logger: true
+    host: "0.0.0.0",
+    logger: true,
   },
   routes: {
-    dir: './routes',
-    prefix: ''
+    dir: "./routes",
+    prefix: "",
   },
   plugins: {
     helmet: true,
     rateLimit: true,
     cors: true,
-    swagger: true
+    swagger: true,
   },
   middleware: {
-    global: ['logger', 'commonHeaders']
+    global: ["logger", "commonHeaders"],
   },
-  validation: true
+  validation: true,
 };
 
 export function mergeConfig(userConfig: NoboilConfig = {}): NoboilConfig {
@@ -63,6 +63,6 @@ export function mergeConfig(userConfig: NoboilConfig = {}): NoboilConfig {
     plugins: { ...defaultConfig.plugins, ...userConfig.plugins },
     middleware: { ...defaultConfig.middleware, ...userConfig.middleware },
     validation: userConfig.validation !== undefined ? userConfig.validation : defaultConfig.validation,
-    fastify: userConfig.fastify || {}
+    fastify: userConfig.fastify || {},
   };
 }

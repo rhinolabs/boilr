@@ -1,9 +1,6 @@
-import { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-export type NoboilMiddlewareFunction = (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => Promise<void> | void;
+export type NoboilMiddlewareFunction = (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void;
 
 export type NoboilMiddlewareHandler = {
   name: string;
@@ -12,35 +9,41 @@ export type NoboilMiddlewareHandler = {
 
 export const middlewares: Record<string, NoboilMiddlewareHandler> = {
   logger: {
-    name: 'logger',
+    name: "logger",
     handler: async (request, reply) => {
-      request.log.info({
-        url: request.url,
-        method: request.method,
-        ip: request.ip,
-        userAgent: request.headers['user-agent']
-      }, 'Request received');
-      
-      const start = Date.now();
-      reply.raw.on('finish', () => {
-        const responseTime = Date.now() - start;
-        request.log.info({
+      request.log.info(
+        {
           url: request.url,
           method: request.method,
-          statusCode: reply.statusCode,
-          responseTime
-        }, 'Request completed');
+          ip: request.ip,
+          userAgent: request.headers["user-agent"],
+        },
+        "Request received",
+      );
+
+      const start = Date.now();
+      reply.raw.on("finish", () => {
+        const responseTime = Date.now() - start;
+        request.log.info(
+          {
+            url: request.url,
+            method: request.method,
+            statusCode: reply.statusCode,
+            responseTime,
+          },
+          "Request completed",
+        );
       });
-    }
+    },
   },
-  
+
   commonHeaders: {
-    name: 'commonHeaders',
+    name: "commonHeaders",
     handler: async (request, reply) => {
-      reply.header('X-Powered-By', 'noboil');
-      reply.header('X-Request-ID', request.id);
-    }
-  }
+      reply.header("X-Powered-By", "noboil");
+      reply.header("X-Request-ID", request.id);
+    },
+  },
 };
 
 export function applyGlobalMiddleware(app: FastifyInstance, middlewareName: string): FastifyInstance {
@@ -48,28 +51,25 @@ export function applyGlobalMiddleware(app: FastifyInstance, middlewareName: stri
   if (!middleware) {
     throw new Error(`Middleware "${middlewareName}" not found`);
   }
-  
-  app.addHook('onRequest', middleware.handler);
+
+  app.addHook("onRequest", middleware.handler);
   return app;
 }
 
 export function createRouteMiddleware(...middlewareNames: string[]): Record<string, NoboilMiddlewareFunction[]> {
-  const handlers = middlewareNames.map(name => {
+  const handlers = middlewareNames.map((name) => {
     const middleware = middlewares[name];
     if (!middleware) {
       throw new Error(`Middleware "${name}" not found`);
     }
     return middleware.handler;
   });
-  
+
   return {
-    onRequest: handlers
+    onRequest: handlers,
   };
 }
 
-export function registerMiddleware(
-  name: string, 
-  handler: NoboilMiddlewareFunction
-): void {
+export function registerMiddleware(name: string, handler: NoboilMiddlewareFunction): void {
   middlewares[name] = { name, handler };
 }

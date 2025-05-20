@@ -1,9 +1,12 @@
-import { FastifyInstance, FastifyListenOptions, FastifyRequest, FastifyReply } from 'fastify';
-import { NoboilConfig } from './config';
+import type { FastifyInstance, FastifyListenOptions, FastifyReply, FastifyRequest } from "fastify";
+import type { NoboilConfig } from "./config";
 
 export interface NoboilInstance extends FastifyInstance {
   start: (options?: NoboilStartOptions) => Promise<{ app: FastifyInstance; address: string }>;
-  registerMiddleware: (name: string, handler: (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void) => void;
+  registerMiddleware: (
+    name: string,
+    handler: (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void,
+  ) => void;
 }
 
 export interface NoboilStartOptions {
@@ -11,21 +14,18 @@ export interface NoboilStartOptions {
   host?: string;
 }
 
-export function decorateServer(
-  app: FastifyInstance, 
-  config: NoboilConfig
-): NoboilInstance {
+export function decorateServer(app: FastifyInstance, config: NoboilConfig): NoboilInstance {
   const noboilApp = app as NoboilInstance;
-  
-  noboilApp.start = async function(options: NoboilStartOptions = {}) {
+
+  noboilApp.start = async function (options: NoboilStartOptions = {}) {
     const port = options.port || config.server?.port || 3000;
-    const host = options.host || config.server?.host || '0.0.0.0';
-    
+    const host = options.host || config.server?.host || "0.0.0.0";
+
     const listenOptions: FastifyListenOptions = {
       port: port as number,
-      host: host as string
+      host: host as string,
     };
-    
+
     try {
       const address = await this.listen(listenOptions);
       this.log.info(`Server started on ${address}`);
@@ -35,6 +35,6 @@ export function decorateServer(
       process.exit(1);
     }
   };
-  
+
   return noboilApp;
 }

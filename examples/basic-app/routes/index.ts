@@ -1,19 +1,16 @@
-import { z } from 'zod';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
 
 export const schema = {
   get: {
     response: {
       200: z.object({
-        message: z.string()
-      })
-    }
-  }
+        message: z.string(),
+      }),
+    },
+  },
 };
 
-export async function get(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
-  return { message: 'Welcome to noboil!' };
+export async function get(request: FastifyRequest, reply: FastifyReply) {
+  return { message: "Welcome to noboil!" };
 }

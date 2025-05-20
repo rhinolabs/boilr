@@ -6,37 +6,17 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "complexity": {
-        "noExcessiveCognitiveComplexity": "error",
-        "noStaticOnlyClass": "error"
-      },
-      "correctness": {
-        "noUnusedVariables": "error"
-      },
-      "performance": {
-        "noDelete": "error"
-      },
-      "style": {
-        "noNegationElse": "error",
-        "useShorthandArrayType": "error"
-      },
-      "suspicious": {
-        "noExplicitAny": "off",
-        "noConsoleLog": "warn"
-      }
+      "recommended": true
     }
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 100
+    "lineWidth": 120
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
-      "trailingComma": "es5",
       "semicolons": "always"
     }
   }
