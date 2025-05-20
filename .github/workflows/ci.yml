@@ -29,6 +29,9 @@ jobs:
       - name: Build CLI package
         run: pnpm --filter @rhinolabs/boilr-cli build
 
+      - name: 📦 Sync dependencies with local binaries
+        run: pnpm install
+
       - name: ✏️ Lint code
         run: pnpm lint
 
