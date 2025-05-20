@@ -1,16 +1,20 @@
 # @rhinolabs/fastify-file-routes
 
-A Fastify plugin that provides file-based routing similar to Next.js pages router.
+A Next.js-style file-based routing plugin for Fastify. This plugin is the core routing engine behind the `@rhinolabs/boilr` framework but can be used independently with any Fastify application.
+
+<p align="center">
+  <img src="https://img.shields.io/npm/v/@rhinolabs/fastify-file-routes" alt="npm version">
+  <img src="https://img.shields.io/npm/l/@rhinolabs/fastify-file-routes" alt="license">
+</p>
 
 ## Features
 
-- **File-based routing**: Map your directory structure directly to API routes
-- **Dynamic segments**: Support for parameters in routes using `[param]` syntax
-- **Catch-all routes**: Handle wildcard routes with `[...param]` syntax
-- **Optional catch-all**: Make catch-all parameters optional with `[[...param]]` syntax
-- **Route grouping**: Use `(group)` prefix for folders to organize routes without affecting URL paths
-- **HTTP method handlers**: Export functions named after HTTP methods (get, post, put, etc.)
-- **Schema validation**: Export a schema object to define validation using Zod
+- 📁 **Filesystem-based routing**: Your directory structure becomes your API routes
+- 📊 **Dynamic parameters**: Support for parameters in routes using `[param]` syntax
+- 🌟 **Catch-all routes**: Handle wildcards with `[...param]` syntax
+- 🧩 **Route grouping**: Use `(group)` prefix for folders to organize without affecting URLs
+- 🚀 **HTTP method exports**: Simply export functions named `get`, `post`, `put`, `patch`, `del`
+- 📝 **Schema support**: Export a `schema` object for validation with any schema system
 
 ## Installation
 
@@ -46,14 +50,16 @@ app.listen({ port: 3000 });
 routes/
 ├── index.js            # GET /
 ├── users/
-│   ├── index.js        # GET /users
-│   └── [id].js         # GET /users/:id
+│   ├── index.js        # GET/POST /users 
+│   └── [id].js         # GET/PUT/PATCH/DELETE /users/:id
 └── posts/
-    ├── index.js        # GET /posts
-    └── [...slug].js    # GET /posts/*
+    ├── index.js        # GET/POST /posts
+    └── [...slug].js    # GET/POST/etc. /posts/*
 ```
 
 ### Define route handlers
+
+Create route handlers by exporting named functions matching the HTTP methods you want to support:
 
 ```typescript
 // routes/users/[id].js
@@ -85,9 +91,27 @@ export async function post(request, reply) {
   const { id } = request.params;
   return reply.status(201).send({ id, created: true });
 }
+
+// PUT handler
+export async function put(request, reply) {
+  const { id } = request.params;
+  return { id, updated: true };
+}
+
+// PATCH handler
+export async function patch(request, reply) {
+  const { id } = request.params;
+  return { id, patched: true };
+}
+
+// DELETE handler (using 'del' not 'delete')
+export async function del(request, reply) {
+  const { id } = request.params;
+  return { id, deleted: true };
+}
 ```
 
-## Route Mapping
+## Route Mapping Examples
 
 | File Path | HTTP Method | Route Path |
 |-----------|------------|------------|
@@ -97,31 +121,97 @@ export async function post(request, reply) {
 | `routes/posts/[...slug].js` | GET | `/posts/*` |
 | `routes/(admin)/settings.js` | GET | `/settings` |
 
-## Configuration Options
+## Working with Route Parameters
+
+### Basic Parameters
 
 ```typescript
-interface FileRoutesOptions {
-  // Required: directory containing route files
-  routesDir: string;
-  
-  // Optional: prefix for all routes
-  prefix?: string;
-  
-  // Additional options
-  options?: {
+// routes/users/[id].js
+export async function get(request, reply) {
+  const { id } = request.params;
+  return { id };
+}
+```
+
+### Catch-all Parameters
+
+```typescript
+// routes/docs/[...path].js
+export async function get(request, reply) {
+  const { path } = request.params; // Will be an array of segments
+  return { path };
+}
+```
+
+### Optional Catch-all Parameters
+
+```typescript
+// routes/[[...slug]].js - matches / or any path
+export async function get(request, reply) {
+  const { slug = [] } = request.params; // Will be undefined or an array
+  return { slug };
+}
+```
+
+## Advanced Usage
+
+### Custom Configuration
+
+```typescript
+app.register(fastifyFileRoutes, {
+  routesDir: './routes',
+  prefix: '/api',
+  options: {
     // File patterns to ignore
-    ignore?: RegExp[];
+    ignore: [/\.test\.js$/, /\.spec\.js$/],
+    
+    // File extensions to include (defaults to .js, .cjs, .mjs, .ts)
+    extensions: ['.js', '.ts'],
     
     // Custom path transformation function
-    pathTransform?: (path: string, filename: string) => string;
+    pathTransform: (path, filename) => {
+      // Customize the route path if needed
+      return path.toLowerCase();
+    },
     
     // Global hooks to apply to all routes
-    globalHooks?: any;
-    
-    // File extensions to include
-    extensions?: string[];
-  };
-}
+    globalHooks: {
+      onRequest: (request, reply, done) => {
+        // Do something before all routes
+        done();
+      }
+    }
+  }
+});
+```
+
+### Automatic Schema Validation
+
+This plugin works well with Fastify's schema validation. Just export a `schema` object:
+
+```typescript
+// With JSON Schema
+export const schema = {
+  get: {
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' }
+      }
+    }
+  }
+};
+
+// With Zod (requires fastify-zod or similar)
+import { z } from 'zod';
+
+export const schema = {
+  get: {
+    params: z.object({
+      id: z.string()
+    })
+  }
+};
 ```
 
 ## License

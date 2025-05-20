@@ -1,12 +1,11 @@
 {
-  "name": "boilr-monorepo",
+  "name": "@rhinolabs/boilr-monorepo",
   "version": "0.1.0",
   "description": "Monorepo for boilr framework",
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel dev",
-    "test": "pnpm -r test",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe",
     "format": "biome format . --fix"
