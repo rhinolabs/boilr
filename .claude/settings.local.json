@@ -36,7 +36,10 @@
       "Bash(pnpm exec:*)",
       "Bash(grep:*)",
       "Bash(boilr start:*)",
-      "Bash(tsc)"
+      "Bash(tsc)",
+      "Bash(chmod:*)",
+      "Bash(../packages/boilr/bin/boilr new test-app)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }

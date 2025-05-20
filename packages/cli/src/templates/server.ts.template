@@ -1,27 +1,27 @@
-import { createApp } from "@rhinolabs/boilr";
+import { createApp } from '@rhinolabs/boilr';
 
 // Create the application
 const app = createApp({
   server: {
     port: 3000,
-    host: "localhost",
+    host: 'localhost',
     logger: {
-      level: "info",
+      level: 'info',
       transport: {
-        target: "pino-pretty",
+        target: 'pino-pretty',
       },
     },
   },
   routes: {
     dir: './routes',
-    prefix: "/api",
+    prefix: '/api',
   },
   plugins: {
     swagger: {
       info: {
-        title: "Todo CRUD API",
-        description: "API for managing todos",
-        version: "1.0.0",
+        title: 'Boilr API',
+        description: 'API built with Boilr framework',
+        version: '1.0.0',
       },
     },
   },
@@ -34,6 +34,6 @@ app.start()
     console.log(`📚 API docs available at ${address}/docs`);
   })
   .catch((err) => {
-    console.error("Error starting server:", err);
+    console.error('Error starting server:', err);
     process.exit(1);
   });
