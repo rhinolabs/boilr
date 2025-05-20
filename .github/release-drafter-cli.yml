@@ -1,5 +1,5 @@
 _extends: boilr:.github/release-drafter-base.yml
-name-template: 'CLI v$RESOLVED_VERSION'
+name-template: 'cli@$RESOLVED_VERSION'
 tag-template: 'cli@$RESOLVED_VERSION'
 tag-prefix: 'cli@'
 include-paths:
