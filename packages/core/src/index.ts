@@ -66,8 +66,6 @@ export function createApp(userConfig: NoboilConfig = {}): NoboilInstance {
   // Decorate with additional methods
   const noboilApp = decorateServer(typedApp as unknown as FastifyInstance, config);
 
-  noboilApp.decorate("registerMiddleware", registerMiddleware);
-
   return noboilApp;
 }
 

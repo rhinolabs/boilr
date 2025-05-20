@@ -2,6 +2,13 @@
 
 A convention-based Fastify framework with batteries included. noboil is to Fastify what Next.js is to React.
 
+## Monorepo Structure
+
+This project is structured as a monorepo using pnpm workspaces:
+
+- `packages/core`: The main Noboil framework (`@noboil/core`)
+- `packages/demo-app`: A demo application showcasing the framework
+
 ## Features
 
 - Convention-based routing
@@ -11,10 +18,34 @@ A convention-based Fastify framework with batteries included. noboil is to Fasti
 - Standardized middleware system
 - Modern development tools with Biome
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm (recommended) or npm
+
+### Installation
 
 ```bash
-npm install noboil
+# Clone the repository
+git clone https://github.com/rhinolabs/framework.git
+cd framework
+
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run the demo application
+pnpm demo
+```
+
+### Using in your project
+
+```bash
+npm install @noboil/core
 ```
 
 ## Quick Start
@@ -37,7 +68,7 @@ Create a route with type-safe validation using Zod:
 // routes/api/users/[id].ts
 import { z } from 'zod';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { ZodTypeProvider } from 'noboil';
+import { ZodTypeProvider } from '@noboil/core';
 
 export const schema = {
   get: {
@@ -84,7 +115,7 @@ Start your server:
 
 ```typescript
 // server.ts
-import { createApp } from 'noboil';
+import { createApp } from '@noboil/core';
 
 const app = createApp({
   server: {
@@ -199,7 +230,7 @@ Apply middleware to specific routes:
 
 ```typescript
 // routes/api/private/index.ts
-import { createRouteMiddleware } from 'noboil';
+import { createRouteMiddleware } from '@noboil/core';
 
 export const middleware = createRouteMiddleware('auth');
 

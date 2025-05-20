@@ -11,7 +11,9 @@ interface ExtendedPluginOptions extends FastifyPluginOptions {
 export const routerPlugin = fp<ExtendedPluginOptions>(
   async (fastify: FastifyInstance, options: ExtendedPluginOptions) => {
     const routeOptions: AutoloadPluginOptions = {
-      dir: path.join(process.cwd(), options.routesDir || "./routes"),
+      dir: path.isAbsolute(options.routesDir || "")
+        ? (options.routesDir as string)
+        : path.join(process.cwd(), options.routesDir || "./routes"),
       options: {
         prefix: options.prefix || "",
       },

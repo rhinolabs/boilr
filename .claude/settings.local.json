@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npx tsc:*)",
+      "Bash(node:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(DEBUG=*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run:*)",
+      "Bash(ts-node:*)",
+      "Bash(pnpm run:*)",
+      "Bash(cp:*)",
+      "Bash(pnpm --filter @noboil/core build)",
+      "Bash(pnpm demo:*)",
+      "Bash(NODE_OPTIONS=--trace-uncaught npx ts-node src/server.ts)",
+      "Bash(pnpm build:*)"
+    ],
+    "deny": []
+  }
+}
