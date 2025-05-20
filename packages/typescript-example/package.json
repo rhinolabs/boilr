@@ -7,8 +7,8 @@
   "type": "module",
   "scripts": {
     "build": "boilr build",
-    "start": "boilr start",
-    "dev": "boilr dev",
+    "start": "NODE_ENV=production boilr start",
+    "dev": "NODE_ENV=development boilr dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

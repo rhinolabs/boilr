@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { RouteInfo } from "./types";
+import type { RouteInfo } from "./types.js";
 
 /**
  * Options for scanning directories
@@ -21,7 +21,7 @@ interface ScanOptions {
  * Default options for scanning
  */
 const DEFAULT_SCAN_OPTIONS: ScanOptions = {
-  ignore: [/node_modules/, /\.(test|spec)\./],
+  ignore: [/node_modules/, /\.(test|spec)\./, /\.d\.ts$/],
   extensions: [".js", ".cjs", ".mjs", ".ts"],
 };
 
@@ -41,7 +41,11 @@ export async function scanDirectories(rootDir: string, options: ScanOptions = DE
     throw new Error(`Directory ${absoluteRootDir} does not exist or is not accessible`);
   }
 
-  return scanRecursive(absoluteRootDir, "", options);
+  // First scan for all files
+  const allFiles = await scanRecursive(absoluteRootDir, "", options);
+  
+  // Process the files to prioritize .js over .ts for the same base filename
+  return prioritizeJsFiles(allFiles);
 }
 
 /**
@@ -188,4 +192,67 @@ export function handleDynamicSegments(segment: string): string {
 
   // Handle dynamic parameters: [id] -> :id
   return segment.replace(/\[([^\]]+)\]/g, ":$1");
+}
+
+/**
+ * Prioritizes .js files over .ts files for the same base name
+ * 
+ * @param files - List of file paths
+ * @returns Filtered list with .js prioritized over .ts
+ */
+function prioritizeJsFiles(files: string[]): string[] {
+  // First, filter out .d.ts files completely
+  const nonDeclarationFiles = files.filter(file => !file.endsWith('.d.ts'));
+  
+  // Create a map to track files by their "base name" (without extension)
+  const fileMap = new Map<string, string[]>();
+  
+  for (const file of nonDeclarationFiles) {
+    // Get the directory and base name without extension
+    const dir = path.dirname(file);
+    const basename = path.basename(file);
+    // Remove extension (.js, .ts, etc.)
+    const baseWithoutExt = basename.replace(/\.(js|ts|mjs|cjs)$/, '');
+    
+    // Key is the directory + base name without extension
+    const key = path.join(dir, baseWithoutExt);
+    
+    if (!fileMap.has(key)) {
+      fileMap.set(key, []);
+    }
+    
+    fileMap.get(key)!.push(file);
+  }
+  
+  // For each group of files with the same base name, prioritize .js over .ts
+  const result: string[] = [];
+  
+  for (const [_, files] of fileMap.entries()) {
+    if (files.length === 1) {
+      // If only one file exists, include it
+      result.push(files[0]);
+    } else {
+      // If multiple files exist, prioritize by extension
+      // Order: .js, .mjs, .cjs, .ts
+      const jsFile = files.find(f => f.endsWith('.js'));
+      const mjsFile = files.find(f => f.endsWith('.mjs'));
+      const cjsFile = files.find(f => f.endsWith('.cjs'));
+      
+      if (jsFile) {
+        result.push(jsFile);
+      } else if (mjsFile) {
+        result.push(mjsFile);
+      } else if (cjsFile) {
+        result.push(cjsFile);
+      } else {
+        // If no JS version exists, use the TS version
+        const tsFile = files.find(f => f.endsWith('.ts'));
+        if (tsFile) {
+          result.push(tsFile);
+        }
+      }
+    }
+  }
+  
+  return result;
 }

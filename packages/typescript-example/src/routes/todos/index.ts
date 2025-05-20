@@ -1,4 +1,3 @@
-// Use explicit imports with ESM
 import { type GetHandler, type PostHandler, defineSchema } from "@rhinolabs/boilr";
 import { z } from "zod";
 

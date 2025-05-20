@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { RouteOptions } from "fastify";
-import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "./types";
+import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "./types.js";
 
 /**
  * Load a route module dynamically using ESM imports
@@ -18,13 +18,46 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | n
       return null;
     }
 
+    // Skip declaration files
+    if (filePath.endsWith('.d.ts')) {
+      console.warn(`Skipping TypeScript declaration file: ${filePath}`);
+      return null;
+    }
+
+    // Always try to load the corresponding .js file if the path is a .ts file
+    let actualFilePath = filePath;
+    if (filePath.endsWith('.ts')) {
+      const jsFilePath = filePath.replace(/\.ts$/, '.js');
+      if (existsSync(jsFilePath)) {
+        actualFilePath = jsFilePath;
+        console.log(`Using compiled JS file instead of TS: ${jsFilePath}`);
+      }
+    }
+
     try {
       // Use dynamic import with file URL to load ESM module
-      const fileUrl = pathToFileURL(filePath).href;
+      const fileUrl = pathToFileURL(actualFilePath).href;
       const imported = await import(fileUrl);
       return imported as RouteModule;
     } catch (error) {
-      console.error(`Error importing ESM module: ${filePath}`, error);
+      console.error(`Error importing ESM module: ${actualFilePath}`, error);
+      
+      // If this was a TypeScript file and we're still trying to load it,
+      // try the JS version as a fallback
+      if (actualFilePath.endsWith('.ts')) {
+        const jsFilePath = actualFilePath.replace(/\.ts$/, '.js');
+        if (existsSync(jsFilePath) && jsFilePath !== actualFilePath) {
+          console.log(`Attempting to load JS version as fallback: ${jsFilePath}`);
+          try {
+            const jsFileUrl = pathToFileURL(jsFilePath).href;
+            const imported = await import(jsFileUrl);
+            return imported as RouteModule;
+          } catch (jsError) {
+            console.error(`Error importing JS fallback: ${jsFilePath}`, jsError);
+          }
+        }
+      }
+      
       return null;
     }
   } catch (error) {
@@ -93,7 +126,29 @@ export async function registerRoutes(
   routes: RouteInfo[],
   globalHooks: Partial<RouteOptions> = {},
 ): Promise<void> {
-  for (const route of routes) {
+  // First filter out any TypeScript declaration files
+  const filteredRoutes = routes.filter(route => !route.filePath.endsWith('.d.ts'));
+  
+  // Always deduplicate routes by preferring .js over .ts files for the same route
+  // Create a map to track route paths and their corresponding files
+  const routePathMap = new Map<string, RouteInfo>();
+  
+  // Prioritize JS over TS files for the same route path
+  for (const route of filteredRoutes) {
+    const existingRoute = routePathMap.get(route.routePath);
+    
+    // If this is a new route path or it's a JS file replacing a TS file, update the map
+    if (!existingRoute || 
+        (route.filePath.endsWith('.js') && existingRoute.filePath.endsWith('.ts'))) {
+      routePathMap.set(route.routePath, route);
+    }
+  }
+  
+  // Convert the map back to an array
+  const routesToRegister = Array.from(routePathMap.values());
+
+  // Register each route
+  for (const route of routesToRegister) {
     try {
       const module = await loadRouteModule(route.filePath);
 
@@ -124,7 +179,7 @@ export async function registerRoutes(
 
         // Register the route
         fastify.route(routeOptions);
-        fastify.log.debug(`Registered route: ${method.toUpperCase()} ${route.routePath}`);
+        fastify.log.debug(`Registered route: ${method.toUpperCase()} ${route.routePath} from ${route.filePath}`);
       }
     } catch (error) {
       fastify.log.error(`Failed to register route from file: ${route.filePath}`, error);

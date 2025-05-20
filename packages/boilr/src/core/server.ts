@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyListenOptions } from "fastify";
-import type { BoilrConfig } from "./config";
+import type { BoilrConfig } from "./config.js";
 
 export interface BoilrInstance extends FastifyInstance {
   start: (options?: BoilrStartOptions) => Promise<{ app: FastifyInstance; address: string }>;

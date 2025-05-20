@@ -1,10 +1,10 @@
 import fastify, { type FastifyInstance, type FastifyPluginOptions } from "fastify";
-import { type BoilrConfig, mergeConfig } from "./core/config";
-import { routerPlugin } from "./core/router";
-import { type BoilrInstance, decorateServer } from "./core/server";
-import { applyGlobalMiddleware } from "./middleware";
-import { plugins } from "./plugins";
-import { type ZodTypeProvider, jsonSchemaTransform, serializerCompiler, validatorCompiler } from "./validation";
+import { type BoilrConfig, mergeConfig } from "./core/config.js";
+import { routerPlugin } from "./core/router.js";
+import { type BoilrInstance, decorateServer } from "./core/server.js";
+import { applyGlobalMiddleware } from "./middleware/index.js";
+import { plugins } from "./plugins/index.js";
+import { type ZodTypeProvider, jsonSchemaTransform, serializerCompiler, validatorCompiler } from "./validation/index.js";
 
 /**
  * Creates a boilr application instance
@@ -67,16 +67,16 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   return decorateServer(typedApp as unknown as FastifyInstance, config);
 }
 
-export { BoilrConfig } from "./core/config";
-export { registerMiddleware, createRouteMiddleware } from "./middleware";
-export { BoilrInstance } from "./core/server";
+export { BoilrConfig } from "./core/config.js";
+export { registerMiddleware, createRouteMiddleware } from "./middleware/index.js";
+export { BoilrInstance } from "./core/server.js";
 export {
   ZodTypeProvider,
   validatorCompiler,
   serializerCompiler,
   jsonSchemaTransform,
   createJsonSchemaTransformObject,
-} from "./validation";
+} from "./validation/index.js";
 
 // Export route types and utils
 export {
@@ -96,11 +96,11 @@ export {
   PathSegments,
   CatchAllParam,
   catchAllSchema,
-} from "./types/route-types";
+} from "./types/route-types.js";
 
 export {
   getTypedParams,
   getTypedQuery,
   getTypedBody,
   getCatchAllParam,
-} from "./utils/route-utils";
+} from "./utils/route-utils.js";

@@ -4,7 +4,7 @@ import type { SwaggerOptions } from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import { helmetPlugin, rateLimitPlugin } from "./security";
+import { helmetPlugin, rateLimitPlugin } from "./security.js";
 
 export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: FastifyPluginOptions = {}) => {
   const defaultOptions: SwaggerOptions = {
