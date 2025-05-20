@@ -1,15 +1,5 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { createApp } from "@rhinolabs/boilr";
 
-// Get the current directory in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-console.log("Starting boilr Todo CRUD example...");
-
-// Create a boilr application instance
-console.log("Routes directory:", path.join(__dirname, "../routes"));
 try {
   const app = createApp({
     server: {
@@ -23,7 +13,7 @@ try {
       },
     },
     routes: {
-      dir: path.join(__dirname, "../routes"),
+      dir: "./routes",
       prefix: "/api",
     },
     plugins: {

@@ -9,9 +9,9 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./",
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "sourceMap": false,
+    "declaration": false,
+    "declarationMap": false,
     "emitDeclarationOnly": false,
     "resolveJsonModule": true,
     "preserveConstEnums": true
