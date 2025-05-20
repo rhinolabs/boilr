@@ -104,6 +104,9 @@ importers:
       '@rhinolabs/boilr':
         specifier: workspace:*
         version: link:../boilr
+      '@rhinolabs/boilr-cli':
+        specifier: workspace:*
+        version: link:../cli
       fastify:
         specifier: ^5.0.0
         version: 5.3.3
