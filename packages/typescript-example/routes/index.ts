@@ -14,15 +14,8 @@ export const schema = defineSchema({
   },
 });
 
-// Type for the response
-type RootResponse = {
-  message: string;
-  api: string;
-  documentation: string;
-};
-
 // GET / - Root endpoint with type safety
-export const get: GetHandler<typeof schema> = async (request, reply): Promise<RootResponse> => {
+export const get: GetHandler<typeof schema> = async (request, reply) => {
   const serverAddress = `${request.protocol}://${request.hostname}`;
 
   return {

@@ -50,7 +50,7 @@ export const schema = defineSchema({
 
 // GET /api/todos/:id - Get a single todo with type safety
 export const get: GetHandler<typeof schema> = async (request, reply) => {
-  const { id } = request.params; // id is typed as number due to transform
+  const { id } = request.params;
 
   const todo = todos.find((t) => t.id === id);
 
@@ -66,7 +66,7 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
 
 // PUT /api/todos/:id - Update a todo with type safety
 export const put: PutHandler<typeof schema> = async (request, reply) => {
-  const { id } = request.params; // id is typed as number
+  const { id } = request.params;
   const updates = request.body;
 
   const todoIndex = todos.findIndex((t) => t.id === id);
@@ -91,7 +91,7 @@ export const put: PutHandler<typeof schema> = async (request, reply) => {
 
 // DELETE /api/todos/:id - Delete a todo with type safety
 export const del: DeleteHandler<typeof schema> = async (request, reply) => {
-  const { id } = request.params; // id is typed as number
+  const { id } = request.params;
 
   const todoIndex = todos.findIndex((t) => t.id === id);
 

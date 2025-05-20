@@ -61,16 +61,10 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
   return todos;
 };
 
-// Type for request body
-type CreateTodoBody = {
-  title: string;
-  completed?: boolean;
-};
-
 // POST /api/todos - Create a new todo with type safety
 export const post: PostHandler<typeof schema> = async (request, reply) => {
   // Body is properly typed with TypeScript inference
-  const { title, completed = false } = request.body as CreateTodoBody;
+  const { title, completed = false } = request.body;
 
   const newTodo = {
     id: todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1,
