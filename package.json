@@ -10,8 +10,7 @@
     "test": "jest",
     "lint": "biome check .",
     "lint:fix": "biome check --apply .",
-    "format": "biome format --write .",
-    "example": "ts-node examples/basic-app/server.ts"
+    "format": "biome format --write ."
   },
   "dependencies": {
     "@fastify/autoload": "^5.8.0",
