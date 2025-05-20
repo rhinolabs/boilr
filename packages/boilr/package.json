@@ -9,7 +9,6 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
     "lint": "biome check .",
     "lint:fix": "biome check --apply ."
   },
@@ -28,10 +27,7 @@
     "zod-to-json-schema": "^3.22.4"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
     "@types/node": "^20.11.30",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
   },
   "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod"],

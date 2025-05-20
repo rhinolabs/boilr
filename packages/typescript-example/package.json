@@ -8,8 +8,7 @@
   "scripts": {
     "build": "boilr build",
     "start": "boilr start",
-    "dev": "boilr dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "boilr dev"
   },
   "dependencies": {
     "@rhinolabs/boilr": "workspace:*",

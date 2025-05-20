@@ -9,7 +9,6 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
     "lint": "biome check src",
     "format": "biome format --write src"
   },
