@@ -7,6 +7,7 @@ import fp from "fastify-plugin";
 import { helmetPlugin, rateLimitPlugin } from "./security.js";
 
 export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: FastifyPluginOptions = {}) => {
+  // Enhance the default options for better documentation
   const defaultOptions: SwaggerOptions = {
     openapi: {
       info: {
@@ -24,19 +25,31 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: Fastif
         },
       },
     },
+    // Enable Swagger on all routes by default
+    mode: 'dynamic',
+    hideUntagged: false,
   };
 
   const mergedOptions = { ...defaultOptions, ...options };
 
+  // Register swagger schema generator
   await fastify.register(swagger, mergedOptions as SwaggerOptions);
 
+  // Configure Swagger UI with improved settings
   await fastify.register(swaggerUI, {
     routePrefix: "/docs",
     uiConfig: {
       docExpansion: "list",
       deepLinking: true,
+      defaultModelExpandDepth: 3,
+      defaultModelsExpandDepth: 3,
+      displayRequestDuration: true,
+      showExtensions: true,
+      showCommonExtensions: true,
+      tryItOutEnabled: true,
     },
     staticCSP: true,
+    transformStaticCSP: (header) => header,
   });
 });
 

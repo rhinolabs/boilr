@@ -60,16 +60,16 @@ async function findServerFile(): Promise<string> {
   try {
     // Detect project structure
     const structure = await detectProjectStructure();
-    
+
     // Preferred convention: src/server.ts (TypeScript only)
     const conventionalPath = 'src/server.ts';
-    
+
     // Check if conventional path exists first
     if (await pathExists(path.join(process.cwd(), conventionalPath))) {
       console.log(`Found server file at conventional location: ${conventionalPath}`);
       return conventionalPath;
     }
-    
+
     // Alternative TypeScript paths to check
     const alternativePaths = [
       'server.ts',
@@ -78,7 +78,7 @@ async function findServerFile(): Promise<string> {
       'src/index.ts',
       'index.ts'
     ];
-    
+
     // Check alternative paths
     for (const altPath of alternativePaths) {
       if (await pathExists(path.join(process.cwd(), altPath))) {
@@ -86,7 +86,7 @@ async function findServerFile(): Promise<string> {
         return altPath;
       }
     }
-    
+
     // If not found, use the convention but warn
     console.log(`No TypeScript server file found. Using convention: ${conventionalPath}`);
     return conventionalPath;
@@ -115,16 +115,16 @@ async function startDev() {
     '--transpile-only',
     serverFile
   ];
-  
+
   // If the project uses pnpm, use 'pnpm exec' instead
   if (usesPnpmProject) {
     console.log('Using pnpm instead of npx...');
     command = 'pnpm';
     args = ['exec', 'ts-node-dev', '--esm', '--respawn', '--transpile-only', serverFile];
   }
-  
+
   console.log('Starting TypeScript with ESM modules...');
-  
+
   // Run ts-node-dev with proper configuration
   const proc = spawn(command, args, {
     stdio: 'inherit',
@@ -158,7 +158,7 @@ async function build() {
 
     // 2. Copy routes directory to dist
     await copyRoutes();
-    
+
     // 3. Fix route paths in compiled server files
     await fixRoutePaths();
 
@@ -177,15 +177,15 @@ async function start() {
     console.log('⚠️ Project not built yet, building first...');
     await build();
   }
-  
+
   // Find the compiled server file
   const serverFile = await findCompiledServerFile();
-  
+
   if (!serverFile) {
     console.error('Error: Could not find compiled server file after build.');
     process.exit(1);
   }
-  
+
   // Start the Node.js server
   const proc = spawn('node', [serverFile], {
     stdio: 'inherit',
@@ -258,7 +258,7 @@ async function runCommand(command: string, args: string[]) {
   if (command === 'npx' && (await usesPnpm())) {
     // Convert the command from npx to pnpm
     console.log('Using pnpm instead of npx...');
-    
+
     // For TypeScript compilation, we can use 'pnpm exec tsc'
     if (args[0] === 'tsc') {
       return new Promise<void>((resolve, reject) => {
@@ -266,7 +266,7 @@ async function runCommand(command: string, args: string[]) {
           stdio: 'inherit',
           shell: true
         });
-        
+
         proc.on('close', (code) => {
           if (code === 0) {
             resolve();
@@ -274,7 +274,7 @@ async function runCommand(command: string, args: string[]) {
             reject(new Error(`Command "pnpm exec tsc" failed with exit code ${code}`));
           }
         });
-        
+
         proc.on('error', reject);
       });
     } else {
@@ -284,7 +284,7 @@ async function runCommand(command: string, args: string[]) {
           stdio: 'inherit',
           shell: true
         });
-        
+
         proc.on('close', (code) => {
           if (code === 0) {
             resolve();
@@ -292,12 +292,12 @@ async function runCommand(command: string, args: string[]) {
             reject(new Error(`Command "pnpm exec ${args.join(' ')}" failed with exit code ${code}`));
           }
         });
-        
+
         proc.on('error', reject);
       });
     }
   }
-  
+
   // Fall back to original command
   return new Promise<void>((resolve, reject) => {
     const proc = spawn(command, args, {
@@ -321,18 +321,18 @@ async function copyRoutes() {
   try {
     // Detect project structure
     const structure = await detectProjectStructure();
-    
+
     // Determine source and destination paths
     const routesDir = structure.hasSrcDir ? 'src/routes' : 'routes';
     const fullRoutesDir = path.join(process.cwd(), routesDir);
     const destDir = path.join(process.cwd(), structure.expectedOutput.routesPath);
-    
+
     // Check if either routes directory exists
     if (!(await pathExists(fullRoutesDir))) {
       // If the primary route dir doesn't exist, check alternative
       const altRoutesDir = structure.hasSrcDir ? 'routes' : 'src/routes';
       const altFullRoutesDir = path.join(process.cwd(), altRoutesDir);
-      
+
       if (await pathExists(altFullRoutesDir)) {
         // Found routes in alternative location
         console.log(`Found routes at alternative location: ${altRoutesDir}`);
@@ -342,18 +342,15 @@ async function copyRoutes() {
         await copyDir(altFullRoutesDir, destDir);
         console.log(`📁 Routes copied from ${altRoutesDir} to ${structure.expectedOutput.routesPath}`);
         return;
-      } else {
-        console.log('⚠️ No routes directory found at any expected location');
-        return;
       }
     }
-    
+
     // Create destination directory
     await fs.mkdir(destDir, { recursive: true });
-    
+
     // Copy all files from routes to dist
     await copyDir(fullRoutesDir, destDir);
-    
+
     console.log(`📁 Routes copied from ${routesDir} to ${structure.expectedOutput.routesPath}`);
   } catch (err) {
     console.log('⚠️ Error copying routes:', err);
@@ -400,36 +397,25 @@ async function detectProjectStructure(): Promise<ProjectStructure> {
         routeRefPath: './routes'
       }
     };
-    
+
     // Try to read and parse tsconfig.json
     try {
       const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
       const tsconfigContent = await fs.readFile(tsconfigPath, 'utf8');
       const tsconfig = JSON.parse(tsconfigContent);
-      
+
       // Check rootDir configuration
-      if (tsconfig.compilerOptions && tsconfig.compilerOptions.rootDir) {
+      if (tsconfig.compilerOptions?.rootDir) {
         const rootDir = tsconfig.compilerOptions.rootDir.replace(/^\.\//, '');
         const outDir = (tsconfig.compilerOptions.outDir || './dist').replace(/^\.\//, '');
-        
+
         if (rootDir === 'src') {
           // If rootDir is src/, the output will be flattened
           return {
             hasSrcDir: true,
             expectedOutput: {
               serverPath: `${outDir}/server.js`,
-              routesPath: `${outDir}/routes`, 
-              routeRefPath: './routes'
-            }
-          };
-        } else {
-          // If rootDir is ./ or anything else, structure is preserved
-          const hasSrc = await pathExists(path.join(process.cwd(), 'src'));
-          return {
-            hasSrcDir: hasSrc,
-            expectedOutput: {
-              serverPath: hasSrc ? `${outDir}/src/server.js` : `${outDir}/server.js`,
-              routesPath: hasSrc ? `${outDir}/src/routes` : `${outDir}/routes`,
+              routesPath: `${outDir}/routes`,
               routeRefPath: './routes'
             }
           };
@@ -439,8 +425,8 @@ async function detectProjectStructure(): Promise<ProjectStructure> {
       // If we can't read or parse tsconfig.json, use default
       console.log('⚠️ Could not read or parse tsconfig.json, using default structure');
     }
-    
-    // Check if src directory exists, even without tsconfig
+
+    // Check if the src directory exists, even without tsconfig
     const hasSrc = await pathExists(path.join(process.cwd(), 'src'));
     if (!hasSrc) {
       return {
@@ -452,7 +438,7 @@ async function detectProjectStructure(): Promise<ProjectStructure> {
         }
       };
     }
-    
+
     return defaultStructure;
   } catch (err) {
     // In case of any error, return default structure
@@ -474,29 +460,29 @@ async function findCompiledServerFile(): Promise<string | null> {
     // Detect project structure
     const structure = await detectProjectStructure();
     const expectedPath = structure.expectedOutput.serverPath;
-    
+
     // Make sure we're looking for .js files (compiled from .ts)
     const jsPath = expectedPath.endsWith('.js') ? expectedPath : `${expectedPath.replace(/\.ts$/, '')}.js`;
-    
+
     // Check if expected path exists
     if (await pathExists(path.join(process.cwd(), jsPath))) {
       console.log(`Found compiled server file at expected location: ${jsPath}`);
       return jsPath;
     }
-    
+
     // If not found at expected location, try alternative locations
     const alternativePaths = [
       'dist/src/server.js',
       'dist/server.js'
     ].filter(p => p !== jsPath); // Don't check the already checked path
-    
+
     for (const altPath of alternativePaths) {
       if (await pathExists(path.join(process.cwd(), altPath))) {
         console.log(`Found compiled server file at alternative location: ${altPath}`);
         return altPath;
       }
     }
-    
+
     console.log('⚠️ Compiled server file not found at any expected location');
     return null;
   } catch (err) {
@@ -513,16 +499,16 @@ async function fixRoutePaths() {
     console.log('⚠️ No compiled server file found, skipping route path fix');
     return;
   }
-  
+
   try {
     // Detect project structure to know correct route references
     const structure = await detectProjectStructure();
     const expectedRoutePath = structure.expectedOutput.routeRefPath;
-    
+
     // Read the file content
     const filePath = path.join(process.cwd(), serverFile);
     const content = await fs.readFile(filePath, 'utf8');
-    
+
     // Possible route reference patterns to look for
     const routePatterns = [
       '"..\/routes"',    // "../routes" (escaped in code)
@@ -530,7 +516,7 @@ async function fixRoutePaths() {
       '"../../routes"',   // "../../routes" (deeper path)
       '"../src/routes"'   // "../src/routes" (if routes in src)
     ];
-    
+
     // Check if any patterns exist in the content
     let contentNeedsFixing = false;
     for (const pattern of routePatterns) {
@@ -539,7 +525,7 @@ async function fixRoutePaths() {
         break;
       }
     }
-    
+
     if (contentNeedsFixing) {
       // Create fixed content by replacing all patterns with the expected route path
       let fixedContent = content;
@@ -547,16 +533,16 @@ async function fixRoutePaths() {
         // We need to use string replacement (not regex) due to escaping complexities
         fixedContent = fixedContent.replace(pattern, `"${expectedRoutePath}"`);
       }
-      
+
       // Write the fixed content back
       await fs.writeFile(filePath, fixedContent, 'utf8');
       console.log(`🔧 Fixed route paths in server file to use "${expectedRoutePath}"`);
     }
-    
+
     // Make sure the routes are in the right place for the compiled server to find them
     const serverDir = path.dirname(path.join(process.cwd(), serverFile));
     const routesDir = path.join(serverDir, 'routes');
-    
+
     // If routes don't exist at the location the server expects, copy them there
     if (!(await pathExists(routesDir))) {
       const expectedRoutesPath = path.join(process.cwd(), structure.expectedOutput.routesPath);

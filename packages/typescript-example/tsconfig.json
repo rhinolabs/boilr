@@ -11,8 +11,9 @@
     "rootDir": "./",
     "sourceMap": true,
     "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
     "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
     "preserveConstEnums": true
   },
   "include": ["src/**/*"],

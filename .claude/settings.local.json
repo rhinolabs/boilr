@@ -35,7 +35,8 @@
       "Bash(boilr build:*)",
       "Bash(pnpm exec:*)",
       "Bash(grep:*)",
-      "Bash(boilr start:*)"
+      "Bash(boilr start:*)",
+      "Bash(tsc)"
     ],
     "deny": []
   }

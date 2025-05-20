@@ -83,25 +83,6 @@ importers:
         specifier: ^5.3.3
         version: 5.8.3
 
-  packages/javascript-example:
-    dependencies:
-      '@rhinolabs/boilr':
-        specifier: workspace:*
-        version: link:../boilr
-      fastify:
-        specifier: ^5.0.0
-        version: 5.3.3
-      pino-pretty:
-        specifier: ^13.0.0
-        version: 13.0.0
-      zod:
-        specifier: ^3.22.4
-        version: 3.25.7
-    devDependencies:
-      nodemon:
-        specifier: ^3.0.1
-        version: 3.1.10
-
   packages/typescript-example:
     dependencies:
       '@rhinolabs/boilr':
