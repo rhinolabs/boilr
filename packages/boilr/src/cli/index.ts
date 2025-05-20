@@ -135,7 +135,7 @@ async function startDev() {
       watch: ["src"],
       ext: "ts,json",
       ignore: ["src/**/*.spec.ts"],
-      exec: "npm run build && npm run start",
+      exec: "pnpm run build && pnpm run start",
     };
 
     const nodemonConfigPath = path.join(process.cwd(), "nodemon.json");
@@ -147,8 +147,8 @@ async function startDev() {
     const usesPnpmProject = await usesPnpm();
 
     // Command to run nodemon
-    let command;
-    let args;
+    let command: string | undefined;
+    let args: string[] | undefined;
 
     if (usesPnpmProject) {
       s.message("Using pnpm with nodemon");
