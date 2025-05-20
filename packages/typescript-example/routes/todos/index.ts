@@ -1,7 +1,7 @@
 import { type GetHandler, type PostHandler, defineSchema } from "@rhinolabs/boilr";
 import { z } from "zod";
 
-// Define schema for todo API with type inference
+// Define schema for endpoints
 export const schema = defineSchema({
   get: {
     response: {
@@ -56,12 +56,12 @@ export const todos = [
   },
 ];
 
-// GET /api/todos - List all todos with type safety
+// GET /api/todos
 export const get: GetHandler<typeof schema> = async (request, reply) => {
   return todos;
 };
 
-// POST /api/todos - Create a new todo with type safety
+// POST /api/todos
 export const post: PostHandler<typeof schema> = async (request, reply) => {
   // Body is properly typed with TypeScript inference
   const { title, completed = false } = request.body;

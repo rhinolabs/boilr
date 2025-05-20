@@ -12,7 +12,7 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
 
-  packages/core:
+  packages/boilr:
     dependencies:
       '@fastify/autoload':
         specifier: ^6.3.0
@@ -87,7 +87,7 @@ importers:
     dependencies:
       '@rhinolabs/boilr':
         specifier: workspace:*
-        version: link:../core
+        version: link:../boilr
       fastify:
         specifier: ^5.0.0
         version: 5.3.3
@@ -106,7 +106,7 @@ importers:
     dependencies:
       '@rhinolabs/boilr':
         specifier: workspace:*
-        version: link:../core
+        version: link:../boilr
       fastify:
         specifier: ^5.0.0
         version: 5.3.3

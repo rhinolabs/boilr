@@ -2,7 +2,7 @@ import { type DeleteHandler, type GetHandler, type PutHandler, defineSchema } fr
 import { z } from "zod";
 import { TodoSchema, todos } from "./index";
 
-// Define schema for todo API with ID parameter
+// Define schema for endpoints
 export const schema = defineSchema({
   get: {
     params: z.object({
@@ -48,7 +48,7 @@ export const schema = defineSchema({
   },
 });
 
-// GET /api/todos/:id - Get a single todo with type safety
+// GET /api/todos/:id
 export const get: GetHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
 
@@ -64,7 +64,7 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
   return todo;
 };
 
-// PUT /api/todos/:id - Update a todo with type safety
+// PUT /api/todos/:id
 export const put: PutHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
   const updates = request.body;
@@ -89,7 +89,7 @@ export const put: PutHandler<typeof schema> = async (request, reply) => {
   return updatedTodo;
 };
 
-// DELETE /api/todos/:id - Delete a todo with type safety
+// DELETE /api/todos/:id
 export const del: DeleteHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
 

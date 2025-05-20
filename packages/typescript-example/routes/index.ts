@@ -1,7 +1,7 @@
 import { type GetHandler, defineSchema } from "@rhinolabs/boilr";
 import { z } from "zod";
 
-// Schema for the root endpoint with type inference
+// Schema for the root endpoint
 export const schema = defineSchema({
   get: {
     response: {
@@ -14,7 +14,7 @@ export const schema = defineSchema({
   },
 });
 
-// GET / - Root endpoint with type safety
+// GET / - Root endpoint
 export const get: GetHandler<typeof schema> = async (request, reply) => {
   const serverAddress = `${request.protocol}://${request.hostname}`;
 
