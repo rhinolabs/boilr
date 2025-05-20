@@ -1,11 +1,11 @@
-import * as fs from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { RouteOptions } from "fastify";
 import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "./types";
 
 /**
- * Load a route module dynamically
+ * Load a route module dynamically using ESM imports
  *
  * @param filePath - The file path of the module
  * @returns The loaded route module
@@ -13,93 +13,23 @@ import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule 
 export async function loadRouteModule(filePath: string): Promise<RouteModule | null> {
   try {
     // Check if file exists
-    if (!fs.existsSync(filePath)) {
+    if (!existsSync(filePath)) {
       console.error(`File does not exist: ${filePath}`);
       return null;
     }
 
-    // Try to detect whether to use ESM or CommonJS
-    const isESM = detectESM(filePath);
-    // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-    let imported;
-
-    if (isESM) {
-      try {
-        // Use dynamic import with file URL to load ESM module
-        const fileUrl = pathToFileURL(filePath).href;
-        imported = await import(fileUrl);
-      } catch (esmError) {
-        console.error(`Error importing ESM module: ${filePath}`, esmError);
-
-        // Try CommonJS as fallback
-        try {
-          imported = require(filePath);
-        } catch (cjsError) {
-          console.error(`Error importing CommonJS module: ${filePath}`, cjsError);
-          return null;
-        }
-      }
-    } else {
-      // Use require for CommonJS
-      try {
-        imported = require(filePath);
-      } catch (cjsError) {
-        console.error(`Error importing CommonJS module: ${filePath}`, cjsError);
-
-        // Try ESM as fallback
-        try {
-          const fileUrl = pathToFileURL(filePath).href;
-          imported = await import(fileUrl);
-        } catch (esmError) {
-          console.error(`Error importing ESM module: ${filePath}`, esmError);
-          return null;
-        }
-      }
+    try {
+      // Use dynamic import with file URL to load ESM module
+      const fileUrl = pathToFileURL(filePath).href;
+      const imported = await import(fileUrl);
+      return imported as RouteModule;
+    } catch (error) {
+      console.error(`Error importing ESM module: ${filePath}`, error);
+      return null;
     }
-
-    return imported as RouteModule;
   } catch (error) {
     console.error(`Error importing route module from ${filePath}:`, error);
     return null;
-  }
-}
-
-/**
- * Detect whether a file should be loaded as an ESM or CommonJS module
- */
-function detectESM(filePath: string): boolean {
-  try {
-    // Check if parent package.json has type: module
-    const dir = path.dirname(filePath);
-    let currentDir = dir;
-
-    while (currentDir !== path.parse(currentDir).root) {
-      const pkgPath = path.join(currentDir, "package.json");
-
-      if (fs.existsSync(pkgPath)) {
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-        if (pkg.type === "module") {
-          return true;
-        }
-        break;
-      }
-
-      currentDir = path.dirname(currentDir);
-    }
-
-    // Check if file has mjs extension
-    if (filePath.endsWith(".mjs")) {
-      return true;
-    }
-
-    // Check if file has import/export statements
-    const content = fs.readFileSync(filePath, "utf8");
-    return (
-      /\bimport\s+[^;]+\s+from\s+/.test(content) || /\bexport\s+(default|const|let|var|function|class)\b/.test(content)
-    );
-  } catch (error) {
-    console.error("Error detecting module type:", error);
-    return false;
   }
 }
 

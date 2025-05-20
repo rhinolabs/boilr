@@ -2,6 +2,7 @@
   "name": "@rhinolabs/fastify-file-routes",
   "version": "0.1.0",
   "description": "Next.js-style file-based routing for Fastify",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],

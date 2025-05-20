@@ -44,7 +44,7 @@ Commands:
   dev       - Start development server with hot reloading
   build     - Build the project for production
   start     - Start the production server
-  new       - Create a new Boilr project
+  new       - Create a new Boilr TypeScript project with ESM modules
   help      - Show this help message
 
 Examples:
@@ -55,16 +55,46 @@ Examples:
   `);
 }
 
-// Function to find server file - always use src/server.ts by convention
+// Function to find server file based on project structure - TypeScript only
 async function findServerFile(): Promise<string> {
-  const serverPath = 'src/server.ts';
   try {
-    await fs.access(path.join(process.cwd(), serverPath));
-    console.log(`Found server file at: ${serverPath}`);
+    // Detect project structure
+    const structure = await detectProjectStructure();
+    
+    // Preferred convention: src/server.ts (TypeScript only)
+    const conventionalPath = 'src/server.ts';
+    
+    // Check if conventional path exists first
+    if (await pathExists(path.join(process.cwd(), conventionalPath))) {
+      console.log(`Found server file at conventional location: ${conventionalPath}`);
+      return conventionalPath;
+    }
+    
+    // Alternative TypeScript paths to check
+    const alternativePaths = [
+      'server.ts',
+      'src/app.ts',
+      'app.ts',
+      'src/index.ts',
+      'index.ts'
+    ];
+    
+    // Check alternative paths
+    for (const altPath of alternativePaths) {
+      if (await pathExists(path.join(process.cwd(), altPath))) {
+        console.log(`Found server file at alternative location: ${altPath}`);
+        return altPath;
+      }
+    }
+    
+    // If not found, use the convention but warn
+    console.log(`No TypeScript server file found. Using convention: ${conventionalPath}`);
+    return conventionalPath;
   } catch (err) {
-    console.log(`Using convention: ${serverPath} (even if it doesn't exist yet)`);
+    // Default to convention in case of error
+    console.log('⚠️ Error finding server file, using convention: src/server.ts');
+    return 'src/server.ts';
   }
-  return serverPath;
 }
 
 async function startDev() {
@@ -75,12 +105,12 @@ async function startDev() {
 
   // Check if the project uses pnpm
   const usesPnpmProject = await usesPnpm();
-  
-  // Command and args to run
+
+  // Command and args to run - always using ESM
   let command = 'npx';
   let args = [
     'ts-node-dev',
-    '--esm',
+    '--esm', // Always use ESM mode
     '--respawn',
     '--transpile-only',
     serverFile
@@ -92,6 +122,8 @@ async function startDev() {
     command = 'pnpm';
     args = ['exec', 'ts-node-dev', '--esm', '--respawn', '--transpile-only', serverFile];
   }
+  
+  console.log('Starting TypeScript with ESM modules...');
   
   // Run ts-node-dev with proper configuration
   const proc = spawn(command, args, {
@@ -179,7 +211,7 @@ async function createProject(name: string) {
       // Directory doesn't exist, we can proceed
     }
 
-    console.log(`Creating new Boilr project: ${name}`);
+    console.log(`Creating new Boilr TypeScript project with ESM modules: ${name}`);
 
     // 2. Create project directory
     await fs.mkdir(projectDir, { recursive: true });
@@ -187,17 +219,17 @@ async function createProject(name: string) {
     // 3. Create project structure
     await createProjectStructure(projectDir);
 
-    // 4. Initialize package.json
+    // 4. Initialize package.json with ESM
     await createPackageJson(projectDir, name);
 
-    // 5. Create tsconfig.json
+    // 5. Create tsconfig.json for ESM
     await createTsConfig(projectDir);
 
-    // 6. Create example routes and server file
+    // 6. Create example TypeScript routes and server file
     await createExampleFiles(projectDir);
 
     console.log(`
-✅ Project created successfully!
+✅ TypeScript+ESM project created successfully!
 
 Next steps:
   cd ${name}
@@ -286,14 +318,35 @@ async function runCommand(command: string, args: string[]) {
 }
 
 async function copyRoutes() {
-  // By convention, routes are always in src/routes
-  const routesDir = 'src/routes';
-  const fullRoutesDir = path.join(process.cwd(), routesDir);
-  const destDir = path.join(process.cwd(), 'dist', routesDir);
-  
   try {
-    // Check if routes directory exists
-    await fs.access(fullRoutesDir);
+    // Detect project structure
+    const structure = await detectProjectStructure();
+    
+    // Determine source and destination paths
+    const routesDir = structure.hasSrcDir ? 'src/routes' : 'routes';
+    const fullRoutesDir = path.join(process.cwd(), routesDir);
+    const destDir = path.join(process.cwd(), structure.expectedOutput.routesPath);
+    
+    // Check if either routes directory exists
+    if (!(await pathExists(fullRoutesDir))) {
+      // If the primary route dir doesn't exist, check alternative
+      const altRoutesDir = structure.hasSrcDir ? 'routes' : 'src/routes';
+      const altFullRoutesDir = path.join(process.cwd(), altRoutesDir);
+      
+      if (await pathExists(altFullRoutesDir)) {
+        // Found routes in alternative location
+        console.log(`Found routes at alternative location: ${altRoutesDir}`);
+        // Create destination directory
+        await fs.mkdir(destDir, { recursive: true });
+        // Copy all files from routes to dist
+        await copyDir(altFullRoutesDir, destDir);
+        console.log(`📁 Routes copied from ${altRoutesDir} to ${structure.expectedOutput.routesPath}`);
+        return;
+      } else {
+        console.log('⚠️ No routes directory found at any expected location');
+        return;
+      }
+    }
     
     // Create destination directory
     await fs.mkdir(destDir, { recursive: true });
@@ -301,9 +354,9 @@ async function copyRoutes() {
     // Copy all files from routes to dist
     await copyDir(fullRoutesDir, destDir);
     
-    console.log(`📁 Routes copied from ${routesDir} to ${path.relative(process.cwd(), destDir)}`);
+    console.log(`📁 Routes copied from ${routesDir} to ${structure.expectedOutput.routesPath}`);
   } catch (err) {
-    console.log(`⚠️ No routes directory found at: ${routesDir}`);
+    console.log('⚠️ Error copying routes:', err);
   }
 }
 
@@ -323,23 +376,138 @@ async function copyDir(src: string, dest: string) {
   }
 }
 
-// Function to find compiled server file
-// By convention, server file is always in dist/src/server.js
-async function findCompiledServerFile(): Promise<string | null> {
-  const serverPath = 'dist/src/server.js';
+// Type for project structure info
+interface ProjectStructure {
+  // Whether the project uses src/ directory structure
+  hasSrcDir: boolean;
+  // Expected output structure based on tsconfig
+  expectedOutput: {
+    serverPath: string;        // Where server.js will be compiled to
+    routesPath: string;        // Where routes will be copied to
+    routeRefPath: string;      // How the server should reference routes
+  };
+}
+
+// Function to detect the project structure by analyzing tsconfig.json
+async function detectProjectStructure(): Promise<ProjectStructure> {
   try {
-    await fs.access(path.join(process.cwd(), serverPath));
-    console.log(`Found compiled server file at: ${serverPath}`);
-    return serverPath;
+    // Default structure (with src/)
+    const defaultStructure: ProjectStructure = {
+      hasSrcDir: true,
+      expectedOutput: {
+        serverPath: 'dist/src/server.js',
+        routesPath: 'dist/src/routes',
+        routeRefPath: './routes'
+      }
+    };
+    
+    // Try to read and parse tsconfig.json
+    try {
+      const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
+      const tsconfigContent = await fs.readFile(tsconfigPath, 'utf8');
+      const tsconfig = JSON.parse(tsconfigContent);
+      
+      // Check rootDir configuration
+      if (tsconfig.compilerOptions && tsconfig.compilerOptions.rootDir) {
+        const rootDir = tsconfig.compilerOptions.rootDir.replace(/^\.\//, '');
+        const outDir = (tsconfig.compilerOptions.outDir || './dist').replace(/^\.\//, '');
+        
+        if (rootDir === 'src') {
+          // If rootDir is src/, the output will be flattened
+          return {
+            hasSrcDir: true,
+            expectedOutput: {
+              serverPath: `${outDir}/server.js`,
+              routesPath: `${outDir}/routes`, 
+              routeRefPath: './routes'
+            }
+          };
+        } else {
+          // If rootDir is ./ or anything else, structure is preserved
+          const hasSrc = await pathExists(path.join(process.cwd(), 'src'));
+          return {
+            hasSrcDir: hasSrc,
+            expectedOutput: {
+              serverPath: hasSrc ? `${outDir}/src/server.js` : `${outDir}/server.js`,
+              routesPath: hasSrc ? `${outDir}/src/routes` : `${outDir}/routes`,
+              routeRefPath: './routes'
+            }
+          };
+        }
+      }
+    } catch (err) {
+      // If we can't read or parse tsconfig.json, use default
+      console.log('⚠️ Could not read or parse tsconfig.json, using default structure');
+    }
+    
+    // Check if src directory exists, even without tsconfig
+    const hasSrc = await pathExists(path.join(process.cwd(), 'src'));
+    if (!hasSrc) {
+      return {
+        hasSrcDir: false,
+        expectedOutput: {
+          serverPath: 'dist/server.js',
+          routesPath: 'dist/routes',
+          routeRefPath: './routes'
+        }
+      };
+    }
+    
+    return defaultStructure;
   } catch (err) {
-    console.log(`Compiled server file not found at expected location: ${serverPath}`);
+    // In case of any error, return default structure
+    console.log('⚠️ Error detecting project structure:', err);
+    return {
+      hasSrcDir: true,
+      expectedOutput: {
+        serverPath: 'dist/src/server.js',
+        routesPath: 'dist/src/routes',
+        routeRefPath: './routes'
+      }
+    };
+  }
+}
+
+// Function to find compiled server file based on project structure (ESM TypeScript)
+async function findCompiledServerFile(): Promise<string | null> {
+  try {
+    // Detect project structure
+    const structure = await detectProjectStructure();
+    const expectedPath = structure.expectedOutput.serverPath;
+    
+    // Make sure we're looking for .js files (compiled from .ts)
+    const jsPath = expectedPath.endsWith('.js') ? expectedPath : `${expectedPath.replace(/\.ts$/, '')}.js`;
+    
+    // Check if expected path exists
+    if (await pathExists(path.join(process.cwd(), jsPath))) {
+      console.log(`Found compiled server file at expected location: ${jsPath}`);
+      return jsPath;
+    }
+    
+    // If not found at expected location, try alternative locations
+    const alternativePaths = [
+      'dist/src/server.js',
+      'dist/server.js'
+    ].filter(p => p !== jsPath); // Don't check the already checked path
+    
+    for (const altPath of alternativePaths) {
+      if (await pathExists(path.join(process.cwd(), altPath))) {
+        console.log(`Found compiled server file at alternative location: ${altPath}`);
+        return altPath;
+      }
+    }
+    
+    console.log('⚠️ Compiled server file not found at any expected location');
+    return null;
+  } catch (err) {
+    console.log('⚠️ Error finding compiled server file:', err);
     return null;
   }
 }
 
 // Function to fix route paths in compiled server files for src/routes convention
 async function fixRoutePaths() {
-  // Find the compiled server file - by convention in dist/src/server.js
+  // Find the compiled server file
   const serverFile = await findCompiledServerFile();
   if (!serverFile) {
     console.log('⚠️ No compiled server file found, skipping route path fix');
@@ -347,21 +515,56 @@ async function fixRoutePaths() {
   }
   
   try {
+    // Detect project structure to know correct route references
+    const structure = await detectProjectStructure();
+    const expectedRoutePath = structure.expectedOutput.routeRefPath;
+    
     // Read the file content
     const filePath = path.join(process.cwd(), serverFile);
     const content = await fs.readFile(filePath, 'utf8');
     
-    // Check if the content needs to be fixed - by convention, routes in src/server.ts
-    // are referenced with ../routes, but compiled in dist/src/server.js, they should be ./routes
-    if (content.includes('"..\/routes"') || content.includes('"../routes"')) {
-      // Fix the path to be ./routes for dist/src/server.js
-      const fixedContent = content
-        .replace('"..\/routes"', '"./routes"')
-        .replace('"../routes"', '"./routes"');
+    // Possible route reference patterns to look for
+    const routePatterns = [
+      '"..\/routes"',    // "../routes" (escaped in code)
+      '"../routes"',      // "../routes" (unescaped)
+      '"../../routes"',   // "../../routes" (deeper path)
+      '"../src/routes"'   // "../src/routes" (if routes in src)
+    ];
+    
+    // Check if any patterns exist in the content
+    let contentNeedsFixing = false;
+    for (const pattern of routePatterns) {
+      if (content.includes(pattern)) {
+        contentNeedsFixing = true;
+        break;
+      }
+    }
+    
+    if (contentNeedsFixing) {
+      // Create fixed content by replacing all patterns with the expected route path
+      let fixedContent = content;
+      for (const pattern of routePatterns) {
+        // We need to use string replacement (not regex) due to escaping complexities
+        fixedContent = fixedContent.replace(pattern, `"${expectedRoutePath}"`);
+      }
       
       // Write the fixed content back
       await fs.writeFile(filePath, fixedContent, 'utf8');
-      console.log('🔧 Fixed route paths in server file to use "./routes"');
+      console.log(`🔧 Fixed route paths in server file to use "${expectedRoutePath}"`);
+    }
+    
+    // Make sure the routes are in the right place for the compiled server to find them
+    const serverDir = path.dirname(path.join(process.cwd(), serverFile));
+    const routesDir = path.join(serverDir, 'routes');
+    
+    // If routes don't exist at the location the server expects, copy them there
+    if (!(await pathExists(routesDir))) {
+      const expectedRoutesPath = path.join(process.cwd(), structure.expectedOutput.routesPath);
+      if (await pathExists(expectedRoutesPath)) {
+        await fs.mkdir(routesDir, { recursive: true });
+        await copyDir(expectedRoutesPath, routesDir);
+        console.log(`📋 Copied routes from ${structure.expectedOutput.routesPath} to server's expected location`);
+      }
     }
   } catch (err) {
     console.log('⚠️ Error fixing route paths:', err);
@@ -395,7 +598,7 @@ async function createPackageJson(projectDir: string, name: string) {
     name,
     version: '0.1.0',
     description: 'A Boilr API project',
-    type: 'module',
+    type: 'module', // Explicitly set as ESM
     scripts: {
       dev: 'boilr dev',
       build: 'boilr build',
@@ -412,6 +615,9 @@ async function createPackageJson(projectDir: string, name: string) {
       '@types/node': '^20.11.30',
       'ts-node-dev': '^2.0.0',
       'typescript': '^5.4.5'
+    },
+    engines: {
+      "node": ">=18.0.0"
     }
   };
 
@@ -422,11 +628,12 @@ async function createPackageJson(projectDir: string, name: string) {
 }
 
 async function createTsConfig(projectDir: string) {
+  // Create an ESM-optimized TypeScript config
   const tsConfig = {
     compilerOptions: {
-      target: 'ES2020',
-      module: 'NodeNext',
-      moduleResolution: 'NodeNext',
+      target: 'ES2022',
+      module: 'NodeNext',     // Required for ESM
+      moduleResolution: 'NodeNext', // Required for ESM
       esModuleInterop: true,
       forceConsistentCasingInFileNames: true,
       strict: true,

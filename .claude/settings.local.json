@@ -33,7 +33,9 @@
       "Bash(npm link)",
       "Bash(pnpm link:*)",
       "Bash(boilr build:*)",
-      "Bash(pnpm exec:*)"
+      "Bash(pnpm exec:*)",
+      "Bash(grep:*)",
+      "Bash(boilr start:*)"
     ],
     "deny": []
   }

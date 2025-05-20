@@ -2,6 +2,7 @@
   "name": "@rhinolabs/boilr",
   "version": "0.1.0",
   "description": "Convention-based Fastify framework with batteries included",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
