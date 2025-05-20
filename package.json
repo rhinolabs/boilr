@@ -12,7 +12,9 @@
   },
   "workspaces": ["packages/*"],
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^20.15.20",
+    "tsx": "^4.7.0"
   },
   "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod"],
   "author": "",
