@@ -1,0 +1,6 @@
+_extends: boilr:.github/release-drafter-base.yml
+name-template: 'boilr v$RESOLVED_VERSION'
+tag-template: 'boilr@$RESOLVED_VERSION'
+tag-prefix: 'boilr@'
+include-paths:
+  - "packages/boilr/"
