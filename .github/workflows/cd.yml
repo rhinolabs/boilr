@@ -9,72 +9,94 @@ jobs:
     if: startsWith(github.event.release.tag_name, 'cli@')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-          
-      - uses: actions/setup-node@v4
+      - name: 🛠 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
-          node-version: '20'
+          version: 9
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-          
-      - name: Get version from release
+
+      - name: 🏷️ Get version from release
         id: get_version
         run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/cli@//')" >> $GITHUB_OUTPUT
-          
-      - name: Update package version
-        run: |
-          cd packages/cli
-          npm version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version
-          
-      - name: Install dependencies
-        run: pnpm install
-        
-      - name: Build CLI package
-        run: pnpm run build --filter @rhinolabs/cli
 
-      - name: Publish CLI package
+      - name: 🔄 Update package version
+        run: npx tsx scripts/version.ts cli ${{ steps.get_version.outputs.VERSION }}
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 🛠️ Build CLI package
+        run: pnpm --filter @rhinolabs/boilr-cli build
+
+      - name: ✏️ Fix linting issues
+        run: pnpm lint:fix
+
+      - name: 📢 Publish CLI package
         run: cd packages/cli && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: 💾 Commit version changes
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: bump CLI version to ${{ steps.get_version.outputs.VERSION }}"
-          file_pattern: 'packages/cli/package.json'
+          commit_message: "Bump @rhinolabs/boilr-cli version to ${{ steps.get_version.outputs.VERSION }}"
+          file_pattern: 'packages/cli/package.json pnpm-lock.yaml'
           branch: main
+          push_options: '--force'
 
   publish-core:
     if: startsWith(github.event.release.tag_name, 'boilr@')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-          
-      - uses: actions/setup-node@v4
+      - name: 🛠 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
-          node-version: '20'
+          version: 9
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
-          
-      - name: Get version from release
+
+      - name: 🏷️ Get version from release
         id: get_version
         run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/boilr@//')" >> $GITHUB_OUTPUT
-          
-      - name: Update package version
-        run: |
-          cd packages/boilr
-          npm version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version
-          
-      - name: Install dependencies
-        run: pnpm install
-        
-      - name: Build Core package
-        run: pnpm run build --filter @rhinolabs/boilr
 
-      - name: Publish Core package
+      - name: 🔄 Update package version
+        run: npx tsx scripts/version.ts boilr ${{ steps.get_version.outputs.VERSION }}
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 🛠️ Build Core package
+        run: pnpm --filter @rhinolabs/boilr build
+
+      - name: ✏️ Fix linting issues
+        run: pnpm lint:fix
+
+      - name: 📢 Publish Core package
         run: cd packages/boilr && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: 💾 Commit version changes
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: bump boilr version to ${{ steps.get_version.outputs.VERSION }}"
-          file_pattern: 'packages/boilr/package.json'
+          commit_message: "Bump @rhinolabs/boilr version to ${{ steps.get_version.outputs.VERSION }}"
+          file_pattern: 'packages/boilr/package.json pnpm-lock.yaml'
           branch: main
+          push_options: '--force'
