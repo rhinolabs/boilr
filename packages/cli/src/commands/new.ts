@@ -37,17 +37,17 @@ function processTemplateFiles(source: string, destination: string, variables: Re
   }
 }
 
-export function registerInitCommand(program: Command): void {
+export function registerNewCommand(program: Command): void {
   program
-    .command("init")
-    .description("Initialize a new Boilr project")
+    .command("new")
+    .description("Create a new Boilr project")
     .argument("[name]", "project name")
     .option("-t, --template <template>", "template to use", "default")
     .option("--typescript", "use TypeScript", true)
     .option("--skip-install", "skip dependency installation", false)
     .action((name, options) => {
       const projectName = name || "my-boilr-app";
-      console.log(`Initializing new Boilr project: ${projectName}`);
+      console.log(`Creating new Boilr project: ${projectName}`);
 
       const cwd = process.cwd();
       const projectPath = path.join(cwd, projectName);
