@@ -35,6 +35,7 @@ export const schema = defineSchema({
     },
   },
   delete: {
+    tags: ["To-do"],
     params: z.object({
       id: z.string().transform((val) => Number.parseInt(val, 10)),
     }),

@@ -4,6 +4,7 @@ import { z } from "zod";
 // Define schema for endpoints
 export const schema = defineSchema({
   get: {
+    tags: ["To-do"],
     response: {
       200: z.array(
         z.object({
@@ -16,6 +17,7 @@ export const schema = defineSchema({
     },
   },
   post: {
+    tags: ["To-do"],
     body: z.object({
       title: z.string().min(1, "Title is required"),
       completed: z.boolean().optional().default(false),

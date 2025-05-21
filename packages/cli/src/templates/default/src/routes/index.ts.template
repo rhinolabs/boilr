@@ -4,6 +4,7 @@ import { z } from "zod";
 // Schema for the root endpoint
 export const schema = defineSchema({
   get: {
+    tags: ["General"],
     response: {
       200: z.object({
         message: z.string(),

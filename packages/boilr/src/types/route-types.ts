@@ -26,16 +26,12 @@ export interface RouteSchema {
 
 // Schema for a specific HTTP method
 export interface MethodSchema {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  params?: ZodType<any>;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  querystring?: ZodType<any>;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  headers?: ZodType<any>;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  body?: ZodType<any>;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  response?: Record<number, ZodType<any>>;
+  params?: ZodType;
+  querystring?: ZodType;
+  headers?: ZodType;
+  body?: ZodType;
+  response?: Record<number, ZodType>;
+  tags?: string[];
 }
 
 // Extract parameter types with inference
@@ -75,7 +71,7 @@ type ExtractResponse<S extends RouteSchema, M extends HttpMethod, Status extends
   ? R
   : unknown;
 
-// Tipo para request tipado según el esquema
+// Extract response types without status code inference
 export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = FastifyRequest<{
   Params: ExtractParams<S, M>;
   Querystring: ExtractQuery<S, M>;
@@ -83,7 +79,7 @@ export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = FastifyR
   Body: ExtractBody<S, M>;
 }>;
 
-// Tipo genérico para handlers con tipos inferidos
+// Handler type for route methods
 export type RouteHandler<
   S extends RouteSchema,
   M extends HttpMethod,
@@ -93,7 +89,7 @@ export type RouteHandler<
   reply: FastifyReply,
 ) => Promise<ExtractResponse<S, M, Status>> | ExtractResponse<S, M, Status>;
 
-// Tipos específicos para cada método HTTP
+// Handler types for each HTTP method
 export type GetHandler<S extends RouteSchema> = RouteHandler<S, "get">;
 export type PostHandler<S extends RouteSchema> = RouteHandler<S, "post", 201>;
 export type PutHandler<S extends RouteSchema> = RouteHandler<S, "put">;
