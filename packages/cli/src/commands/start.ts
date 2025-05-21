@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import path from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { findCompiledServerFile, isBuilt } from "../utils/filesystem.js";
@@ -31,15 +32,39 @@ export async function start() {
     p.log.info("Press Ctrl+C to stop");
     p.log.info("");
 
-    // Start the Node.js server
-    const proc = spawn("node", [serverFile], {
+    const serverDir = path.dirname(path.join(process.cwd(), serverFile));
+
+    const proc = spawn("node", [path.basename(serverFile)], {
       stdio: "inherit",
       shell: true,
+      cwd: serverDir,
+      detached: false
     });
 
+    // Handle process termination events
     proc.on("error", (err) => {
       p.log.error(`Failed to start server: ${err}`);
       process.exit(1);
+    });
+
+    // Don't let the parent process exit
+    return new Promise((resolve) => {
+      // Only resolve when the child process exits
+      proc.on("exit", (code, signal) => {
+        if (code !== 0) {
+          p.log.error(`Server process exited with code ${code} and signal ${signal}`);
+        }
+        resolve(code);
+      });
+
+      // Handle SIGINT (Ctrl+C) to properly clean up
+      process.on("SIGINT", () => {
+        p.log.info("Stopping server...");
+        if (!proc.killed) {
+          proc.kill("SIGINT");
+        }
+        setTimeout(() => process.exit(0), 100);
+      });
     });
   } catch (err) {
     s.stop(`${pc.red("Error:")} Failed to start server`);

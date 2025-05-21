@@ -27,15 +27,17 @@ async function main() {
  * @param args Command arguments
  */
 async function handleCommand(command: string, args: string[]) {
+  let result: unknown;
+
   switch (command) {
     case "dev":
-      await startDev();
+      result = await startDev();
       break;
     case "build":
       await build();
       break;
     case "start":
-      await start();
+      result = await start();
       break;
     case "new": {
       const projectName = args[0] || (await promptForProjectName());
@@ -50,6 +52,8 @@ async function handleCommand(command: string, args: string[]) {
       await showHelp();
       process.exit(1);
   }
+
+  return result;
 }
 
 /**
