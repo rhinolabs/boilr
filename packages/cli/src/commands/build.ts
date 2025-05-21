@@ -1,26 +1,26 @@
-import type { Command } from 'commander';
-import { spawn } from 'node:child_process';
-import path from 'node:path';
-import fs from 'node:fs';
+import { spawn } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+import type { Command } from "commander";
 
 export function registerBuildCommand(program: Command): void {
   program
-    .command('build')
-    .description('Build the Boilr application for production')
-    .option('-c, --config <path>', 'specify the config file path')
-    .option('-o, --outDir <path>', 'specify the output directory', 'dist')
-    .option('--clean', 'clean the output directory before building', false)
+    .command("build")
+    .description("Build the Boilr application for production")
+    .option("-c, --config <path>", "specify the config file path")
+    .option("-o, --outDir <path>", "specify the output directory", "dist")
+    .option("--clean", "clean the output directory before building", false)
     .action((options) => {
-      console.log('Building application for production...');
+      console.log("Building application for production...");
 
       const cwd = process.cwd();
-      const serverPath = path.join(cwd, 'server.ts');
+      const serverPath = path.join(cwd, "server.ts");
       const configPath = options.config ? path.resolve(cwd, options.config) : null;
       const outDir = path.resolve(cwd, options.outDir);
 
       // Check if server.ts exists
       if (!fs.existsSync(serverPath)) {
-        console.error('Error: server.ts file not found in the current directory.');
+        console.error("Error: server.ts file not found in the current directory.");
         process.exit(1);
       }
 
@@ -35,7 +35,7 @@ export function registerBuildCommand(program: Command): void {
         console.log(`Cleaning output directory: ${outDir}`);
         try {
           fs.rmSync(outDir, { recursive: true, force: true });
-          console.log('Output directory cleaned successfully.');
+          console.log("Output directory cleaned successfully.");
         } catch (error) {
           console.error(`Error cleaning output directory: ${(error as Error).message}`);
           process.exit(1);
@@ -54,8 +54,8 @@ export function registerBuildCommand(program: Command): void {
 
       // Build using TypeScript compiler (tsc)
       // Execute tsc directly without npx
-      const tscCommand = 'tsc';
-      const args = ['--outDir', options.outDir];
+      const tscCommand = "tsc";
+      const args = ["--outDir", options.outDir];
 
       // Add config file if specified
       if (configPath) {
@@ -63,19 +63,19 @@ export function registerBuildCommand(program: Command): void {
         // Here you would add logic to handle the config file
       }
 
-      console.log(`Building with command: ${tscCommand} ${args.join(' ')}`);
+      console.log(`Building with command: ${tscCommand} ${args.join(" ")}`);
 
       const child = spawn(tscCommand, args, {
-        stdio: 'inherit',
-        shell: true
+        stdio: "inherit",
+        shell: true,
       });
 
-      child.on('close', (code) => {
+      child.on("close", (code) => {
         if (code !== 0) {
           console.error(`Build failed with code ${code}`);
           process.exit(code || 1);
         } else {
-          console.log('Build completed successfully.');
+          console.log("Build completed successfully.");
           console.log(`Output files available in: ${outDir}`);
         }
       });

@@ -7,12 +7,9 @@
   "bin": {
     "boilr": "./bin/run.js"
   },
-  "files": [
-    "/bin",
-    "/dist"
-  ],
+  "files": ["/bin", "/dist", "/src/templates"],
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && cp -R src/templates dist",
     "dev": "tsc --watch"
   },
   "dependencies": {
@@ -25,11 +22,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": [
-    "cli",
-    "boilr",
-    "framework"
-  ],
+  "keywords": ["cli", "boilr", "framework"],
   "author": "",
   "license": "MIT"
 }
