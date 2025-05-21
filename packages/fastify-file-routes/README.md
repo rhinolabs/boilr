@@ -9,12 +9,13 @@ A Next.js-style file-based routing plugin for Fastify. This plugin is the core r
 
 ## Features
 
-- 📁 **Filesystem-based routing**: Your directory structure becomes your API routes
-- 📊 **Dynamic parameters**: Support for parameters in routes using `[param]` syntax
-- 🌟 **Catch-all routes**: Handle wildcards with `[...param]` syntax
-- 🧩 **Route grouping**: Use `(group)` prefix for folders to organize without affecting URLs
-- 🚀 **HTTP method exports**: Simply export functions named `get`, `post`, `put`, `patch`, `del`
-- 📝 **Schema support**: Export a `schema` object for validation with any schema system
+- 📁 **Filesystem-based routing** - Your directory structure becomes your API routes
+- 📊 **Dynamic parameters** - Support for parameters in routes using `[param]` syntax
+- 🌟 **Catch-all routes** - Handle wildcards with `[...param]` syntax
+- 🧩 **Route grouping** - Use `(group)` prefix for folders to organize without affecting URLs
+- 🚀 **HTTP method exports** - Simply export functions named `get`, `post`, `put`, `patch`, `del`
+- 📝 **Schema support** - Export a `schema` object for validation with any schema system
+- ⚡ **TypeScript support** - Full type safety when used with TypeScript
 
 ## Installation
 
@@ -26,7 +27,7 @@ yarn add @rhinolabs/fastify-file-routes
 pnpm add @rhinolabs/fastify-file-routes
 ```
 
-## Usage
+## Basic Usage
 
 ### Register the plugin
 
@@ -52,14 +53,16 @@ routes/
 ├── users/
 │   ├── index.js        # GET/POST /users 
 │   └── [id].js         # GET/PUT/PATCH/DELETE /users/:id
-└── posts/
-    ├── index.js        # GET/POST /posts
-    └── [...slug].js    # GET/POST/etc. /posts/*
+├── posts/
+│   ├── index.js        # GET/POST /posts
+│   └── [...slug].js    # GET/POST/etc. /posts/*
+└── (admin)/            # Route grouping (doesn't affect URL)
+    └── settings.js     # GET /settings
 ```
 
 ### Define route handlers
 
-Create route handlers by exporting named functions matching the HTTP methods you want to support:
+Create route handlers by exporting named functions matching the HTTP methods:
 
 ```typescript
 // routes/users/[id].js
@@ -153,9 +156,7 @@ export async function get(request, reply) {
 }
 ```
 
-## Advanced Usage
-
-### Custom Configuration
+## Advanced Configuration
 
 ```typescript
 app.register(fastifyFileRoutes, {
@@ -170,38 +171,17 @@ app.register(fastifyFileRoutes, {
     
     // Custom path transformation function
     pathTransform: (path, filename) => {
-      // Customize the route path if needed
       return path.toLowerCase();
-    },
-    
-    // Global hooks to apply to all routes
-    globalHooks: {
-      onRequest: (request, reply, done) => {
-        // Do something before all routes
-        done();
-      }
     }
   }
 });
 ```
 
-### Automatic Schema Validation
+## Schema Validation
 
-This plugin works well with Fastify's schema validation. Just export a `schema` object:
+Works seamlessly with Fastify's schema validation:
 
 ```typescript
-// With JSON Schema
-export const schema = {
-  get: {
-    params: {
-      type: 'object',
-      properties: {
-        id: { type: 'string' }
-      }
-    }
-  }
-};
-
 // With Zod (requires fastify-zod or similar)
 import { z } from 'zod';
 
@@ -209,7 +189,13 @@ export const schema = {
   get: {
     params: z.object({
       id: z.string()
-    })
+    }),
+    response: {
+      200: z.object({
+        id: z.string(),
+        name: z.string()
+      })
+    }
   }
 };
 ```
