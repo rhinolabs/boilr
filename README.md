@@ -1,32 +1,33 @@
 # @rhinolabs/boilr
 
-A convention-based Fastify framework with file-based routing, schema validation, and powerful developer tools. Designed to simplify API development by reducing boilerplate code while maintaining full type safety.
+A convention-based web framework built on top of Fastify, designed to streamline API development through standardized patterns and built-in features. Developed by Rhinolabs Agency, it follows a "batteries included" philosophy while maintaining the performance benefits of the underlying Fastify engine.
 
 ## Monorepo Structure
 
 This project is structured as a monorepo using pnpm workspaces:
 
-- **`packages/boilr`** - Main framework package (`@rhinolabs/boilr`)  
-  The core Boilr framework that provides the convention-based wrapper around Fastify.
+- **`packages/boilr`** - Core framework package (`@rhinolabs/boilr`)  
+  The main Boilr framework that provides convention-based routing, configuration, and plugin management around Fastify.
 
 - **`packages/cli`** - Command-line interface (`@rhinolabs/boilr-cli`)  
-  Tools for creating new projects, development, building, and running Boilr applications.
+  Tools for creating new projects, development server with hot-reload, building, and running Boilr applications.
 
 - **`packages/fastify-file-routes`** - File-based routing plugin (`@rhinolabs/fastify-file-routes`)  
-  Next.js-style file-based routing system for Fastify.
+  Next.js-style filesystem-based routing system for Fastify with dynamic parameters and catch-all support.
 
 - **`packages/typescript-example`** - Example application  
-  A complete sample application built with Boilr that demonstrates key features.
+  A complete Todo CRUD API demonstrating Boilr's key features including type-safe validation and automatic documentation.
 
 ## Overview
 
 Boilr simplifies building TypeScript APIs with Fastify by providing:
 
-- **File-based routing** with Next.js-style conventions
-- **Type-safe validation** with Zod integration
-- **Automatic OpenAPI documentation**
-- **Pluggable architecture** with sensible defaults
-- **Command-line tools** for scaffolding, development, and deployment
+- **Convention-based file routing** with Next.js-style patterns
+- **Integrated schema validation** using Zod with automatic type inference
+- **Automatic OpenAPI documentation** generation from Zod schemas
+- **Preconfigured security and performance optimizations** (CORS, Helmet, Rate limiting)
+- **Developer-friendly tooling** for rapid development and deployment
+- **TypeScript support** with full type inference and safety
 
 ## Getting Started
 
@@ -45,38 +46,38 @@ cd my-api-project
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server with hot-reload
 npm run dev
 ```
 
 For more detailed instructions, check the documentation for each package:
 
-- [`@rhinolabs/boilr`](./packages/boilr/README.md) - Main framework
-- [`@rhinolabs/boilr-cli`](./packages/cli/README.md) - Command-line tools
-- [`@rhinolabs/fastify-file-routes`](./packages/fastify-file-routes/README.md) - File-based routing
-- [Example Application](./packages/typescript-example/README.md) - Complete sample app
+- [`@rhinolabs/boilr`](./packages/boilr/README.md) - Core framework with routing and validation
+- [`@rhinolabs/boilr-cli`](./packages/cli/README.md) - Command-line development tools
+- [`@rhinolabs/fastify-file-routes`](./packages/fastify-file-routes/README.md) - File-based routing engine
+- [Example Application](./packages/typescript-example/README.md) - Complete Todo API sample
 
 ## Key Features
 
-### 📁 File-Based Routing
+### 📁 Convention-Based File Routing
 
-Routes are automatically created based on your file structure:
+Routes are automatically created based on your file structure following Next.js conventions:
 
 ```
 routes/
 ├── api/
 │   ├── users/
-│   │   ├── [id].ts       → GET /api/users/:id
-│   │   └── index.ts      → GET /api/users
+│   │   ├── [id].ts       → GET/PUT/DELETE /api/users/:id
+│   │   └── index.ts      → GET/POST /api/users
 │   └── index.ts          → GET /api
-├── (admin)/              → Group routes without affecting URL
+├── (admin)/              → Group routes without affecting URL structure
 │   └── settings.ts       → GET /settings
-└── [...catchAll].ts      → Wildcard route
+└── [...catchAll].ts      → Wildcard route handling
 ```
 
-### 🔍 Type-Safe Validation
+### 🔍 Type-Safe Schema Validation
 
-Define schemas and handlers with full type safety:
+Define schemas and handlers with full TypeScript type safety using Zod:
 
 ```typescript
 // routes/api/users/[id].ts
@@ -103,9 +104,8 @@ export const schema = defineSchema({
 });
 
 export const get: GetHandler<typeof schema> = async (request, reply) => {
-  const { id } = request.params;
+  const { id } = request.params; // Automatically typed as number
   
-  // Your logic here
   const user = await getUserById(id);
   
   if (!user) {
@@ -115,19 +115,18 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
     });
   }
   
-  return user;
-}
+  return user; // Return type automatically validated
+};
 ```
 
-### 📚 Automatic Documentation
+### 📚 Automatic API Documentation
 
-Your API documentation is automatically generated from your Zod schemas:
+Your OpenAPI/Swagger documentation is automatically generated from your Zod schemas:
 
 ```typescript
 // server.ts
 import { createApp } from '@rhinolabs/boilr';
 
-// Create the application
 const app = createApp({
   server: {
     port: 3000
@@ -143,29 +142,45 @@ const app = createApp({
   }
 });
 
-// Start the server
-app.start();
+app.start(); // Documentation available at /docs
 ```
 
-Access your API documentation at `/docs` (configurable).
+### 🛡️ Security and Performance Built-in
 
-### 🛠️ Command-Line Tools
+Boilr comes with essential security and performance features pre-configured:
 
-Boilr comes with a powerful CLI for managing your project:
+- **CORS** - Cross-origin resource sharing
+- **Helmet** - Security headers
+- **Rate limiting** - Request throttling
+- **Schema validation** - Input/output validation with Zod
+- **Type safety** - Full TypeScript integration
+
+### 🛠️ Developer Experience
+
+Powerful CLI tools for seamless development workflow:
 
 ```bash
-# Create a new project
+# Create a new project with TypeScript template
 boilr new my-api-project
 
-# Start development server with hot reloading
+# Start development server with hot-reload
 boilr dev
 
-# Build for production
+# Build optimized production bundle
 boilr build
 
 # Start production server
 boilr start
 ```
+
+## Architecture
+
+The framework leverages modern TypeScript features and provides:
+
+- **Modular plugin system** - Extend functionality through Fastify's plugin ecosystem
+- **Convention over configuration** - Sensible defaults with customization options
+- **Performance focused** - Built on Fastify's high-performance foundation
+- **Developer friendly** - Hot-reload, automatic documentation, type safety
 
 ## Development
 
@@ -179,6 +194,9 @@ pnpm install
 
 # Build all packages
 pnpm build
+
+# Run development mode (watch all packages)
+pnpm dev
 ```
 
 ## Contributing

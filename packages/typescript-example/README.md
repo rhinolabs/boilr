@@ -1,15 +1,16 @@
 # TypeScript Todo API Example
 
-A complete Todo CRUD API example built with the `@rhinolabs/boilr` framework, showcasing TypeScript type safety, file-based routing, and Zod schema validation.
+A complete Todo CRUD API example built with the `@rhinolabs/boilr` framework, showcasing TypeScript type safety, file-based routing, Zod schema validation, and automatic OpenAPI documentation generation.
 
 ## Features Demonstrated
 
-- ✅ File-based routing with dynamic parameters
-- ✅ Type-safe validation using Zod schemas
-- ✅ Automatic OpenAPI/Swagger documentation
-- ✅ CRUD operations with proper status codes and error handling
-- ✅ Query parameter filtering
-- ✅ Clean separation of schema and handler logic
+- ✅ **File-based routing** with dynamic parameters (`[id].ts`)
+- ✅ **Type-safe validation** using Zod schemas with automatic TypeScript inference
+- ✅ **Automatic OpenAPI/Swagger documentation** generated from schemas
+- ✅ **CRUD operations** with proper HTTP status codes and error handling
+- ✅ **Query parameter filtering** (e.g., `?completed=true/false`)
+- ✅ **Security features** (CORS, Helmet, Rate limiting)
+- ✅ **Development workflow** with hot-reload and TypeScript compilation
 
 ## Getting Started
 
@@ -17,7 +18,7 @@ A complete Todo CRUD API example built with the `@rhinolabs/boilr` framework, sh
 # Install dependencies
 pnpm install
 
-# Run the server in development mode
+# Run the server in development mode with hot-reload
 pnpm dev
 
 # Or build and run in production
@@ -25,19 +26,24 @@ pnpm build
 pnpm start
 ```
 
+The server will start on `http://localhost:3000` with the following features:
+- API endpoints at `/api/todos`
+- Interactive documentation at `/docs`
+- Hot-reload in development mode
+
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/todos` | List all todos (filter with `?completed=true/false`) |
-| POST | `/api/todos` | Create a new todo |
-| GET | `/api/todos/:id` | Get a specific todo by ID |
-| PUT | `/api/todos/:id` | Update a todo |
-| DELETE | `/api/todos/:id` | Delete a todo |
+| Method | Endpoint | Description | Example |
+|--------|----------|-------------|---------|
+| GET | `/api/todos` | List all todos | `?completed=true` to filter |
+| POST | `/api/todos` | Create a new todo | `{"title": "Learn Boilr", "completed": false}` |
+| GET | `/api/todos/:id` | Get a specific todo by ID | `/api/todos/1` |
+| PUT | `/api/todos/:id` | Update a todo completely | `{"title": "Updated", "completed": true}` |
+| DELETE | `/api/todos/:id` | Delete a todo | Returns `204 No Content` |
 
 ## Swagger Documentation
 
-API documentation is automatically generated from your Zod schemas and available at:
+Interactive API documentation is automatically generated from your Zod schemas:
 
 ```
 http://localhost:3000/docs
@@ -52,7 +58,7 @@ src/
 │       └── todos/
 │           ├── [id].ts    # Get/Update/Delete todo by ID
 │           └── index.ts   # List/Create todos
-└── server.ts              # Server configuration
+└── server.ts              # Server configuration with plugins
 ```
 
 ## Key Implementation Examples
@@ -62,22 +68,32 @@ src/
 ```typescript
 import { createApp } from "@rhinolabs/boilr";
 
-// Create the application
 const app = createApp({
   server: {
     port: 3000,
-    logger: { /* ... */ },
+    logger: {
+      level: "info",
+      transport: {
+        target: "pino-pretty",
+        options: { colorize: true }
+      }
+    }
   },
   routes: {
     dir: './routes',
-    prefix: "/api",
+    prefix: "/api"
   },
   plugins: {
-    swagger: { /* ... */ },
-  },
+    swagger: {
+      info: {
+        title: "Todo API",
+        description: "A simple Todo CRUD API built with Boilr",
+        version: "1.0.0"
+      }
+    }
+  }
 });
 
-// Start the server
 app.start();
 ```
 
@@ -90,18 +106,25 @@ import { type GetHandler, defineSchema } from "@rhinolabs/boilr";
 export const schema = defineSchema({
   get: {
     params: z.object({
-      id: z.string(),
+      id: z.string()
     }),
     response: {
-      200: z.object({ /* ... */ }),
-      404: z.object({ /* ... */ }),
-    },
-  },
+      200: z.object({
+        id: z.string(),
+        title: z.string(),
+        completed: z.boolean()
+      }),
+      404: z.object({
+        error: z.string(),
+        message: z.string()
+      })
+    }
+  }
 });
 
 export const get: GetHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
-  // ... implementation
+  // Implementation with full type safety
 };
 ```
 
