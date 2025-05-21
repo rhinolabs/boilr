@@ -1,38 +1,35 @@
 {
-  "name": "@rhinolabs/boilr-cli",
+  "name": "@rhinolabs/cli",
   "version": "0.1.0",
-  "description": "CLI for Boilr framework - manage, build and run your Boilr applications",
+  "description": "CLI tool for Boilr framework",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": "./dist/index.js",
   "bin": {
-    "boilr": "dist/index.js"
+    "boilr": "./bin/run.js"
   },
   "files": [
-    "dist/**/*"
+    "/bin",
+    "/dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "biome check .",
-    "lint:fix": "biome check --apply ."
+    "build": "rm -rf dist && tsc",
+    "dev": "tsc --watch"
   },
   "dependencies": {
-    "@clack/prompts": "^0.10.1",
-    "picocolors": "^1.1.1"
+    "commander": "^12.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
-    "@types/nodemon": "^3.1.1",
-    "nodemon": "^3.1.10",
+    "@types/node": "^20.15.20",
     "typescript": "^5.4.5"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [
-    "boilr",
     "cli",
-    "framework",
-    "api",
-    "fastify"
+    "boilr",
+    "framework"
   ],
+  "author": "",
   "license": "MIT"
 }

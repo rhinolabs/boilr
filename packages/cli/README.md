@@ -1,109 +1,43 @@
-# Boilr CLI
+# @rhinolabs/cli
 
-CLI tools for the Boilr framework that simplify the development, building and deployment of Boilr applications.
+CLI tool for the Boilr framework.
 
 ## Installation
 
-```bash
-# Global installation (recommended)
-npm install -g @rhinolabs/boilr-cli
+```sh
+npm install -g @rhinolabs/cli
+```
 
-# Local installation
-npm install --save-dev @rhinolabs/boilr-cli
+Or use it directly with npx:
+
+```sh
+npx @rhinolabs/cli [command]
 ```
 
 ## Commands
 
-### Create a new project
+* `boilr init [name]` - Initialize a new Boilr project
+  * `--template <template>` - Template to use (default: "default")
+  * `--typescript` - Use TypeScript (default: true)
+  * `--skip-install` - Skip dependency installation
 
-```bash
-boilr new my-api-project
-```
+* `boilr dev` - Start the development server with hot-reload
+  * `-p, --port <number>` - Specify the port (default: 3000)
+  * `-h, --host <host>` - Specify the host (default: localhost)
+  * `-w, --watch` - Watch for file changes (default: true)
 
-This command scaffolds a new Boilr project with:
-- TypeScript configuration
-- Recommended directory structure
-- Base server file
-- Example API route
-- ESM modules support
+* `boilr build` - Build the Boilr application for production
+  * `-c, --config <path>` - Specify the config file path
 
-### Start development server
+* `boilr start` - Start the production server
+  * `-p, --port <number>` - Specify the port (default: 3000)
+  * `-h, --host <host>` - Specify the host (default: localhost)
 
-```bash
-boilr dev
-```
-
-Starts the development server with hot reloading using nodemon.
-
-### Build for production
-
-```bash
-boilr build
-```
-
-Compiles TypeScript files and prepares the application for production deployment.
-
-### Start production server
-
-```bash
-boilr start
-```
-
-Runs the built application in production mode.
-
-### Display help
-
-```bash
-boilr help
-```
-
-Shows information about available commands.
-
-## Interactive Mode
-
-Running `boilr` without arguments starts an interactive prompt to select a command.
-
-## Project Structure
-
-Boilr CLI creates projects with the following structure:
-
-```
-my-api-project/
-├── src/
-│   ├── routes/
-│   │   └── api/
-│   │       └── index.ts  # Example API route
-│   └── server.ts         # Server entry point
-├── package.json
-├── tsconfig.json
-└── README.md
-```
+* `boilr --help` - Display help information
+* `boilr --version` - Display version information
 
 ## Development
 
-The CLI package is organized into modular commands:
-
-```
-src/
-├── commands/         # Command implementations
-│   ├── build.ts      # Build command
-│   ├── dev.ts        # Development server
-│   ├── help.ts       # Help command
-│   ├── index.ts      # Commands index
-│   ├── new.ts        # Project creation
-│   └── start.ts      # Production server
-├── templates/        # Project templates
-│   ├── index.ts.template       # Example route template
-│   ├── package.json.template   # Package.json template
-│   ├── README.md.template      # Project README template
-│   ├── server.ts.template      # Server template
-│   └── tsconfig.json.template  # TypeScript config template
-├── utils/            # Shared utilities
-│   ├── filesystem.ts # File system utilities
-│   └── process.ts    # Process utilities
-└── index.ts          # CLI entry point
-```
-
-## License
-
-MIT
+* `pnpm install` - Install dependencies
+* `pnpm build` - Build the CLI
+* `pnpm dev` - Watch for changes and rebuild

@@ -1,5 +1,12 @@
-export { build } from "./build.js";
-export { startDev } from "./dev.js";
-export { showHelp } from "./help.js";
-export { createProject, promptForProjectName } from "./new.js";
-export { start } from "./start.js";
+import type { Command } from 'commander';
+import { registerBuildCommand } from './build.js';
+import { registerDevCommand } from './dev.js';
+import { registerStartCommand } from './start.js';
+import { registerInitCommand } from './init.js';
+
+export function registerCommands(program: Command): void {
+  registerBuildCommand(program);
+  registerDevCommand(program);
+  registerStartCommand(program);
+  registerInitCommand(program);
+}
