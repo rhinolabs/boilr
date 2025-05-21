@@ -4,27 +4,22 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Command } from "commander";
 
-// Helper function to process template content
 function processTemplateContent(content: string, variables: Record<string, string>): string {
   return content.replace(/\{\{(\w+)\}\}/g, (match, variable) => {
     return variables[variable] || match;
   });
 }
 
-// Helper function to recursively copy and process template files
 function processTemplateFiles(source: string, destination: string, variables: Record<string, string>) {
-  // Create destination directory if it doesn't exist
   if (!fs.existsSync(destination)) {
     fs.mkdirSync(destination, { recursive: true });
   }
 
-  // Read source directory content
   const entries = fs.readdirSync(source, { withFileTypes: true });
 
   for (const entry of entries) {
     const sourcePath = path.join(source, entry.name);
 
-    // For template files, remove the .template extension
     let destFileName = entry.name;
     if (destFileName.endsWith(".template")) {
       destFileName = destFileName.substring(0, destFileName.length - 9);
@@ -33,10 +28,8 @@ function processTemplateFiles(source: string, destination: string, variables: Re
     const destinationPath = path.join(destination, destFileName);
 
     if (entry.isDirectory()) {
-      // Recursively process subdirectories
       processTemplateFiles(sourcePath, destinationPath, variables);
     } else {
-      // Read and process template files
       const content = fs.readFileSync(sourcePath, "utf8");
       const processedContent = processTemplateContent(content, variables);
       fs.writeFileSync(destinationPath, processedContent);
@@ -56,47 +49,38 @@ export function registerInitCommand(program: Command): void {
       const projectName = name || "my-boilr-app";
       console.log(`Initializing new Boilr project: ${projectName}`);
 
-      // Get current working directory
       const cwd = process.cwd();
       const projectPath = path.join(cwd, projectName);
 
-      // Check if directory already exists
       if (fs.existsSync(projectPath)) {
         console.error(`Error: Directory ${projectName} already exists. Please choose a different project name.`);
         process.exit(1);
       }
 
-      // Create project directory
       fs.mkdirSync(projectPath, { recursive: true });
 
-      // Get template source directory
       const currentFilePath = fileURLToPath(import.meta.url);
       const currentDirPath = path.dirname(currentFilePath);
-      
-      // First try in dist/templates (when installed as package)
+
       let templatesRootPath = path.resolve(currentDirPath, "../templates");
       let templatePath = path.join(templatesRootPath, options.template);
-      
-      // If not found, try in src/templates (during development)
+
       if (!fs.existsSync(templatePath)) {
         templatesRootPath = path.resolve(currentDirPath, "../../src/templates");
         templatePath = path.join(templatesRootPath, options.template);
       }
-      
-      // Check if the template exists
+
       if (!fs.existsSync(templatePath)) {
         console.error(`Error: Template "${options.template}" not found.`);
         process.exit(1);
       }
 
       try {
-        // Variables for template processing
         const templateVariables = {
           projectName,
           typescript: options.typescript ? "true" : "false",
         };
 
-        // Process template files and copy to project directory
         console.log("Copying and processing template files...");
         processTemplateFiles(templatePath, projectPath, templateVariables);
 

@@ -17,21 +17,18 @@ export function registerStartCommand(program: Command): void {
       const distDir = path.resolve(cwd, options.dir);
       const serverPath = path.join(distDir, "server.js");
 
-      // Check if the build directory exists
       if (!fs.existsSync(distDir)) {
         console.error(`Error: Build directory not found: ${distDir}`);
         console.error('Make sure you have built the application using the "build" command.');
         process.exit(1);
       }
 
-      // Check if server.js exists in the build directory
       if (!fs.existsSync(serverPath)) {
         console.error(`Error: server.js not found in build directory: ${serverPath}`);
         console.error('Make sure you have built the application using the "build" command.');
         process.exit(1);
       }
 
-      // Set environment variables
       const env = {
         ...process.env,
         PORT: options.port,
@@ -39,7 +36,6 @@ export function registerStartCommand(program: Command): void {
         NODE_ENV: "production",
       };
 
-      // Start the server
       const child = spawn("node", [serverPath], {
         stdio: "inherit",
         env,
@@ -47,7 +43,6 @@ export function registerStartCommand(program: Command): void {
         cwd: distDir, // Run from the dist directory
       });
 
-      // Handle process exit
       child.on("close", (code) => {
         if (code !== 0 && code !== null) {
           console.error(`Production server exited with code ${code}`);

@@ -43,7 +43,6 @@ export function registerDevCommand(program: Command): void {
         shell: true,
       });
 
-      // Handle process exit
       child.on("close", (code) => {
         if (code !== 0 && code !== null) {
           console.error(`Development server exited with code ${code}`);

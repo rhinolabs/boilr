@@ -7,7 +7,6 @@ export function registerBuildCommand(program: Command): void {
   program
     .command("build")
     .description("Build the Boilr application for production")
-    .option("-c, --config <path>", "specify the config file path")
     .option("-o, --outDir <path>", "specify the output directory", "dist")
     .option("--clean", "clean the output directory before building", false)
     .action((options) => {
@@ -15,22 +14,13 @@ export function registerBuildCommand(program: Command): void {
 
       const cwd = process.cwd();
       const serverPath = path.join(cwd, "server.ts");
-      const configPath = options.config ? path.resolve(cwd, options.config) : null;
       const outDir = path.resolve(cwd, options.outDir);
 
-      // Check if server.ts exists
       if (!fs.existsSync(serverPath)) {
         console.error("Error: server.ts file not found in the current directory.");
         process.exit(1);
       }
 
-      // Check if config file exists when specified
-      if (configPath && !fs.existsSync(configPath)) {
-        console.error(`Error: Config file not found: ${configPath}`);
-        process.exit(1);
-      }
-
-      // Clean output directory if --clean option is provided
       if (options.clean && fs.existsSync(outDir)) {
         console.log(`Cleaning output directory: ${outDir}`);
         try {
@@ -42,7 +32,6 @@ export function registerBuildCommand(program: Command): void {
         }
       }
 
-      // Create output directory if it doesn't exist
       if (!fs.existsSync(outDir)) {
         try {
           fs.mkdirSync(outDir, { recursive: true });
@@ -52,16 +41,8 @@ export function registerBuildCommand(program: Command): void {
         }
       }
 
-      // Build using TypeScript compiler (tsc)
-      // Execute tsc directly without npx
       const tscCommand = "tsc";
       const args = ["--outDir", options.outDir];
-
-      // Add config file if specified
-      if (configPath) {
-        console.log(`Using config file: ${configPath}`);
-        // Here you would add logic to handle the config file
-      }
 
       console.log(`Building with command: ${tscCommand} ${args.join(" ")}`);
 
