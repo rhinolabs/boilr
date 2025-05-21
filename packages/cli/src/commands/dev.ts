@@ -1,12 +1,7 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { findServerFile, usesPnpm } from "../utils/filesystem.js";
-
-// Get __dirname equivalent in ES modules
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Start the development server with hot reloading using nodemon with spawn
