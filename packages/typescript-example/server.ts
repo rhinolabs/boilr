@@ -13,7 +13,7 @@ const app = createApp({
     },
   },
   routes: {
-    dir: "./routes",
+    dir: "./src/routes",
     prefix: "/api",
   },
   plugins: {
