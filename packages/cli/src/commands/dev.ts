@@ -1,84 +1,64 @@
 import { spawn } from "node:child_process";
-import fs from "node:fs/promises";
+import fs from "node:fs";
 import path from "node:path";
-import * as p from "@clack/prompts";
-import pc from "picocolors";
-import { findServerFile, pathExists, usesPnpm } from "../utils/filesystem.js";
+import type { Command } from "commander";
 
-/**
- * Start the development server with hot reloading
- */
-export async function startDev() {
-  const s = p.spinner();
-  s.start("Preparing development environment");
+export function registerDevCommand(program: Command): void {
+  program
+    .command("dev")
+    .description("Start the development server with hot-reload")
+    .option("-p, --port <number>", "specify the port", "3000")
+    .option("-h, --host <host>", "specify the host", "localhost")
+    .option("-w, --watch", "watch for file changes", true)
+    .action((options) => {
+      console.log(`Starting development server on ${options.host}:${options.port}...`);
 
-  try {
-    // Find the server file
-    const serverFile = await findServerFile();
-    s.message(`Found server file: ${pc.cyan(serverFile)}`);
+      const cwd = process.cwd();
+      const serverPath = path.join(cwd, "server.ts");
 
-    // Read nodemon.json template
-    const nodemonTemplateFile = path.join(__dirname, "../templates/nodemon.json.template");
-    const nodemonContent = await fs.readFile(nodemonTemplateFile, "utf-8");
-
-    const nodemonConfigPath = path.join(process.cwd(), "nodemon.json");
-
-    // Write the nodemon config
-    await fs.writeFile(nodemonConfigPath, nodemonContent);
-
-    // Check if the project uses pnpm
-    const usesPnpmProject = await usesPnpm();
-
-    // Command to run nodemon
-    let command: string | undefined;
-    let args: string[] | undefined;
-
-    if (usesPnpmProject) {
-      s.message("Using pnpm with nodemon");
-      command = "pnpm";
-      args = ["exec", "nodemon"];
-    } else {
-      command = "npx";
-      args = ["nodemon"];
-    }
-
-    s.stop(`Development server ready - ${pc.green("starting nodemon")}`);
-    p.log.info("Starting development server...");
-    p.log.info("Press Ctrl+C to stop");
-    p.log.info("");
-
-    // Run nodemon process
-    const proc = spawn(command, args, {
-      stdio: "inherit",
-      shell: true,
-    });
-
-    proc.on("error", (err) => {
-      p.log.error(`Failed to start development server: ${err}`);
-      process.exit(1);
-    });
-
-    // Clean up nodemon.json when the process exits
-    process.on("SIGINT", async () => {
-      try {
-        await fs.unlink(nodemonConfigPath);
-      } catch (err) {
-        // Ignore errors during cleanup
+      if (!fs.existsSync(serverPath)) {
+        console.error("Error: server.ts file not found in the current directory.");
+        process.exit(1);
       }
-      process.exit(0);
+
+      const env = {
+        ...process.env,
+        PORT: options.port,
+        HOST: options.host,
+      };
+
+      const nodeArgs = ["--no-warnings"];
+
+      const args = options.watch
+        ? ["tsx", "watch", ...nodeArgs, serverPath] // Use tsx watch mode when watch is enabled
+        : ["tsx", ...nodeArgs, serverPath]; // Use regular tsx execution otherwise
+
+      if (options.watch) {
+        console.log("Watching for file changes...");
+      }
+
+      const child = spawn("npx", args, {
+        stdio: "inherit",
+        env,
+        shell: true,
+      });
+
+      child.on("close", (code) => {
+        if (code !== 0 && code !== null) {
+          console.error(`Development server exited with code ${code}`);
+          process.exit(code);
+        }
+      });
+
+      // Handle SIGINT and SIGTERM to gracefully shutdown
+      process.on("SIGINT", () => {
+        console.log("\nGracefully shutting down development server...");
+        child.kill("SIGINT");
+      });
+
+      process.on("SIGTERM", () => {
+        console.log("\nGracefully shutting down development server...");
+        child.kill("SIGTERM");
+      });
     });
-  } catch (err) {
-    s.stop(`${pc.red("Error:")} Failed to start development server`);
-    p.log.error(err instanceof Error ? err.message : String(err));
-
-    try {
-      // Try to clean up the config file
-      const nodemonConfigPath = path.join(process.cwd(), "nodemon.json");
-      await fs.unlink(nodemonConfigPath);
-    } catch {
-      // Ignore errors during cleanup
-    }
-
-    process.exit(1);
-  }
 }

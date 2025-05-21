@@ -1,49 +1,64 @@
 import { spawn } from "node:child_process";
-import * as p from "@clack/prompts";
-import pc from "picocolors";
-import { findCompiledServerFile, isBuilt } from "../utils/filesystem.js";
-import { build } from "./build.js";
+import fs from "node:fs";
+import path from "node:path";
+import type { Command } from "commander";
 
-/**
- * Start the production server
- */
-export async function start() {
-  const s = p.spinner();
-  s.start("Starting production server");
+export function registerStartCommand(program: Command): void {
+  program
+    .command("start")
+    .description("Start the production server")
+    .option("-p, --port <number>", "specify the port", "3000")
+    .option("-h, --host <host>", "specify the host", "localhost")
+    .option("-d, --dir <path>", "specify the build directory", "dist")
+    .action((options) => {
+      console.log(`Starting production server on ${options.host}:${options.port}...`);
 
-  try {
-    // Make sure the project is built
-    if (!(await isBuilt())) {
-      s.message("Project not built yet, building first...");
-      await build();
-    }
+      const cwd = process.cwd();
+      const distDir = path.resolve(cwd, options.dir);
+      const serverPath = path.join(distDir, "server.js");
 
-    // Find the compiled server file
-    const serverFile = await findCompiledServerFile();
+      if (!fs.existsSync(distDir)) {
+        console.error(`Error: Build directory not found: ${distDir}`);
+        console.error('Make sure you have built the application using the "build" command.');
+        process.exit(1);
+      }
 
-    if (!serverFile) {
-      s.stop(`${pc.red("Error:")} Could not find compiled server file after build`);
-      process.exit(1);
-    }
+      if (!fs.existsSync(serverPath)) {
+        console.error(`Error: server.js not found in build directory: ${serverPath}`);
+        console.error('Make sure you have built the application using the "build" command.');
+        process.exit(1);
+      }
 
-    s.stop(`${pc.green("✓")} Starting server from ${pc.cyan(serverFile)}`);
-    p.log.info("Starting production server...");
-    p.log.info("Press Ctrl+C to stop");
-    p.log.info("");
+      const env = {
+        ...process.env,
+        PORT: options.port,
+        HOST: options.host,
+        NODE_ENV: "production",
+      };
 
-    // Start the Node.js server
-    const proc = spawn("node", [serverFile], {
-      stdio: "inherit",
-      shell: true,
+      const child = spawn("node", [serverPath], {
+        stdio: "inherit",
+        env,
+        shell: true,
+        cwd: distDir, // Run from the dist directory
+      });
+
+      child.on("close", (code) => {
+        if (code !== 0 && code !== null) {
+          console.error(`Production server exited with code ${code}`);
+          process.exit(code);
+        }
+      });
+
+      // Handle SIGINT and SIGTERM to gracefully shutdown
+      process.on("SIGINT", () => {
+        console.log("\nGracefully shutting down production server...");
+        child.kill("SIGINT");
+      });
+
+      process.on("SIGTERM", () => {
+        console.log("\nGracefully shutting down production server...");
+        child.kill("SIGTERM");
+      });
     });
-
-    proc.on("error", (err) => {
-      p.log.error(`Failed to start server: ${err}`);
-      process.exit(1);
-    });
-  } catch (err) {
-    s.stop(`${pc.red("Error:")} Failed to start server`);
-    p.log.error(err instanceof Error ? err.message : String(err));
-    process.exit(1);
-  }
 }
