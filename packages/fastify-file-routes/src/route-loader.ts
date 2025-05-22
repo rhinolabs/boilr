@@ -1,5 +1,4 @@
 import { existsSync } from "node:fs";
-import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { RouteOptions } from "fastify";
 import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "./types.js";
@@ -173,7 +172,31 @@ export async function registerRoutes(
 
         // Add schema from the route module if present for this method
         if (module.schema?.[method]) {
-          routeOptions.schema = module.schema[method];
+          const methodSchema = module.schema[method];
+
+          // Extract tags from the method schema if present
+          let schemaWithTags = { ...methodSchema };
+
+          if (methodSchema && typeof methodSchema === "object" && "tags" in methodSchema) {
+            const tags = methodSchema.tags;
+            if (Array.isArray(tags) && tags.length > 0) {
+              // Remove tags from the validation schema and add them to the route options
+              const { tags: _, ...schemaWithoutTags } = methodSchema;
+              schemaWithTags = schemaWithoutTags;
+
+              // Add tags to the route options for Swagger
+              if (!routeOptions.schema) {
+                routeOptions.schema = {};
+              }
+              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+              (routeOptions.schema as any).tags = tags;
+            }
+          }
+
+          routeOptions.schema = {
+            ...routeOptions.schema,
+            ...schemaWithTags,
+          };
         }
 
         // Register the route
