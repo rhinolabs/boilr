@@ -12,7 +12,40 @@ import {
 } from "./validation/index.js";
 
 /**
- * Creates a boilr application instance
+ * Creates a new Boilr application instance with the specified configuration.
+ * This is the main entry point for creating Boilr applications.
+ *
+ * @param userConfig - Optional configuration object to customize the application
+ * @returns A configured Boilr application instance ready to be started
+ *
+ * @example
+ * ```typescript
+ * // Basic usage with defaults
+ * const app = createApp();
+ *
+ * // With custom configuration
+ * const app = createApp({
+ *   server: {
+ *     port: 8080,
+ *     host: "localhost"
+ *   },
+ *   routes: {
+ *     dir: "./src/api",
+ *     prefix: "/api/v1"
+ *   },
+ *   plugins: {
+ *     swagger: {
+ *       info: {
+ *         title: "My API",
+ *         version: "1.0.0"
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * // Start the server
+ * await app.start();
+ * ```
  */
 export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   const config = mergeConfig(userConfig);
