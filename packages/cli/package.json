@@ -1,5 +1,5 @@
 {
-  "name": "@rhinolabs/cli",
+  "name": "@rhinolabs/boilr-cli",
   "version": "0.1.0",
   "description": "CLI tool for Boilr framework",
   "type": "module",
@@ -13,7 +13,8 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "commander": "^12.0.0"
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.15.20",
