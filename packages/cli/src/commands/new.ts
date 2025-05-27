@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Command } from "commander";
+import { log } from "../utils/logger.js";
 
 function processTemplateContent(content: string, variables: Record<string, string>): string {
   return content.replace(/\{\{(\w+)\}\}/g, (match, variable) => {
@@ -47,13 +48,17 @@ export function registerNewCommand(program: Command): void {
     .option("--skip-install", "skip dependency installation", false)
     .action((name, options) => {
       const projectName = name || "my-boilr-app";
-      console.log(`Creating new Boilr project: ${projectName}`);
+      log.banner(`Creating new Boilr project: ${projectName}`);
 
       const cwd = process.cwd();
       const projectPath = path.join(cwd, projectName);
 
       if (fs.existsSync(projectPath)) {
-        console.error(`Error: Directory ${projectName} already exists. Please choose a different project name.`);
+        log.errorWithSuggestion(`Directory ${projectName} already exists`, [
+          "Choose a different project name",
+          "Remove the existing directory first",
+          "Use a different location",
+        ]);
         process.exit(1);
       }
 
@@ -71,7 +76,11 @@ export function registerNewCommand(program: Command): void {
       }
 
       if (!fs.existsSync(templatePath)) {
-        console.error(`Error: Template "${options.template}" not found.`);
+        log.errorWithSuggestion(`Template "${options.template}" not found`, [
+          `Use the default template: ${log.command("boilr new my-app")}`,
+          "Check available templates",
+          "Verify the template name is correct",
+        ]);
         process.exit(1);
       }
 
@@ -81,14 +90,15 @@ export function registerNewCommand(program: Command): void {
           typescript: options.typescript ? "true" : "false",
         };
 
-        console.log("Copying and processing template files...");
+        log.step(1, "Copying and processing template files...");
         processTemplateFiles(templatePath, projectPath, templateVariables);
 
-        console.log("Project files created successfully.");
+        log.step(2, "Project files created successfully.");
 
         // Install dependencies
         if (!options.skipInstall) {
-          console.log("Installing dependencies...");
+          log.step(3, "Installing dependencies...");
+          log.progress("Installing dependencies");
 
           const child = spawn("npm", ["install"], {
             stdio: "inherit",
@@ -98,28 +108,37 @@ export function registerNewCommand(program: Command): void {
 
           child.on("close", (code) => {
             if (code !== 0) {
-              console.error(`Error: npm install failed with code ${code}.`);
-              console.log("You can install dependencies manually by running:");
-              console.log(`  cd ${projectName}`);
-              console.log("  npm install");
+              log.errorWithSuggestion(`npm install failed with code ${code}`, [
+                `cd ${projectName}`,
+                log.command("npm install"),
+                "Check your internet connection",
+              ]);
             } else {
-              console.log("Dependencies installed successfully.");
-              console.log("\nYour new Boilr project is ready! 🚀\n");
-              console.log("To get started:");
-              console.log(`  cd ${projectName}`);
-              console.log("  npm run dev");
+              log.newline();
+              log.successWithSteps("🎉 Your new Boilr project is ready!", [
+                `cd ${log.command(projectName)}`,
+                log.command("npm run dev"),
+              ]);
+              log.newline();
+              log.dim("Happy coding! 🚀");
             }
           });
         } else {
-          console.log("Dependencies installation skipped.");
-          console.log("\nYour new Boilr project is ready! 🚀\n");
-          console.log("To get started:");
-          console.log(`  cd ${projectName}`);
-          console.log("  npm install");
-          console.log("  npm run dev");
+          log.newline();
+          log.successWithSteps("🎉 Your new Boilr project is ready!", [
+            `cd ${log.command(projectName)}`,
+            log.command("npm install"),
+            log.command("npm run dev"),
+          ]);
+          log.newline();
+          log.dim("Happy coding! 🚀");
         }
       } catch (error) {
-        console.error(`Error initializing project: ${(error as Error).message}`);
+        log.errorWithSuggestion(`Error initializing project: ${(error as Error).message}`, [
+          "Check if you have write permissions",
+          "Try again with a different project name",
+          "Ensure you have a stable internet connection",
+        ]);
         process.exit(1);
       }
     });
