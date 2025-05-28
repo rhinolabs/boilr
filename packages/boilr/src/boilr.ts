@@ -79,13 +79,18 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   if (config.plugins?.swagger !== false) {
     // Configure Swagger with Zod transformation
-    const swaggerOptions = config.plugins?.swagger === true ? {} : config.plugins?.swagger || {};
-    const options = {
+    let swaggerOptions = config.plugins?.swagger === true ? {} : config.plugins?.swagger || {};
+    swaggerOptions = {
       ...swaggerOptions,
       transform: jsonSchemaTransform,
     };
 
-    typedApp.register(plugins.swagger, options as FastifyPluginOptions);
+    typedApp.register(plugins.swagger, swaggerOptions);
+  }
+
+  if (config.plugins?.monitor !== false) {
+    const monitorOptions = config.plugins?.monitor === true ? {} : config.plugins?.monitor || {};
+    typedApp.register(plugins.monitor, monitorOptions);
   }
 
   // Register middleware
