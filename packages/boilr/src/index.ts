@@ -1,3 +1,4 @@
+import devPerformancePlugin from "@rhinolabs/fastify-dev-performance";
 import fastify, { type FastifyInstance, type FastifyPluginOptions } from "fastify";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
@@ -87,6 +88,8 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
     typedApp.register(plugins.swagger, options as FastifyPluginOptions);
   }
+
+  typedApp.register(devPerformancePlugin);
 
   // Register middleware
   if (config.middleware?.global) {
