@@ -1,3 +1,4 @@
+import type { DevPerformanceOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
 
 export interface BoilrServerConfig {
@@ -106,6 +107,16 @@ export interface BoilrPluginsConfig {
    * ```
    */
   swagger?: boolean | object;
+
+  /**
+   * Development performance monitoring plugin configuration.
+   * Only active in development mode (NODE_ENV=development).
+   * Set to `false` to disable, `true` for defaults, or an object for custom config.
+   * @default true
+   *
+   * For available options, see: https://www.npmjs.com/package/@rhinolabs/fastify-monitor
+   */
+  monitor?: boolean | DevPerformanceOptions;
 }
 
 /**
@@ -213,6 +224,7 @@ export const defaultConfig: BoilrConfig = {
     rateLimit: true,
     cors: true,
     swagger: true,
+    monitor: true,
   },
   middleware: {
     global: ["logger", "commonHeaders"],

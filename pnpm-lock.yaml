@@ -41,6 +41,9 @@ importers:
       '@rhinolabs/fastify-file-routes':
         specifier: workspace:*
         version: link:../fastify-file-routes
+      '@rhinolabs/fastify-monitor':
+        specifier: ^0.1.0
+        version: 0.1.0(fastify@5.3.3)
       fastify:
         specifier: ^5.3.3
         version: 5.3.3
@@ -401,6 +404,12 @@ packages:
   '@lukeed/ms@2.0.2':
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
+
+  '@rhinolabs/fastify-monitor@0.1.0':
+    resolution: {integrity: sha512-K0uju73G6vqw0tAfYNnLZEhF6CZUI0K2bsBCoa2BYhoke81Dqm6Wl6D1Pz/NZNFZ78Fwm6hexYow6HjkPARvCw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      fastify: ^5.0.0
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -1303,6 +1312,11 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@lukeed/ms@2.0.2': {}
+
+  '@rhinolabs/fastify-monitor@0.1.0(fastify@5.3.3)':
+    dependencies:
+      fastify: 5.3.3
+      fastify-plugin: 5.0.1
 
   '@tsconfig/node10@1.0.11': {}
 
