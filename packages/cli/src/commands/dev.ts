@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import type { Command } from "commander";
+import { loadEnvFiles } from "../utils/env.js";
 import { log } from "../utils/logger.js";
 
 export function registerDevCommand(program: Command): void {
@@ -12,10 +13,11 @@ export function registerDevCommand(program: Command): void {
     .option("-h, --host <host>", "specify the host", "localhost")
     .option("-w, --watch", "watch for file changes", true)
     .action((options) => {
+      loadEnvFiles();
+
       log.dev(`Starting development server on ${log.url(`http://${options.host}:${options.port}`)}`);
 
-      const cwd = process.cwd();
-      const serverPath = path.join(cwd, "server.ts");
+      const serverPath = path.join(process.cwd(), "server.ts");
 
       if (!fs.existsSync(serverPath)) {
         log.errorWithSuggestion("server.ts file not found in the current directory", [
