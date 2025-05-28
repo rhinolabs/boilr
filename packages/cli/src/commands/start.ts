@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import type { Command } from "commander";
+import { loadEnvFiles } from "../utils/env.js";
 import { log } from "../utils/logger.js";
 
 export function registerStartCommand(program: Command): void {
@@ -12,9 +13,11 @@ export function registerStartCommand(program: Command): void {
     .option("-h, --host <host>", "specify the host", "localhost")
     .option("-d, --dir <path>", "specify the build directory", "dist")
     .action((options) => {
+      const cwd = process.cwd();
+      loadEnvFiles();
+
       log.server(`Starting production server on ${log.url(`http://${options.host}:${options.port}`)}`);
 
-      const cwd = process.cwd();
       const distDir = path.resolve(cwd, options.dir);
       const serverPath = path.join(distDir, "server.js");
 

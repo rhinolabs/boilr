@@ -3,8 +3,8 @@ import { createApp } from "@rhinolabs/boilr";
 // Create the application
 const app = createApp({
   server: {
-    port: 3000,
-    host: "localhost",
+    port: process.env.PORT ? Number(process.env.PORT) : 3000,
+    host: process.env.HOST || "localhost",
     logger: {
       level: "info",
       transport: {
