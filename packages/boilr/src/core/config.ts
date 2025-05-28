@@ -1,6 +1,5 @@
+import type { DevPerformanceOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
-import type {DevPerformanceOptions} from "@rhinolabs/fastify-monitor";
-
 
 export interface BoilrServerConfig {
   /**

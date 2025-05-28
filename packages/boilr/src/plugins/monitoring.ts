@@ -10,7 +10,7 @@ import fp from "fastify-plugin";
  */
 export const monitorPlugin = fp(async (fastify: FastifyInstance, options: DevPerformanceOptions = {}) => {
   const defaultOptions: DevPerformanceOptions = {
-    slowThreshold: 1000,     // Log slow requests after 1000ms
+    slowThreshold: 1000, // Log slow requests after 1000ms
     verySlowThreshold: 3000, // Log very slow requests after 3000ms
 
     // Default exclusions for common monitoring and asset endpoints
