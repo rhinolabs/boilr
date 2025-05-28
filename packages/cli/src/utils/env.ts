@@ -1,6 +1,6 @@
-import { config } from "dotenv";
 import fs from "node:fs";
 import path from "node:path";
+import { config } from "dotenv";
 import { log } from "./logger.js";
 
 /**
@@ -18,12 +18,7 @@ export function loadEnvFiles(): void {
   const nodeEnv = process.env.NODE_ENV || "development";
 
   // Define the order of env files to load (later files override earlier ones)
-  const envFiles = [
-    ".env",
-    ".env.local",
-    `.env.${nodeEnv}`,
-    `.env.${nodeEnv}.local`,
-  ];
+  const envFiles = [".env", ".env.local", `.env.${nodeEnv}`, `.env.${nodeEnv}.local`];
 
   let loadedCount = 0;
 
