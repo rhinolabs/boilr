@@ -6,6 +6,8 @@ import fp from "fastify-plugin";
 /**
  * Swagger documentation plugin that automatically generates OpenAPI specs and provides
  * an interactive documentation interface at /docs endpoint.
+ *
+ * For configuration options, see: https://www.npmjs.com/package/@fastify/swagger
  */
 export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: FastifyDynamicSwaggerOptions = {}) => {
   // Enhance the default options for better documentation

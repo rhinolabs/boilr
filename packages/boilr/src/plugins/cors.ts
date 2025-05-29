@@ -5,6 +5,8 @@ import fp from "fastify-plugin";
 /**
  * CORS (Cross-Origin Resource Sharing) plugin that configures cross-origin request
  * handling with sensible defaults for API development.
+ *
+ * For configuration options, see: https://www.npmjs.com/package/@fastify/cors
  */
 export const corsPlugin = fp(async (fastify: FastifyInstance, options: FastifyCorsOptions = {}) => {
   const defaultOptions = {
