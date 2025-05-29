@@ -2,7 +2,7 @@ import type { FastifyCorsOptions } from "@fastify/cors";
 import type { FastifyHelmetOptions } from "@fastify/helmet";
 import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
-import type { DevPerformanceOptions } from "@rhinolabs/fastify-monitor";
+import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
 
 export interface BoilrServerConfig {
@@ -128,7 +128,7 @@ export interface BoilrPluginsConfig {
    *
    * For available options, see: https://www.npmjs.com/package/@rhinolabs/fastify-monitor
    */
-  monitor?: boolean | DevPerformanceOptions;
+  monitor?: boolean | PerformanceMonitorOptions;
 }
 
 /**
