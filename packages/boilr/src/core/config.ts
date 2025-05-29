@@ -1,3 +1,7 @@
+import type { FastifyCorsOptions } from "@fastify/cors";
+import type { FastifyHelmetOptions } from "@fastify/helmet";
+import type { CreateRateLimitOptions } from "@fastify/rate-limit";
+import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { DevPerformanceOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
 
@@ -47,6 +51,8 @@ export interface BoilrPluginsConfig {
    * Set to `false` to disable, `true` for defaults, or an object for custom config.
    * @default true
    *
+   * For available options, see: https://www.npmjs.com/package/@fastify/helmet
+   *
    * @example
    * ```typescript
    * helmet: {
@@ -55,12 +61,14 @@ export interface BoilrPluginsConfig {
    * }
    * ```
    */
-  helmet?: boolean | object;
+  helmet?: boolean | FastifyHelmetOptions;
 
   /**
    * Rate limiting plugin configuration.
    * Set to `false` to disable, `true` for defaults, or an object for custom config.
    * @default true
+   *
+   * For available options, see: https://www.npmjs.com/package/@fastify/rate-limit
    *
    * @example
    * ```typescript
@@ -70,12 +78,14 @@ export interface BoilrPluginsConfig {
    * }
    * ```
    */
-  rateLimit?: boolean | object;
+  rateLimit?: boolean | CreateRateLimitOptions;
 
   /**
    * CORS (Cross-Origin Resource Sharing) plugin configuration.
    * Set to `false` to disable, `true` for defaults, or an object for custom config.
    * @default true
+   *
+   * For available options, see: https://www.npmjs.com/package/@fastify/cors
    *
    * @example
    * ```typescript
@@ -85,12 +95,14 @@ export interface BoilrPluginsConfig {
    * }
    * ```
    */
-  cors?: boolean | object;
+  cors?: boolean | FastifyCorsOptions;
 
   /**
    * Swagger documentation plugin configuration.
    * Set to `false` to disable, `true` for defaults, or an object for custom config.
    * @default true
+   *
+   * For available options, see: https://www.npmjs.com/package/@fastify/swagger
    *
    * @example
    * ```typescript
@@ -106,7 +118,7 @@ export interface BoilrPluginsConfig {
    * }
    * ```
    */
-  swagger?: boolean | object;
+  swagger?: boolean | FastifyDynamicSwaggerOptions;
 
   /**
    * Development performance monitoring plugin configuration.
