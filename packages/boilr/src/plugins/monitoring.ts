@@ -4,7 +4,7 @@ import fp from "fastify-plugin";
 
 /**
  * Development performance monitoring plugin that automatically tracks request timing
- * and identifies slow endpoints. Only active in development mode (NODE_ENV=development).
+ * and identifies slow endpoints.
  *
  * For configuration options, see: https://www.npmjs.com/package/@rhinolabs/fastify-monitor
  */
