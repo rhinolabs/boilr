@@ -1,16 +1,17 @@
-import swagger from "@fastify/swagger";
-import type { SwaggerOptions } from "@fastify/swagger";
+import swagger, { type FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
-import type { FastifyInstance, FastifyPluginOptions } from "fastify";
+import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 
 /**
  * Swagger documentation plugin that automatically generates OpenAPI specs and provides
  * an interactive documentation interface at /docs endpoint.
+ *
+ * For configuration options, see: https://www.npmjs.com/package/@fastify/swagger
  */
-export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: FastifyPluginOptions = {}) => {
+export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: FastifyDynamicSwaggerOptions = {}) => {
   // Enhance the default options for better documentation
-  const defaultOptions: SwaggerOptions = {
+  const defaultOptions: FastifyDynamicSwaggerOptions = {
     openapi: {
       info: {
         title: "API Documentation",
@@ -35,7 +36,7 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: Fastif
   const mergedOptions = { ...defaultOptions, ...options };
 
   // Register swagger schema generator
-  await fastify.register(swagger, mergedOptions as SwaggerOptions);
+  await fastify.register(swagger, mergedOptions);
 
   // Configure Swagger UI with improved settings
   await fastify.register(swaggerUI, {

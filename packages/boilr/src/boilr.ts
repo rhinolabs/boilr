@@ -74,7 +74,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   if (config.plugins?.cors !== false) {
     const corsOptions = config.plugins?.cors === true ? {} : config.plugins?.cors || {};
-    typedApp.register(plugins.cors, corsOptions as FastifyPluginOptions);
+    typedApp.register(plugins.cors, corsOptions);
   }
 
   if (config.plugins?.swagger !== false) {

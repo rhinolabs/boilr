@@ -18,10 +18,12 @@ const app = createApp({
   },
   plugins: {
     swagger: {
-      info: {
-        title: "Todo CRUD API",
-        description: "API for managing todos",
-        version: "1.0.0",
+      openapi: {
+        info: {
+          title: "Todo CRUD API",
+          description: "API for managing todos",
+          version: "1.0.0",
+        },
       },
     },
   },
