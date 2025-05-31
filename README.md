@@ -139,16 +139,6 @@ const app = createApp({
 app.start(); // Documentation available at /docs
 ```
 
-### 🛡️ Security and Performance Built-in
-
-Boilr comes with essential security and performance features pre-configured:
-
-- **CORS** - Cross-origin resource sharing
-- **Helmet** - Security headers
-- **Rate limiting** - Request throttling
-- **Schema validation** - Input/output validation with Zod
-- **Type safety** - Full TypeScript integration
-
 ### 🛠️ Developer Experience
 
 Powerful CLI tools for seamless development workflow:
