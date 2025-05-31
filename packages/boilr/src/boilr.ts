@@ -2,6 +2,7 @@ import fastify, { type FastifyInstance, type FastifyPluginOptions } from "fastif
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
+import { globalErrorHandler } from "./errors/handler.js";
 import { applyGlobalMiddleware } from "./middleware/index.js";
 import { plugins } from "./plugins/index.js";
 import {
@@ -51,6 +52,11 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   const config = mergeConfig(userConfig);
 
   const app = fastify(config.fastify);
+
+  app.decorate("boilrConfig", config);
+
+  // Set up global error handler
+  app.setErrorHandler(globalErrorHandler);
 
   // Set up Zod validators and serializers
   if (config.validation !== false) {

@@ -1,4 +1,4 @@
-import { type DeleteHandler, type GetHandler, type PutHandler, defineSchema } from "@rhinolabs/boilr";
+import { type DeleteHandler, type GetHandler, NotFoundError, type PutHandler, defineSchema } from "@rhinolabs/boilr";
 import { z } from "zod";
 import { TodoSchema, todos } from "./index.js"; // Ensure .js extension for ESM imports
 
@@ -50,33 +50,27 @@ export const schema = defineSchema({
 });
 
 // GET /api/todos/:id
-export const get: GetHandler<typeof schema> = async (request, reply) => {
+export const get: GetHandler<typeof schema> = async (request) => {
   const { id } = request.params;
 
   const todo = todos.find((t: { id: number }) => t.id === id);
 
   if (!todo) {
-    return reply.code(404).send({
-      error: "Not Found",
-      message: `Todo with id ${id} not found`,
-    });
+    throw new NotFoundError(`Todo with id ${id} not found`);
   }
 
   return todo;
 };
 
 // PUT /api/todos/:id
-export const put: PutHandler<typeof schema> = async (request, reply) => {
+export const put: PutHandler<typeof schema> = async (request) => {
   const { id } = request.params;
   const updates = request.body;
 
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
   if (todoIndex === -1) {
-    return reply.code(404).send({
-      error: "Not Found",
-      message: `Todo with id ${id} not found`,
-    });
+    throw new NotFoundError(`Todo with id ${id} not found`);
   }
 
   const updatedTodo = {
@@ -97,10 +91,7 @@ export const del: DeleteHandler<typeof schema> = async (request, reply) => {
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
   if (todoIndex === -1) {
-    return reply.code(404).send({
-      error: "Not Found",
-      message: `Todo with id ${id} not found`,
-    });
+    throw new NotFoundError(`Todo with id ${id} not found`);
   }
 
   // Remove the todo from the array
