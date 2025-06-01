@@ -1,3 +1,6 @@
+// Import type extensions for Fastify (module augmentation)
+import "./types/fastify.js";
+
 // Export main implementation from boilr
 export { createApp } from "./boilr.js";
 
@@ -12,6 +15,17 @@ export {
   jsonSchemaTransform,
   createJsonSchemaTransformObject,
 } from "./validation/index.js";
+
+// Export error handling classes and types
+export {
+  NotFoundError,
+  ValidationError,
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  ConflictError,
+  ErrorFormatter,
+} from "./errors/index.js";
 
 // Export route types and utils
 export {

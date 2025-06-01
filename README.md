@@ -25,6 +25,7 @@ Boilr simplifies building TypeScript APIs with Fastify by providing:
 - **Convention-based file routing** with Next.js-style patterns
 - **Integrated schema validation** using Zod with automatic type inference
 - **Automatic OpenAPI documentation** generation from Zod schemas
+- **Built-in error handling** with automatic HTTP status codes
 - **Preconfigured security and performance optimizations** (CORS, Helmet, Rate limiting)
 - **Developer-friendly tooling** for rapid development and deployment
 - **TypeScript support** with full type inference and safety
@@ -82,7 +83,7 @@ Define schemas and handlers with full TypeScript type safety using Zod:
 ```typescript
 // routes/api/users/[id].ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema } from '@rhinolabs/boilr';
+import { type GetHandler, defineSchema, NotFoundError } from '@rhinolabs/boilr';
 
 export const schema = defineSchema({
   get: {
@@ -94,25 +95,18 @@ export const schema = defineSchema({
         id: z.number(),
         name: z.string(),
         email: z.string().email()
-      }),
-      404: z.object({
-        error: z.string(),
-        message: z.string()
       })
     }
   }
 });
 
-export const get: GetHandler<typeof schema> = async (request, reply) => {
+export const get: GetHandler<typeof schema> = async (request) => {
   const { id } = request.params; // Automatically typed as number
   
   const user = await getUserById(id);
   
   if (!user) {
-    return reply.code(404).send({
-      error: 'Not Found',
-      message: `User with id ${id} not found`
-    });
+    throw new NotFoundError(`User with id ${id} not found`);
   }
   
   return user; // Return type automatically validated
@@ -144,16 +138,6 @@ const app = createApp({
 
 app.start(); // Documentation available at /docs
 ```
-
-### 🛡️ Security and Performance Built-in
-
-Boilr comes with essential security and performance features pre-configured:
-
-- **CORS** - Cross-origin resource sharing
-- **Helmet** - Security headers
-- **Rate limiting** - Request throttling
-- **Schema validation** - Input/output validation with Zod
-- **Type safety** - Full TypeScript integration
 
 ### 🛠️ Developer Experience
 
