@@ -50,7 +50,7 @@ export const schema = defineSchema({
 });
 
 // GET /api/todos/:id
-export const get: GetHandler<typeof schema> = async (request) => {
+export const GET: GetHandler<typeof schema> = async (request) => {
   const { id } = request.params;
 
   const todo = todos.find((t: { id: number }) => t.id === id);
@@ -63,7 +63,7 @@ export const get: GetHandler<typeof schema> = async (request) => {
 };
 
 // PUT /api/todos/:id
-export const put: PutHandler<typeof schema> = async (request) => {
+export const PUT: PutHandler<typeof schema> = async (request) => {
   const { id } = request.params;
   const updates = request.body;
 
@@ -85,7 +85,7 @@ export const put: PutHandler<typeof schema> = async (request) => {
 };
 
 // DELETE /api/todos/:id
-export const del: DeleteHandler<typeof schema> = async (request, reply) => {
+export const DELETE: DeleteHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
 
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);

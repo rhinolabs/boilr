@@ -76,7 +76,7 @@ export function extractMethodHandlers(routeModule: RouteModule, filePath: string
   const handlers = new Map<HttpMethod, RouteHandler>();
 
   // Check for named exports matching HTTP methods
-  const methods: HttpMethod[] = ["get", "post", "put", "delete", "patch", "head", "options"];
+  const methods: HttpMethod[] = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
 
   for (const method of methods) {
     if (typeof routeModule[method] === "function") {
@@ -88,7 +88,7 @@ export function extractMethodHandlers(routeModule: RouteModule, filePath: string
   if (typeof routeModule.default === "function") {
     // If no other handlers are defined, use default for GET
     if (handlers.size === 0) {
-      handlers.set("get", routeModule.default as RouteHandler);
+      handlers.set("GET", routeModule.default as RouteHandler);
     }
   }
   // Handle default export as object with method handlers
@@ -110,7 +110,7 @@ export function extractMethodHandlers(routeModule: RouteModule, filePath: string
  * @returns Whether the string is a valid HTTP method
  */
 function isHttpMethod(method: string): method is HttpMethod {
-  return ["get", "post", "put", "delete", "patch", "head", "options"].includes(method);
+  return ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"].includes(method);
 }
 
 /**
@@ -171,8 +171,8 @@ export async function registerRoutes(
         }
 
         // Add schema from the route module if present for this method
-        if (module.schema?.[method]) {
-          const methodSchema = module.schema[method];
+        if (module.schema?.[method.toLowerCase()]) {
+          const methodSchema = module.schema[method.toLowerCase()];
 
           // Extract tags from the method schema if present
           let schemaWithTags = { ...methodSchema };

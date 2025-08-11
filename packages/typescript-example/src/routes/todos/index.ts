@@ -59,12 +59,12 @@ export const todos = [
 ];
 
 // GET /api/todos
-export const get: GetHandler<typeof schema> = async (request, reply) => {
+export const GET: GetHandler<typeof schema> = async (request, reply) => {
   return todos;
 };
 
 // POST /api/todos
-export const post: PostHandler<typeof schema> = async (request, reply) => {
+export const POST: PostHandler<typeof schema> = async (request, reply) => {
   // Body is properly typed with TypeScript inference
   const { title, completed = false } = request.body;
 

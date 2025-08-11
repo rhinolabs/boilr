@@ -16,7 +16,7 @@ export const schema = defineSchema({
 });
 
 // GET / - Root endpoint
-export const get: GetHandler<typeof schema> = async (request, reply) => {
+export const GET: GetHandler<typeof schema> = async (request, reply) => {
   const serverAddress = `${request.protocol}://${request.hostname}`;
 
   return {
