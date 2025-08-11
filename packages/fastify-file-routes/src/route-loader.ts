@@ -171,8 +171,8 @@ export async function registerRoutes(
         }
 
         // Add schema from the route module if present for this method
-        if (module.schema?.[method]) {
-          const methodSchema = module.schema[method];
+        if (module.schema?.[method === "del" ? "delete" : method]) {
+          const methodSchema = module.schema[method === "del" ? "delete" : method];
 
           // Extract tags from the method schema if present
           let schemaWithTags = { ...methodSchema };
