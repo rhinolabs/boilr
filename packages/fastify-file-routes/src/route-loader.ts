@@ -159,7 +159,7 @@ export async function registerRoutes(
 
       for (const [method, handler] of methodHandlers.entries()) {
         const routeOptions: RouteOptions = {
-          method: method === 'del' ? 'DELETE' : method.toUpperCase(),
+          method: method === "del" ? "DELETE" : method.toUpperCase(),
           url: route.routePath,
           handler,
           ...globalHooks,
