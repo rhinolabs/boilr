@@ -29,6 +29,6 @@ export const defaultFormatter: ErrorFormatter = (
 ): ErrorResponse => ({
   status: exception.statusCode,
   message: exception.message,
-  error: exception.name.replace("Exception", ""),
+  error: exception.name,
   details: exception.details,
 });

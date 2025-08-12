@@ -20,8 +20,8 @@ export interface ErrorResponse {
  * Options for configuring HTTP exceptions.
  */
 export interface ExceptionOptions {
-  /** Custom error code for application-specific error handling */
-  errorCode?: string;
+  /** Custom error name for application-specific error handling */
+  name?: string;
   /** Additional details to include in the error response */
   details?: unknown;
   /** The underlying error that caused this exception */

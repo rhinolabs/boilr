@@ -23,7 +23,7 @@ export abstract class HttpException extends Error {
   constructor(message: string, statusCode: number, options?: ExceptionOptions) {
     super(message);
     this.statusCode = statusCode;
-    this.errorCode = options?.errorCode;
+    this.errorCode = options?.name;
     this.details = options?.details;
 
     if (options?.cause) {
@@ -46,7 +46,7 @@ export abstract class HttpException extends Error {
 export class BadRequestException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 400, options);
-    this.name = "BadRequestException";
+    this.name = "BadRequest";
   }
 }
 
@@ -62,7 +62,7 @@ export class BadRequestException extends HttpException {
 export class UnauthorizedException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 401, options);
-    this.name = "UnauthorizedException";
+    this.name = "Unauthorized";
   }
 }
 
@@ -78,7 +78,7 @@ export class UnauthorizedException extends HttpException {
 export class ForbiddenException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 403, options);
-    this.name = "ForbiddenException";
+    this.name = "Forbidden";
   }
 }
 
@@ -94,70 +94,70 @@ export class ForbiddenException extends HttpException {
 export class NotFoundException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 404, options);
-    this.name = "NotFoundException";
+    this.name = "NotFound";
   }
 }
 
 export class MethodNotAllowedException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 405, options);
-    this.name = "MethodNotAllowedException";
+    this.name = "MethodNotAllowed";
   }
 }
 
 export class NotAcceptableException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 406, options);
-    this.name = "NotAcceptableException";
+    this.name = "NotAcceptable";
   }
 }
 
 export class RequestTimeoutException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 408, options);
-    this.name = "RequestTimeoutException";
+    this.name = "RequestTimeout";
   }
 }
 
 export class ConflictException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 409, options);
-    this.name = "ConflictException";
+    this.name = "Conflict";
   }
 }
 
 export class GoneException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 410, options);
-    this.name = "GoneException";
+    this.name = "Gone";
   }
 }
 
 export class PreconditionFailedException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 412, options);
-    this.name = "PreconditionFailedException";
+    this.name = "PreconditionFailed";
   }
 }
 
 export class PayloadTooLargeException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 413, options);
-    this.name = "PayloadTooLargeException";
+    this.name = "PayloadTooLarge";
   }
 }
 
 export class UnsupportedMediaTypeException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 415, options);
-    this.name = "UnsupportedMediaTypeException";
+    this.name = "UnsupportedMediaType";
   }
 }
 
 export class ImATeapotException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 418, options);
-    this.name = "ImATeapotException";
+    this.name = "ImATeapot";
   }
 }
 
@@ -166,7 +166,7 @@ export class UnprocessableEntityException extends HttpException {
 
   constructor(message: string, errors?: ValidationError[], options?: ExceptionOptions) {
     super(message, 422, options);
-    this.name = "UnprocessableEntityException";
+    this.name = "UnprocessableEntity";
     this.errors = errors;
   }
 }
@@ -174,42 +174,42 @@ export class UnprocessableEntityException extends HttpException {
 export class InternalServerErrorException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 500, options);
-    this.name = "InternalServerErrorException";
+    this.name = "InternalServerError";
   }
 }
 
 export class NotImplementedException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 501, options);
-    this.name = "NotImplementedException";
+    this.name = "NotImplemented";
   }
 }
 
 export class BadGatewayException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 502, options);
-    this.name = "BadGatewayException";
+    this.name = "BadGateway";
   }
 }
 
 export class ServiceUnavailableException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 503, options);
-    this.name = "ServiceUnavailableException";
+    this.name = "ServiceUnavailable";
   }
 }
 
 export class GatewayTimeoutException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 504, options);
-    this.name = "GatewayTimeoutException";
+    this.name = "GatewayTimeout";
   }
 }
 
 export class HttpVersionNotSupportedException extends HttpException {
   constructor(message: string, options?: ExceptionOptions) {
     super(message, 505, options);
-    this.name = "HttpVersionNotSupportedException";
+    this.name = "HttpVersionNotSupported";
   }
 }
 
@@ -229,7 +229,7 @@ export class HttpVersionNotSupportedException extends HttpException {
 export class ValidationException extends UnprocessableEntityException {
   constructor(message: string, errors?: ValidationError[], options?: ExceptionOptions) {
     super(message, errors, options);
-    this.name = "ValidationException";
+    this.name = "ValidationError";
   }
 
   static fromZodError(zodError: ZodError): ValidationException {
@@ -241,7 +241,7 @@ export class ValidationException extends UnprocessableEntityException {
       })) || [];
 
     return new ValidationException("Validation failed", errors, {
-      errorCode: "VALIDATION_ERROR",
+      name: "ValidationError",
     });
   }
 }

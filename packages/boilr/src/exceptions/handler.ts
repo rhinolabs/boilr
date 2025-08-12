@@ -33,7 +33,7 @@ export function createGlobalExceptionHandler(config?: ExceptionConfig) {
     } else {
       const errorLike = error as Error;
       exception = new InternalServerErrorException(errorLike.message || "Internal server error", {
-        errorCode: "INTERNAL_ERROR",
+        name: "InternalServerError",
       });
     }
 
@@ -109,12 +109,12 @@ export function createValidationHandler(options: ValidationMiddlewareOptions = {
       }));
 
       throw new ValidationException("Validation failed", errors, {
-        errorCode: "VALIDATION_ERROR",
+        name: "ValidationError",
       });
     }
 
     throw new ValidationException(error.message || "Validation failed", undefined, {
-      errorCode: "VALIDATION_ERROR",
+      name: "ValidationError",
     });
   };
 }
@@ -142,12 +142,12 @@ function createValidationException(error: ValidationErrorBase): ValidationExcept
     }));
 
     return new ValidationException("Validation failed", errors, {
-      errorCode: "VALIDATION_ERROR",
+      name: "VALIDATION_ERROR",
     });
   }
 
   return new ValidationException(error.message || "Validation failed", undefined, {
-    errorCode: "VALIDATION_ERROR",
+    name: "VALIDATION_ERROR",
   });
 }
 
@@ -164,12 +164,12 @@ function formatValidationError(error: ValidationErrorBase, options: ValidationMi
     }));
 
     return new ValidationException("Validation failed", errors, {
-      errorCode: "VALIDATION_ERROR",
+      name: "VALIDATION_ERROR",
     });
   }
 
   return new ValidationException(error.message || "Validation failed", undefined, {
-    errorCode: "VALIDATION_ERROR",
+    name: "VALIDATION_ERROR",
   });
 }
 
