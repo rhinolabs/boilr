@@ -59,7 +59,7 @@ export interface FileRoutesOptions extends FastifyPluginOptions {
 /**
  * HTTP methods supported in route files
  */
-export type HttpMethod = "get" | "post" | "put" | "delete" | "patch" | "head" | "options";
+export type HttpMethod = "get" | "post" | "put" | "del" | "patch" | "head" | "options";
 
 /**
  * Route handler function
@@ -94,7 +94,7 @@ export interface RouteModule {
   get?: RouteHandler;
   post?: RouteHandler;
   put?: RouteHandler;
-  delete?: RouteHandler;
+  del?: RouteHandler;
   patch?: RouteHandler;
   head?: RouteHandler;
   options?: RouteHandler;
