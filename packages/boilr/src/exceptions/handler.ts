@@ -4,6 +4,85 @@ import { defaultFormatter } from "./formatter.js";
 import type { ExceptionConfig, ValidationMiddlewareOptions } from "./interfaces.js";
 import type { ValidationErrorBase, ZodError } from "./validation.js";
 
+const isValidationError = (error: unknown): error is ValidationErrorBase => {
+  const typedError = error as ValidationErrorBase;
+  return !!(
+    typedError.validation ||
+    typedError.validationContext ||
+    typedError.name === "ZodError" ||
+    typedError.code?.startsWith("FST_ERR_VALIDATION")
+  );
+};
+
+const createValidationException = (error: ValidationErrorBase): ValidationException => {
+  if (error.name === "ZodError" && error.issues) {
+    return ValidationException.fromZodError(error as ZodError);
+  }
+
+  if (error.validation) {
+    const errors = error.validation.map((issue) => ({
+      field: issue.instancePath || issue.dataPath || "unknown",
+      message: issue.message || "Validation failed",
+      value: issue.data,
+    }));
+
+    return new ValidationException("Validation failed", errors, {
+      name: "ValidationError",
+    });
+  }
+
+  return new ValidationException(error.message || "Validation failed", undefined, {
+    name: "ValidationError",
+  });
+};
+
+const formatValidationError = (
+  error: ValidationErrorBase,
+  options: ValidationMiddlewareOptions,
+): ValidationException => {
+  if (error.name === "ZodError" && error.issues) {
+    return ValidationException.fromZodError(error as ZodError);
+  }
+
+  if (error.validation) {
+    const errors = error.validation.slice(0, options.errorLimit || 10).map((issue) => ({
+      field: issue.instancePath || issue.dataPath || "unknown",
+      message: issue.message || "Validation failed",
+      value: issue.data,
+    }));
+
+    return new ValidationException("Validation failed", errors, {
+      name: "ValidationError",
+    });
+  }
+
+  return new ValidationException(error.message || "Validation failed", undefined, {
+    name: "ValidationError",
+  });
+};
+
+const logError = (exception: HttpException, request: FastifyRequest, originalError?: Error) => {
+  const logData: Record<string, unknown> = {
+    timestamp: new Date().toISOString(),
+    level: exception.statusCode >= 500 ? "error" : "warn",
+    message: exception.message,
+    status: exception.statusCode,
+    path: request.url,
+    method: request.method,
+    details: exception.details,
+  };
+
+  if (originalError && originalError !== exception) {
+    logData.originalError = originalError.message;
+  }
+
+  if (exception.statusCode >= 500) {
+    console.error("HTTP Exception:", logData);
+  } else {
+    console.warn("HTTP Exception:", logData);
+  }
+};
+
 /**
  * Creates a global exception handler for Fastify applications.
  * This handler catches and formats all HTTP exceptions and validation errors.
@@ -20,7 +99,7 @@ import type { ValidationErrorBase, ZodError } from "./validation.js";
  * app.setErrorHandler(handler);
  * ```
  */
-export function createGlobalExceptionHandler(config?: ExceptionConfig) {
+export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
   const { logErrors = true } = config || {};
 
   return async (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
@@ -46,7 +125,7 @@ export function createGlobalExceptionHandler(config?: ExceptionConfig) {
 
     return reply.code(exception.statusCode).send(response);
   };
-}
+};
 
 /**
  * Creates middleware that catches and formats validation errors.
@@ -61,7 +140,7 @@ export function createGlobalExceptionHandler(config?: ExceptionConfig) {
  * app.addHook('preHandler', middleware);
  * ```
  */
-export function createValidationMiddleware(options: ValidationMiddlewareOptions = {}) {
+export const createValidationMiddleware = (options: ValidationMiddlewareOptions = {}) => {
   const { errorLimit = 10 } = options;
 
   return async (request: FastifyRequest, reply: FastifyReply, done: () => Promise<void>) => {
@@ -74,7 +153,7 @@ export function createValidationMiddleware(options: ValidationMiddlewareOptions 
       throw error;
     }
   };
-}
+};
 
 /**
  * Creates a handler function for processing validation errors.
@@ -93,7 +172,7 @@ export function createValidationMiddleware(options: ValidationMiddlewareOptions 
  * }
  * ```
  */
-export function createValidationHandler(options: ValidationMiddlewareOptions = {}) {
+export const createValidationHandler = (options: ValidationMiddlewareOptions = {}) => {
   const { errorLimit = 10 } = options;
 
   return (error: ValidationErrorBase) => {
@@ -117,80 +196,4 @@ export function createValidationHandler(options: ValidationMiddlewareOptions = {
       name: "ValidationError",
     });
   };
-}
-
-function isValidationError(error: unknown): error is ValidationErrorBase {
-  const typedError = error as ValidationErrorBase;
-  return !!(
-    typedError.validation ||
-    typedError.validationContext ||
-    typedError.name === "ZodError" ||
-    typedError.code?.startsWith("FST_ERR_VALIDATION")
-  );
-}
-
-function createValidationException(error: ValidationErrorBase): ValidationException {
-  if (error.name === "ZodError" && error.issues) {
-    return ValidationException.fromZodError(error as ZodError);
-  }
-
-  if (error.validation) {
-    const errors = error.validation.map((issue) => ({
-      field: issue.instancePath || issue.dataPath || "unknown",
-      message: issue.message || "Validation failed",
-      value: issue.data,
-    }));
-
-    return new ValidationException("Validation failed", errors, {
-      name: "VALIDATION_ERROR",
-    });
-  }
-
-  return new ValidationException(error.message || "Validation failed", undefined, {
-    name: "VALIDATION_ERROR",
-  });
-}
-
-function formatValidationError(error: ValidationErrorBase, options: ValidationMiddlewareOptions): ValidationException {
-  if (error.name === "ZodError" && error.issues) {
-    return ValidationException.fromZodError(error as ZodError);
-  }
-
-  if (error.validation) {
-    const errors = error.validation.slice(0, options.errorLimit || 10).map((issue) => ({
-      field: issue.instancePath || issue.dataPath || "unknown",
-      message: issue.message || "Validation failed",
-      value: issue.data,
-    }));
-
-    return new ValidationException("Validation failed", errors, {
-      name: "VALIDATION_ERROR",
-    });
-  }
-
-  return new ValidationException(error.message || "Validation failed", undefined, {
-    name: "VALIDATION_ERROR",
-  });
-}
-
-function logError(exception: HttpException, request: FastifyRequest, originalError?: Error) {
-  const logData: Record<string, unknown> = {
-    timestamp: new Date().toISOString(),
-    level: exception.statusCode >= 500 ? "error" : "warn",
-    message: exception.message,
-    status: exception.statusCode,
-    path: request.url,
-    method: request.method,
-    details: exception.details,
-  };
-
-  if (originalError && originalError !== exception) {
-    logData.originalError = originalError.message;
-  }
-
-  if (exception.statusCode >= 500) {
-    console.error("HTTP Exception:", logData);
-  } else {
-    console.warn("HTTP Exception:", logData);
-  }
-}
+};
