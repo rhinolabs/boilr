@@ -179,12 +179,13 @@ export interface BoilrMiddlewareConfig {
  *       }
  *     }
  *   },
- *   errorFormatter: (error, statusCode, request) => ({
- *     success: false,
- *     message: error.message,
- *     code: statusCode
- *   })
- * };
+ *   exceptions: {
+ *     formatter: (error, statusCode, request) => ({
+ *       success: false,
+ *       message: error.message,
+ *       code: statusCode
+ *     })
+ *    };
  * ```
  */
 export interface BoilrConfig {
@@ -217,19 +218,6 @@ export interface BoilrConfig {
   /**
    * Exception handling configuration for HTTP errors and validation.
    * Configure custom error formatters, logging, and validation behavior.
-   *
-   * @example
-   * ```typescript
-   * exceptions: {
-   *   formatter: (exception, request, reply) => ({
-   *     status: exception.statusCode,
-   *     message: exception.message,
-   *     error: exception.name.replace("Exception", ""),
-   *     details: exception.details
-   *   }),
-   *   logErrors: true
-   * }
-   * ```
    */
   exceptions?: ExceptionConfig;
 
@@ -267,6 +255,9 @@ export const defaultConfig: BoilrConfig = {
     global: ["logger", "commonHeaders"],
   },
   validation: true,
+  exceptions: {
+    logErrors: true,
+  },
 };
 
 /**
@@ -293,7 +284,7 @@ export function mergeConfig(userConfig: BoilrConfig = {}): BoilrConfig {
     plugins: { ...defaultConfig.plugins, ...userConfig.plugins },
     middleware: { ...defaultConfig.middleware, ...userConfig.middleware },
     validation: userConfig.validation !== undefined ? userConfig.validation : defaultConfig.validation,
-    exceptions: userConfig.exceptions,
+    exceptions: { ...defaultConfig.exceptions, ...userConfig.exceptions },
     fastify: userConfig.fastify || {},
   };
 }
