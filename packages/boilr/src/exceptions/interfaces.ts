@@ -73,3 +73,11 @@ export interface ExceptionConfig {
   /** Whether to log errors to console (default: true) */
   logErrors?: boolean;
 }
+
+/**
+ * Options for configuring validation middleware behavior.
+ */
+export interface ValidationMiddlewareOptions {
+  /** Maximum number of validation errors to include in response (default: 10) */
+  errorLimit?: number;
+}

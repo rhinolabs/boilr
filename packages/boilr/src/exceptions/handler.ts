@@ -1,8 +1,8 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { HttpException, InternalServerErrorException, ValidationException } from "./exceptions.js";
 import { defaultFormatter } from "./formatter.js";
-import type { ExceptionConfig } from "./interfaces.js";
-import type { ValidationErrorLike, ZodError } from "./validation.js";
+import type { ExceptionConfig, ValidationMiddlewareOptions } from "./interfaces.js";
+import type { ValidationErrorBase, ZodError } from "./validation.js";
 
 /**
  * Creates a global exception handler for Fastify applications.
@@ -46,14 +46,6 @@ export function createGlobalExceptionHandler(config?: ExceptionConfig) {
 
     return reply.code(exception.statusCode).send(response);
   };
-}
-
-/**
- * Options for configuring validation middleware behavior.
- */
-export interface ValidationMiddlewareOptions {
-  /** Maximum number of validation errors to include in response (default: 10) */
-  errorLimit?: number;
 }
 
 /**
@@ -104,7 +96,7 @@ export function createValidationMiddleware(options: ValidationMiddlewareOptions 
 export function createValidationHandler(options: ValidationMiddlewareOptions = {}) {
   const { errorLimit = 10 } = options;
 
-  return (error: ValidationErrorLike) => {
+  return (error: ValidationErrorBase) => {
     if (error.name === "ZodError" && error.issues) {
       throw ValidationException.fromZodError(error as ZodError);
     }
@@ -127,8 +119,8 @@ export function createValidationHandler(options: ValidationMiddlewareOptions = {
   };
 }
 
-function isValidationError(error: unknown): error is ValidationErrorLike {
-  const typedError = error as ValidationErrorLike;
+function isValidationError(error: unknown): error is ValidationErrorBase {
+  const typedError = error as ValidationErrorBase;
   return !!(
     typedError.validation ||
     typedError.validationContext ||
@@ -137,7 +129,7 @@ function isValidationError(error: unknown): error is ValidationErrorLike {
   );
 }
 
-function createValidationException(error: ValidationErrorLike): ValidationException {
+function createValidationException(error: ValidationErrorBase): ValidationException {
   if (error.name === "ZodError" && error.issues) {
     return ValidationException.fromZodError(error as ZodError);
   }
@@ -159,7 +151,7 @@ function createValidationException(error: ValidationErrorLike): ValidationExcept
   });
 }
 
-function formatValidationError(error: ValidationErrorLike, options: ValidationMiddlewareOptions): ValidationException {
+function formatValidationError(error: ValidationErrorBase, options: ValidationMiddlewareOptions): ValidationException {
   if (error.name === "ZodError" && error.issues) {
     return ValidationException.fromZodError(error as ZodError);
   }

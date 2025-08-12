@@ -48,9 +48,3 @@ export interface ValidationErrorBase extends Error {
   /** Array of validation issues (Zod format) */
   issues?: ZodIssue[];
 }
-
-/**
- * Type alias for objects that resemble validation errors.
- * Used for type checking validation error objects from various sources.
- */
-export type ValidationErrorLike = ValidationErrorBase;
