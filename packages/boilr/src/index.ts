@@ -16,16 +16,44 @@ export {
   createJsonSchemaTransformObject,
 } from "./validation/index.js";
 
-// Export error handling classes and types
+// Export exception handling system
 export {
-  NotFoundError,
-  ValidationError,
-  BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
-  ConflictError,
+  HttpException,
+  BadRequestException,
+  UnauthorizedException,
+  ForbiddenException,
+  NotFoundException,
+  MethodNotAllowedException,
+  NotAcceptableException,
+  RequestTimeoutException,
+  ConflictException,
+  GoneException,
+  PreconditionFailedException,
+  PayloadTooLargeException,
+  UnsupportedMediaTypeException,
+  ImATeapotException,
+  UnprocessableEntityException,
+  InternalServerErrorException,
+  NotImplementedException,
+  BadGatewayException,
+  ServiceUnavailableException,
+  GatewayTimeoutException,
+  HttpVersionNotSupportedException,
+  ValidationException,
+  defaultFormatter,
+  createGlobalExceptionHandler,
+  createValidationHandler,
+  createValidationMiddleware,
+  HttpStatusCode,
+} from "./exceptions/index.js";
+
+export type {
+  ErrorResponse,
   ErrorFormatter,
-} from "./errors/index.js";
+  ExceptionOptions,
+  ExceptionConfig,
+  ValidationError,
+} from "./exceptions/index.js";
 
 // Export route types and utils
 export {

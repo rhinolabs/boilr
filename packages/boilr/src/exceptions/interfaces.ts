@@ -1,0 +1,75 @@
+import type { FastifyReply, FastifyRequest } from "fastify";
+import type { HttpException } from "./exceptions.js";
+
+/**
+ * Standard error response format for HTTP exceptions.
+ * This interface defines the structure of error responses sent to clients.
+ */
+export interface ErrorResponse {
+  /** HTTP status code (e.g., 400, 404, 500) */
+  status: number;
+  /** Human-readable error message */
+  message: string;
+  /** Error type name (e.g., "BadRequest", "NotFound") */
+  error: string;
+  /** Additional error details or validation errors */
+  details: unknown;
+}
+
+/**
+ * Options for configuring HTTP exceptions.
+ */
+export interface ExceptionOptions {
+  /** Custom error code for application-specific error handling */
+  errorCode?: string;
+  /** Additional details to include in the error response */
+  details?: unknown;
+  /** The underlying error that caused this exception */
+  cause?: Error;
+}
+
+/**
+ * Represents a single validation error for a specific field.
+ */
+export interface ValidationError {
+  /** The field name or path that failed validation */
+  field: string;
+  /** Human-readable validation error message */
+  message: string;
+  /** The invalid value that was provided */
+  value?: unknown;
+}
+
+/**
+ * Function type for customizing error response formatting.
+ *
+ * @param exception - The HTTP exception that was thrown
+ * @param request - The Fastify request object
+ * @param reply - The Fastify reply object
+ * @returns The formatted error response object
+ *
+ * @example
+ * ```typescript
+ * const customFormatter: ErrorFormatter = (exception, request, reply) => ({
+ *   status: exception.statusCode,
+ *   message: exception.message,
+ *   error: exception.name.replace("Exception", ""),
+ *   details: exception.details
+ * });
+ * ```
+ */
+export type ErrorFormatter = (
+  exception: HttpException,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => ErrorResponse | Promise<ErrorResponse>;
+
+/**
+ * Global configuration for exception handling in Boilr applications.
+ */
+export interface ExceptionConfig {
+  /** Custom error formatter function to control response structure */
+  formatter?: ErrorFormatter;
+  /** Whether to log errors to console (default: true) */
+  logErrors?: boolean;
+}

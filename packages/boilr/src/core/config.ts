@@ -4,7 +4,7 @@ import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
-import type { ErrorFormatter } from "../types/error.js";
+import type { ExceptionConfig } from "../exceptions/types.js";
 
 export interface BoilrServerConfig {
   /**
@@ -215,20 +215,23 @@ export interface BoilrConfig {
   validation?: boolean;
 
   /**
-   * Custom error formatter function to customize HTTP error response format.
-   * If not provided, uses Boilr's default error format.
+   * Exception handling configuration for HTTP errors and validation.
+   * Configure custom error formatters, logging, and validation behavior.
    *
    * @example
    * ```typescript
-   * errorFormatter: (error, statusCode, request) => ({
-   *   success: false,
-   *   errorMessage: error.message,
-   *   code: statusCode,
-   *   timestamp: Date.now()
-   * })
+   * exceptions: {
+   *   formatter: (exception, request, reply) => ({
+   *     status: exception.statusCode,
+   *     message: exception.message,
+   *     error: exception.name.replace("Exception", ""),
+   *     details: exception.details
+   *   }),
+   *   logErrors: true
+   * }
    * ```
    */
-  errorFormatter?: ErrorFormatter;
+  exceptions?: ExceptionConfig;
 
   /**
    * Raw Fastify server options.
@@ -290,6 +293,7 @@ export function mergeConfig(userConfig: BoilrConfig = {}): BoilrConfig {
     plugins: { ...defaultConfig.plugins, ...userConfig.plugins },
     middleware: { ...defaultConfig.middleware, ...userConfig.middleware },
     validation: userConfig.validation !== undefined ? userConfig.validation : defaultConfig.validation,
+    exceptions: userConfig.exceptions,
     fastify: userConfig.fastify || {},
   };
 }
