@@ -12,9 +12,6 @@ This project is structured as a monorepo using pnpm workspaces:
 - **`packages/cli`** - Command-line interface (`@rhinolabs/boilr-cli`)  
   Tools for creating new projects, development server with hot-reload, building, and running Boilr applications.
 
-- **`packages/fastify-file-routes`** - File-based routing plugin (`@rhinolabs/fastify-file-routes`)  
-  Next.js-style filesystem-based routing system for Fastify with dynamic parameters and catch-all support.
-
 - **`packages/typescript-example`** - Example application  
   A complete Todo CRUD API demonstrating Boilr's key features including type-safe validation and automatic documentation.
 
@@ -55,7 +52,6 @@ For more detailed instructions, check the documentation for each package:
 
 - [`@rhinolabs/boilr`](./packages/boilr/README.md) - Core framework with routing and validation
 - [`@rhinolabs/boilr-cli`](./packages/cli/README.md) - Command-line development tools
-- [`@rhinolabs/fastify-file-routes`](./packages/fastify-file-routes/README.md) - File-based routing engine
 - [Example Application](./packages/typescript-example/README.md) - Complete Todo API sample
 
 ## Key Features
@@ -82,33 +78,37 @@ Define schemas and handlers with full TypeScript type safety using Zod:
 
 ```typescript
 // routes/api/users/[id].ts
-import { z } from 'zod';
-import { type GetHandler, defineSchema, NotFoundException } from '@rhinolabs/boilr';
+import { z } from "zod";
+import {
+  type GetHandler,
+  defineSchema,
+  NotFoundException,
+} from "@rhinolabs/boilr";
 
 export const schema = defineSchema({
   get: {
     params: z.object({
-      id: z.string().transform(val => parseInt(val, 10))
+      id: z.string().transform((val) => parseInt(val, 10)),
     }),
     response: {
       200: z.object({
         id: z.number(),
         name: z.string(),
-        email: z.string().email()
-      })
-    }
-  }
+        email: z.string().email(),
+      }),
+    },
+  },
 });
 
 export const get: GetHandler<typeof schema> = async (request) => {
   const { id } = request.params; // Automatically typed as number
-  
+
   const user = await getUserById(id);
-  
+
   if (!user) {
     throw new NotFoundException(`User with id ${id} not found`);
   }
-  
+
   return user; // Return type automatically validated
 };
 ```
@@ -118,13 +118,13 @@ export const get: GetHandler<typeof schema> = async (request) => {
 Built-in HTTP exception classes with automatic error formatting and validation:
 
 ```typescript
-import { NotFoundException, ValidationException } from '@rhinolabs/boilr';
+import { NotFoundException, ValidationException } from "@rhinolabs/boilr";
 
 // Throw structured HTTP exceptions
-throw new NotFoundException('User not found');
+throw new NotFoundException("User not found");
 
 // Handle validation errors automatically
-throw new ValidationException('Invalid data', validationErrors);
+throw new ValidationException("Invalid data", validationErrors);
 ```
 
 ### 📚 Automatic API Documentation
@@ -133,21 +133,21 @@ Your OpenAPI/Swagger documentation is automatically generated from your Zod sche
 
 ```typescript
 // server.ts
-import { createApp } from '@rhinolabs/boilr';
+import { createApp } from "@rhinolabs/boilr";
 
 const app = createApp({
   server: {
-    port: 3000
+    port: 3000,
   },
   plugins: {
     swagger: {
       info: {
-        title: 'My API',
-        description: 'API built with Boilr',
-        version: '1.0.0'
-      }
-    }
-  }
+        title: "My API",
+        description: "API built with Boilr",
+        version: "1.0.0",
+      },
+    },
+  },
 });
 
 app.start(); // Documentation available at /docs
