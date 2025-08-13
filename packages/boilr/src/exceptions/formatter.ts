@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import type { ErrorFormatter, ErrorResponse } from "../types/error.types.js";
 import type { HttpException } from "./exceptions.js";
-import type { ErrorFormatter, ErrorResponse } from "./interfaces.js";
 
 /**
  * Default error formatter for HTTP exceptions.
