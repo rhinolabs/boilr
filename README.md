@@ -25,7 +25,7 @@ Boilr simplifies building TypeScript APIs with Fastify by providing:
 - **Convention-based file routing** with Next.js-style patterns
 - **Integrated schema validation** using Zod with automatic type inference
 - **Automatic OpenAPI documentation** generation from Zod schemas
-- **Built-in error handling** with automatic HTTP status codes
+- **Built-in error handling** with comprehensive exception classes and automatic HTTP status codes
 - **Preconfigured security and performance optimizations** (CORS, Helmet, Rate limiting)
 - **Developer-friendly tooling** for rapid development and deployment
 - **TypeScript support** with full type inference and safety
@@ -83,7 +83,7 @@ Define schemas and handlers with full TypeScript type safety using Zod:
 ```typescript
 // routes/api/users/[id].ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema, NotFoundError } from '@rhinolabs/boilr';
+import { type GetHandler, defineSchema, NotFoundException } from '@rhinolabs/boilr';
 
 export const schema = defineSchema({
   get: {
@@ -106,11 +106,25 @@ export const get: GetHandler<typeof schema> = async (request) => {
   const user = await getUserById(id);
   
   if (!user) {
-    throw new NotFoundError(`User with id ${id} not found`);
+    throw new NotFoundException(`User with id ${id} not found`);
   }
   
   return user; // Return type automatically validated
 };
+```
+
+### 🚨 Error Handling
+
+Built-in HTTP exception classes with automatic error formatting and validation:
+
+```typescript
+import { NotFoundException, ValidationException } from '@rhinolabs/boilr';
+
+// Throw structured HTTP exceptions
+throw new NotFoundException('User not found');
+
+// Handle validation errors automatically
+throw new ValidationException('Invalid data', validationErrors);
 ```
 
 ### 📚 Automatic API Documentation

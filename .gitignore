@@ -1,16 +1,16 @@
 # Compiled output
-/dist
+dist
 /tmp
 
 # Dependencies
-/node_modules
+node_modules
 
 # Testing
-/coverage
+coverage
 
 # IDE files
-/.idea
-/.vscode
+.idea
+.vscode
 *.sublime-workspace
 *.swp
 *.swo
@@ -34,3 +34,5 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 .claude
+
+mongo.bkp

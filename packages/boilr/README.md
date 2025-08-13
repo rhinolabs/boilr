@@ -11,11 +11,12 @@ A convention-based Fastify framework with batteries included. Boilr brings Next.
 ## Features
 
 - **🗂️ File-based routing** - Next.js style API routes with dynamic parameters and catch-all support
-- **🛡️ Type-safe validation** - First-class Zod integration with TypeScript type inference
-- **📚 Auto-generated API docs** - Swagger/OpenAPI documentation from your schemas
-- **🔌 Batteries included** - CORS, Helmet, Rate limiting and other security plugins pre-configured
-- **🧩 Plugin system** - Built on Fastify's powerful plugin architecture
-- **🛠️ Developer experience** - CLI tools, hot-reload, and comprehensive TypeScript support
+- **🛡️ Type-safe validation** - First-class Zod integration with TypeScript type inference and automatic request/response validation
+- **🚨 Error handling** - Comprehensive HTTP exception classes with structured responses and automatic validation error conversion
+- **📚 Auto-generated API docs** - Swagger/OpenAPI documentation automatically generated from your Zod schemas
+- **🔒 Security & Performance** - Pre-configured CORS, Helmet security headers, and rate limiting
+- **🧩 Plugin system** - Built on Fastify's powerful plugin architecture with easy extensibility
+- **🛠️ Developer experience** - CLI tools, hot-reload development server, and comprehensive TypeScript support
 
 ## Installation
 
@@ -193,19 +194,126 @@ const app = createApp({
 });
 ```
 
-## Built-in Features
+## Error Handling
 
-### Security & Performance
-- **CORS** - Cross-origin resource sharing with configurable options
-- **Helmet** - Security headers for protection against common vulnerabilities
-- **Rate Limiting** - Request throttling to prevent abuse
-- **Schema Validation** - Automatic request/response validation with Zod
+Boilr provides comprehensive error handling with built-in HTTP exception classes and automatic error formatting:
 
-### Developer Experience
-- **TypeScript First** - Full type safety and inference
-- **Hot Reload** - Development server with automatic restart
-- **Auto Documentation** - OpenAPI/Swagger docs generated from schemas
-- **CLI Tools** - Project scaffolding and development commands
+### Exception Classes
+
+```typescript
+import { NotFoundException } from '@rhinolabs/boilr';
+
+throw new NotFoundException('User not found');
+```
+
+**Available Exception Classes:**
+
+**Client Errors (4xx):**
+- `BadRequestException` (400) - Invalid request format or parameters
+- `UnauthorizedException` (401) - Authentication required or invalid
+- `ForbiddenException` (403) - Insufficient permissions
+- `NotFoundException` (404) - Resource not found
+- `MethodNotAllowedException` (405) - HTTP method not supported
+- `NotAcceptableException` (406) - Requested format not acceptable
+- `RequestTimeoutException` (408) - Request took too long
+- `ConflictException` (409) - Resource conflict or duplicate
+- `GoneException` (410) - Resource no longer available
+- `PreconditionFailedException` (412) - Precondition not met
+- `PayloadTooLargeException` (413) - Request payload too large
+- `UnsupportedMediaTypeException` (415) - Media type not supported
+- `ImATeapotException` (418) - I'm a teapot (RFC 2324)
+- `UnprocessableEntityException` (422) - Validation failed
+- `ValidationException` (422) - Validation failed with detailed errors
+
+**Server Errors (5xx):**
+- `InternalServerErrorException` (500) - Internal server error
+- `NotImplementedException` (501) - Feature not implemented
+- `BadGatewayException` (502) - Bad gateway response
+- `ServiceUnavailableException` (503) - Service temporarily unavailable
+- `GatewayTimeoutException` (504) - Gateway timeout
+- `HttpVersionNotSupportedException` (505) - HTTP version not supported
+
+### Custom Exception Options
+
+```typescript
+throw new NotFoundException('User not found', {
+  name: 'USER_NOT_FOUND',           // Custom error code
+  details: { userId: id },          // Additional context
+  cause: originalError              // Underlying error
+});
+```
+
+### Validation Errors
+
+```typescript
+import { ValidationException } from '@rhinolabs/boilr';
+
+// Manual validation errors
+throw new ValidationException('Validation failed', [
+  { field: 'email', message: 'Invalid email format', value: 'invalid-email' },
+  { field: 'age', message: 'Must be a positive number', value: -5 }
+]);
+
+// Zod validation errors are automatically converted
+const result = userSchema.parse(invalidData); // Throws ZodError -> becomes ValidationException
+```
+
+### Error Response Format
+
+All exceptions are automatically formatted into a consistent JSON response:
+
+```json
+{
+  "status": 404,
+  "message": "User not found",
+  "error": "NotFound",
+  "details": { "userId": "123" }
+}
+```
+
+### Custom Error Formatting
+
+Configure global error handling behavior:
+
+```typescript
+import { createApp } from '@rhinolabs/boilr';
+
+const app = createApp({
+  exceptions: {
+    // Custom error formatter
+    formatter: (exception, request, reply) => ({
+      success: false,
+      code: exception.statusCode,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      data: exception.details
+    }),
+    
+    // Enable/disable error logging (default: true)
+    logErrors: true
+  }
+});
+```
+
+### Error Logging
+
+Errors are automatically logged with different levels:
+- **4xx errors**: Logged as warnings
+- **5xx errors**: Logged as errors
+
+Log format includes:
+```json
+{
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "level": "error",
+  "message": "User not found",
+  "status": 404,
+  "path": "/api/users/123",
+  "method": "GET",
+  "details": { "userId": "123" }
+}
+```
 
 ## Examples
 
