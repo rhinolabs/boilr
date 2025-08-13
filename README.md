@@ -12,9 +12,6 @@ This project is structured as a monorepo using pnpm workspaces:
 - **`packages/cli`** - Command-line interface (`@rhinolabs/boilr-cli`)  
   Tools for creating new projects, development server with hot-reload, building, and running Boilr applications.
 
-- **`packages/fastify-file-routes`** - File-based routing plugin (`@rhinolabs/fastify-file-routes`)  
-  Next.js-style filesystem-based routing system for Fastify with dynamic parameters and catch-all support.
-
 - **`packages/typescript-example`** - Example application  
   A complete Todo CRUD API demonstrating Boilr's key features including type-safe validation and automatic documentation.
 
@@ -55,7 +52,6 @@ For more detailed instructions, check the documentation for each package:
 
 - [`@rhinolabs/boilr`](./packages/boilr/README.md) - Core framework with routing and validation
 - [`@rhinolabs/boilr-cli`](./packages/cli/README.md) - Command-line development tools
-- [`@rhinolabs/fastify-file-routes`](./packages/fastify-file-routes/README.md) - File-based routing engine
 - [Example Application](./packages/typescript-example/README.md) - Complete Todo API sample
 
 ## Key Features
