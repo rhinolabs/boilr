@@ -4,7 +4,7 @@ import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
-import type { ExceptionConfig } from "../exceptions/types.js";
+import type { ExceptionConfig } from "../types/error.types.js";
 
 export interface BoilrServerConfig {
   /**

@@ -1,5 +1,4 @@
-import type { ExceptionOptions, ValidationError } from "./interfaces.js";
-import type { ZodError } from "./validation.js";
+import type { ExceptionOptions, ValidationError, ZodError } from "../types/error.types.js";
 
 /**
  * Base class for all HTTP exceptions in Boilr applications.

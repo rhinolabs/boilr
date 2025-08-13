@@ -1,8 +1,12 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
+import type {
+  ExceptionConfig,
+  ValidationErrorBase,
+  ValidationMiddlewareOptions,
+  ZodError,
+} from "../types/error.types.js";
 import { HttpException, InternalServerErrorException, ValidationException } from "./exceptions.js";
 import { defaultFormatter } from "./formatter.js";
-import type { ExceptionConfig, ValidationMiddlewareOptions } from "./interfaces.js";
-import type { ValidationErrorBase, ZodError } from "./validation.js";
 
 const isValidationError = (error: unknown): error is ValidationErrorBase => {
   const typedError = error as ValidationErrorBase;

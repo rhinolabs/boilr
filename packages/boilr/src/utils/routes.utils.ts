@@ -1,5 +1,5 @@
 import type { FastifyRequest } from "fastify";
-import type { CatchAllParam, HttpMethod, PathSegments, RouteSchema } from "../types/route-types.js";
+import type { CatchAllParam, HttpMethod, PathSegments, RouteSchema } from "../types/routes.types.js";
 
 /**
  * Validates and converts route parameters according to the schema.

@@ -53,7 +53,7 @@ export type {
   ExceptionOptions,
   ExceptionConfig,
   ValidationError,
-} from "./exceptions/index.js";
+} from "./types/error.types.js";
 
 // Export route types and utils
 export {
@@ -73,11 +73,11 @@ export {
   PathSegments,
   CatchAllParam,
   catchAllSchema,
-} from "./types/route-types.js";
+} from "./types/routes.types.js";
 
 export {
   getTypedParams,
   getTypedQuery,
   getTypedBody,
   getCatchAllParam,
-} from "./utils/route-utils.js";
+} from "./utils/routes.utils.js";
