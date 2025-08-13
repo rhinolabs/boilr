@@ -39,8 +39,8 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
       '@rhinolabs/fastify-file-routes':
-        specifier: ^0.1.0
-        version: 0.1.0(fastify@5.3.3)
+        specifier: ^0.1.1
+        version: 0.1.1(fastify@5.3.3)
       '@rhinolabs/fastify-monitor':
         specifier: ^0.2.0
         version: 0.2.0(fastify@5.3.3)
@@ -389,8 +389,8 @@ packages:
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
 
-  '@rhinolabs/fastify-file-routes@0.1.0':
-    resolution: {integrity: sha512-N7KtNCp0rCw0jUQlAnsXNFKs7gTCb1nw/aP+mYwmeASE/ptXGXD+ubO3e9A/sOBmGXoAHhQBXTk1MMO4NjB4jg==}
+  '@rhinolabs/fastify-file-routes@0.1.1':
+    resolution: {integrity: sha512-+LDT+qlrPaK9HZL6LIF4t0TQYbYUwg/ZS5NN+kP8DaLyjGqzdw7Aj8XbvQ15Dl/xuL8/vuwopzdsQWW+mvkhXg==}
     peerDependencies:
       fastify: ^5.0.0
 
@@ -1302,7 +1302,7 @@ snapshots:
 
   '@lukeed/ms@2.0.2': {}
 
-  '@rhinolabs/fastify-file-routes@0.1.0(fastify@5.3.3)':
+  '@rhinolabs/fastify-file-routes@0.1.1(fastify@5.3.3)':
     dependencies:
       fastify: 5.3.3
       fastify-plugin: 5.0.1
