@@ -2,7 +2,7 @@ import fastify, { type FastifyInstance, type FastifyPluginOptions } from "fastif
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
-import { globalErrorHandler } from "./errors/handler.js";
+import { createGlobalExceptionHandler } from "./exceptions/handler.js";
 import { applyGlobalMiddleware } from "./middleware/index.js";
 import { plugins } from "./plugins/index.js";
 import {
@@ -41,6 +41,15 @@ import {
  *         version: "1.0.0"
  *       }
  *     }
+ *   },
+ *   exceptions: {
+ *     formatter: (exception, request, reply) => ({
+ *       status: exception.statusCode,
+ *       message: exception.message,
+ *       error: exception.name.replace("Exception", ""),
+ *       details: exception.details
+ *     }),
+ *     logErrors: true
  *   }
  * });
  *
@@ -55,8 +64,12 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   app.decorate("boilrConfig", config);
 
-  // Set up global error handler
-  app.setErrorHandler(globalErrorHandler);
+  // Set up global exception handler with configuration support
+  const exceptionHandler = createGlobalExceptionHandler({
+    formatter: config.exceptions?.formatter,
+    logErrors: config.exceptions?.logErrors,
+  });
+  app.setErrorHandler(exceptionHandler);
 
   // Set up Zod validators and serializers
   if (config.validation !== false) {

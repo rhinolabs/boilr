@@ -4,7 +4,7 @@ import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
-import type { ErrorFormatter } from "../types/error.js";
+import type { ExceptionConfig } from "../exceptions/types.js";
 
 export interface BoilrServerConfig {
   /**
@@ -179,12 +179,13 @@ export interface BoilrMiddlewareConfig {
  *       }
  *     }
  *   },
- *   errorFormatter: (error, statusCode, request) => ({
- *     success: false,
- *     message: error.message,
- *     code: statusCode
- *   })
- * };
+ *   exceptions: {
+ *     formatter: (error, statusCode, request) => ({
+ *       success: false,
+ *       message: error.message,
+ *       code: statusCode
+ *     })
+ *    };
  * ```
  */
 export interface BoilrConfig {
@@ -215,20 +216,10 @@ export interface BoilrConfig {
   validation?: boolean;
 
   /**
-   * Custom error formatter function to customize HTTP error response format.
-   * If not provided, uses Boilr's default error format.
-   *
-   * @example
-   * ```typescript
-   * errorFormatter: (error, statusCode, request) => ({
-   *   success: false,
-   *   errorMessage: error.message,
-   *   code: statusCode,
-   *   timestamp: Date.now()
-   * })
-   * ```
+   * Exception handling configuration for HTTP errors and validation.
+   * Configure custom error formatters, logging, and validation behavior.
    */
-  errorFormatter?: ErrorFormatter;
+  exceptions?: ExceptionConfig;
 
   /**
    * Raw Fastify server options.
@@ -264,6 +255,9 @@ export const defaultConfig: BoilrConfig = {
     global: ["logger", "commonHeaders"],
   },
   validation: true,
+  exceptions: {
+    logErrors: true,
+  },
 };
 
 /**
@@ -290,6 +284,7 @@ export function mergeConfig(userConfig: BoilrConfig = {}): BoilrConfig {
     plugins: { ...defaultConfig.plugins, ...userConfig.plugins },
     middleware: { ...defaultConfig.middleware, ...userConfig.middleware },
     validation: userConfig.validation !== undefined ? userConfig.validation : defaultConfig.validation,
+    exceptions: { ...defaultConfig.exceptions, ...userConfig.exceptions },
     fastify: userConfig.fastify || {},
   };
 }

@@ -1,4 +1,10 @@
-import { type DeleteHandler, type GetHandler, NotFoundError, type PutHandler, defineSchema } from "@rhinolabs/boilr";
+import {
+  type DeleteHandler,
+  type GetHandler,
+  NotFoundException,
+  type PutHandler,
+  defineSchema,
+} from "@rhinolabs/boilr";
 import { z } from "zod";
 import { TodoSchema, todos } from "./index.js"; // Ensure .js extension for ESM imports
 
@@ -56,7 +62,7 @@ export const get: GetHandler<typeof schema> = async (request) => {
   const todo = todos.find((t: { id: number }) => t.id === id);
 
   if (!todo) {
-    throw new NotFoundError(`Todo with id ${id} not found`);
+    throw new NotFoundException(`Todo with id ${id} not found`);
   }
 
   return todo;
@@ -70,7 +76,7 @@ export const put: PutHandler<typeof schema> = async (request) => {
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
   if (todoIndex === -1) {
-    throw new NotFoundError(`Todo with id ${id} not found`);
+    throw new NotFoundException(`Todo with id ${id} not found`);
   }
 
   const updatedTodo = {
@@ -91,7 +97,7 @@ export const del: DeleteHandler<typeof schema> = async (request, reply) => {
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
   if (todoIndex === -1) {
-    throw new NotFoundError(`Todo with id ${id} not found`);
+    throw new NotFoundException(`Todo with id ${id} not found`);
   }
 
   // Remove the todo from the array
