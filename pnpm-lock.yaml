@@ -40,7 +40,7 @@ importers:
         version: 5.2.2
       '@rhinolabs/fastify-file-routes':
         specifier: ^0.1.0
-        version: 0.1.0
+        version: 0.1.0(fastify@5.3.3)
       '@rhinolabs/fastify-monitor':
         specifier: ^0.2.0
         version: 0.2.0(fastify@5.3.3)
@@ -84,22 +84,6 @@ importers:
         version: 20.17.48
       typescript:
         specifier: ^5.4.5
-        version: 5.8.3
-
-  packages/fastify-file-routes:
-    dependencies:
-      fastify-plugin:
-        specifier: ^5.0.1
-        version: 5.0.1
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.5
-        version: 20.17.48
-      fastify:
-        specifier: ^5.3.3
-        version: 5.3.3
-      typescript:
-        specifier: ^5.3.3
         version: 5.8.3
 
   packages/typescript-example:
@@ -404,6 +388,11 @@ packages:
   '@lukeed/ms@2.0.2':
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
+
+  '@rhinolabs/fastify-file-routes@0.1.0':
+    resolution: {integrity: sha512-N7KtNCp0rCw0jUQlAnsXNFKs7gTCb1nw/aP+mYwmeASE/ptXGXD+ubO3e9A/sOBmGXoAHhQBXTk1MMO4NjB4jg==}
+    peerDependencies:
+      fastify: ^5.0.0
 
   '@rhinolabs/fastify-monitor@0.2.0':
     resolution: {integrity: sha512-uF7UWP2JtKETbQGYLDftTCCpv3iJol9SZsbz+Rz1St8OcoIsAMd25RqBRtWmckoPm7m9cpN5u/YQZAv3TfF2+w==}
@@ -1312,6 +1301,11 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@lukeed/ms@2.0.2': {}
+
+  '@rhinolabs/fastify-file-routes@0.1.0(fastify@5.3.3)':
+    dependencies:
+      fastify: 5.3.3
+      fastify-plugin: 5.0.1
 
   '@rhinolabs/fastify-monitor@0.2.0(fastify@5.3.3)':
     dependencies:
