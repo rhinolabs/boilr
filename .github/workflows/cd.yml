@@ -83,7 +83,9 @@ jobs:
         run: pnpm install
 
       - name: 🛠️ Build Core package
-        run: pnpm --filter @rhinolabs/boilr build
+        run: |-
+          pnpm --filter @rhinolabs/fastify-file-routes build
+          pnpm --filter @rhinolabs/boilr build
 
       - name: ✏️ Fix linting issues
         run: pnpm lint:fix
