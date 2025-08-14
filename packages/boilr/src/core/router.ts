@@ -19,7 +19,7 @@ export const routerPlugin = fp<ExtendedPluginOptions>(
   async (fastify: FastifyInstance, options: ExtendedPluginOptions) => {
     await fastify.register(fastifyFileRoutes, {
       routesDir: path.isAbsolute(options.routesDir || "")
-        ? (options.routesDir as string)
+        ? options.routesDir || ""
         : path.join(process.cwd(), options.routesDir || "./routes"),
       prefix: options.prefix || "",
       options: {

@@ -1,5 +1,5 @@
 import fastifyMonitor, { type PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
-import type { FastifyInstance, FastifyPluginOptions } from "fastify";
+import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 
 /**
@@ -28,5 +28,5 @@ export const monitorPlugin = fp(async (fastify: FastifyInstance, options: Perfor
 
   const mergedOptions: PerformanceMonitorOptions = { ...defaultOptions, ...options };
 
-  await fastify.register(fastifyMonitor, mergedOptions as FastifyPluginOptions);
+  await fastify.register(fastifyMonitor, mergedOptions);
 });

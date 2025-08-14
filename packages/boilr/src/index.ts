@@ -1,5 +1,5 @@
 // Import type extensions for Fastify (module augmentation)
-import "./types/fastify.js";
+import "./types/fastify.types.js";
 
 // Export main implementation from boilr
 export { createApp } from "./boilr.js";

@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyListenOptions } from "fastify";
+import type { FastifyInstance } from "fastify";
 import type { BoilrConfig } from "./config.js";
 
 export interface BoilrInstance extends FastifyInstance {
@@ -19,10 +19,7 @@ export function decorateServer(app: FastifyInstance, config: BoilrConfig): Boilr
 
     console.log(`Starting server on ${host}:${port}`);
 
-    const listenOptions: FastifyListenOptions = {
-      port: port as number,
-      host: host as string,
-    };
+    const listenOptions = { port, host };
 
     try {
       console.log("Calling listen with options:", listenOptions);

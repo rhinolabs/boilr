@@ -1,8 +1,8 @@
-import { corsPlugin } from "./cors.js";
-import { helmetPlugin } from "./helmet.js";
-import { monitorPlugin } from "./monitoring.js";
-import { rateLimitPlugin } from "./rate-limit.js";
-import { swaggerPlugin } from "./swagger.js";
+import { corsPlugin } from "./cors.plugin.js";
+import { helmetPlugin } from "./helmet.plugin.js";
+import { monitorPlugin } from "./monitoring.plugin.js";
+import { rateLimitPlugin } from "./rate-limit.plugin.js";
+import { swaggerPlugin } from "./swagger.plugin.js";
 
 export const plugins = {
   helmet: helmetPlugin,
