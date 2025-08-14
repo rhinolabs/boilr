@@ -18,7 +18,7 @@ const isValidationError = (error: unknown): error is ValidationErrorBase => {
   );
 };
 
-const createValidationException = (error: ValidationErrorBase): ValidationException => {
+const createValidationException = (error: ValidationErrorBase) => {
   if (error.name === "ZodError" && error.issues) {
     return ValidationException.fromZodError(error as ZodError);
   }
