@@ -7,9 +7,12 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 
+type TransformResult = ReturnType<typeof baseJsonSchemaTransform> & {
+  tags?: string[];
+};
+
 // Extended transform function that handles Swagger tags
-// biome-ignore lint/suspicious/noExplicitAny: Adding properties to the object
-function jsonSchemaTransform({ schema, url }: { schema: FastifySchema; url: string }): any {
+function jsonSchemaTransform({ schema, url }: { schema: FastifySchema; url: string }): TransformResult {
   // First, apply the base transformation
   const transformed = baseJsonSchemaTransform({ schema, url });
 

@@ -19,13 +19,7 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: Fastif
         version: "1.0.0",
       },
       components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: "http",
-            scheme: "bearer",
-            bearerFormat: "JWT",
-          },
-        },
+        securitySchemes: {},
       },
     },
     // Enable Swagger on all routes by default

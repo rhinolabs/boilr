@@ -1,4 +1,4 @@
-import fastify, { type FastifyInstance, type FastifyPluginOptions } from "fastify";
+import fastify, { type FastifyPluginOptions } from "fastify";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
@@ -126,5 +126,5 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
     options: config.routes?.options,
   });
 
-  return decorateServer(typedApp as unknown as FastifyInstance, config);
+  return decorateServer(typedApp, config);
 }
