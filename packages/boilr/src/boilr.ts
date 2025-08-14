@@ -1,4 +1,4 @@
-import fastify, { type FastifyPluginOptions } from "fastify";
+import fastify from "fastify";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
@@ -83,12 +83,12 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   // Register plugins
   if (config.plugins?.helmet !== false) {
     const helmetOptions = config.plugins?.helmet === true ? {} : config.plugins?.helmet || {};
-    typedApp.register(plugins.helmet, helmetOptions as FastifyPluginOptions);
+    typedApp.register(plugins.helmet, helmetOptions);
   }
 
   if (config.plugins?.rateLimit !== false) {
     const rateLimitOptions = config.plugins?.rateLimit === true ? {} : config.plugins?.rateLimit || {};
-    typedApp.register(plugins.rateLimit, rateLimitOptions as FastifyPluginOptions);
+    typedApp.register(plugins.rateLimit, rateLimitOptions);
   }
 
   if (config.plugins?.cors !== false) {
@@ -121,7 +121,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   // Register routes
   typedApp.register(routerPlugin, {
-    routesDir: config.routes?.dir,
+    routesDir: config.routes?.dir || "./routes",
     prefix: config.routes?.prefix,
     options: config.routes?.options,
   });
