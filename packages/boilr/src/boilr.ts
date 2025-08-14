@@ -121,7 +121,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   // Register routes
   typedApp.register(routerPlugin, {
-    routesDir: config.routes?.dir || "./routes",
+    routesDir: config.routes?.dir,
     prefix: config.routes?.prefix,
     options: config.routes?.options,
   });
