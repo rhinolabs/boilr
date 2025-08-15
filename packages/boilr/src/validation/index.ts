@@ -13,11 +13,11 @@ type TransformResult = ReturnType<typeof baseJsonSchemaTransform> & {
 };
 
 type RouteContext = {
-    schema: FastifySchema;
-    url: string;
-    route: RouteOptions;
-    openapiObject?: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>;
-}
+  schema: FastifySchema;
+  url: string;
+  route: RouteOptions;
+  openapiObject?: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>;
+};
 
 // Extended transform function that handles Swagger tags
 function jsonSchemaTransform({ schema, url, route, openapiObject }: RouteContext): TransformResult {
