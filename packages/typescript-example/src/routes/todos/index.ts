@@ -11,7 +11,7 @@ export const schema = defineSchema({
           id: z.number(),
           title: z.string(),
           completed: z.boolean(),
-          createdAt: z.string().datetime(),
+          createdAt: z.iso.datetime(),
         }),
       ),
     },
@@ -27,7 +27,7 @@ export const schema = defineSchema({
         id: z.number(),
         title: z.string(),
         completed: z.boolean(),
-        createdAt: z.string().datetime(),
+        createdAt: z.iso.datetime(),
       }),
     },
   },
@@ -38,8 +38,8 @@ export const TodoSchema = z.object({
   id: z.number(),
   title: z.string(),
   completed: z.boolean(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().optional(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime().optional(),
 });
 
 // In-memory todo database

@@ -15,7 +15,7 @@
     "@rhinolabs/boilr-cli": "workspace:*",
     "fastify": "^5.0.0",
     "pino-pretty": "^13.0.0",
-    "zod": "^3.22.4"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
@@ -23,6 +23,13 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
-  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript"],
+  "keywords": [
+    "fastify",
+    "boilr",
+    "todos",
+    "crud",
+    "example",
+    "typescript"
+  ],
   "license": "MIT"
 }
