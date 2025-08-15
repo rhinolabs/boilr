@@ -225,9 +225,9 @@ export class HttpVersionNotSupportedException extends HttpException {
  * throw ValidationException.fromZodError(zodError);
  * ```
  */
-export class ValidationException extends UnprocessableEntityException {
-  constructor(message: string, errors?: ValidationError[], options?: ExceptionOptions) {
-    super(message, errors, options);
+export class ValidationException extends BadRequestException {
+  constructor(message: string, options?: ExceptionOptions) {
+    super(message, options);
     this.name = "ValidationError";
   }
 
@@ -239,8 +239,9 @@ export class ValidationException extends UnprocessableEntityException {
         value: issue.received,
       })) || [];
 
-    return new ValidationException("Validation failed", errors, {
+    return new ValidationException("Validation failed", {
       name: "ValidationError",
+      details: errors,
     });
   }
 }

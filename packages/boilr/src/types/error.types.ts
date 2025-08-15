@@ -75,14 +75,6 @@ export interface ExceptionConfig {
 }
 
 /**
- * Options for configuring validation middleware behavior.
- */
-export interface ValidationMiddlewareOptions {
-  /** Maximum number of validation errors to include in response (default: 10) */
-  errorLimit?: number;
-}
-
-/**
  * Represents a validation issue from JSON Schema or similar validators.
  */
 export interface ValidationIssue {

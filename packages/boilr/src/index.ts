@@ -42,8 +42,6 @@ export {
   ValidationException,
   defaultFormatter,
   createGlobalExceptionHandler,
-  createValidationHandler,
-  createValidationMiddleware,
   HttpStatusCode,
 } from "./exceptions/index.js";
 
