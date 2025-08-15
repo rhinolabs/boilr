@@ -1,9 +1,5 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
-import type {
-  ExceptionConfig,
-  ValidationErrorBase,
-  ZodError,
-} from "../types/error.types.js";
+import type { ExceptionConfig, ValidationErrorBase, ZodError } from "../types/error.types.js";
 import { HttpException, InternalServerErrorException, ValidationException } from "./exceptions.js";
 import { defaultFormatter } from "./formatter.js";
 
@@ -31,7 +27,7 @@ const createValidationException = (error: ValidationErrorBase) => {
 
     return new ValidationException("Validation failed", {
       name: "ValidationError",
-      details: errors
+      details: errors,
     });
   }
 
@@ -80,7 +76,7 @@ const logError = (exception: HttpException, request: FastifyRequest, originalErr
  */
 export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
   const { logErrors = true } = config || {};
-  
+
   return async (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
     let exception: HttpException;
 
@@ -93,7 +89,7 @@ export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
         name: "InternalServerError",
       });
     }
-    
+
     if (logErrors) {
       logError(exception, request, error);
     }
