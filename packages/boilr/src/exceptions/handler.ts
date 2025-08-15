@@ -2,7 +2,6 @@ import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import type {
   ExceptionConfig,
   ValidationErrorBase,
-  ValidationMiddlewareOptions,
   ZodError,
 } from "../types/error.types.js";
 import { HttpException, InternalServerErrorException, ValidationException } from "./exceptions.js";
@@ -30,37 +29,13 @@ const createValidationException = (error: ValidationErrorBase) => {
       value: issue.data,
     }));
 
-    return new ValidationException("Validation failed", errors, {
+    return new ValidationException("Validation failed", {
       name: "ValidationError",
+      details: errors
     });
   }
 
-  return new ValidationException(error.message || "Validation failed", undefined, {
-    name: "ValidationError",
-  });
-};
-
-const formatValidationError = (
-  error: ValidationErrorBase,
-  options: ValidationMiddlewareOptions,
-): ValidationException => {
-  if (error.name === "ZodError" && error.issues) {
-    return ValidationException.fromZodError(error as ZodError);
-  }
-
-  if (error.validation) {
-    const errors = error.validation.slice(0, options.errorLimit || 10).map((issue) => ({
-      field: issue.instancePath || issue.dataPath || "unknown",
-      message: issue.message || "Validation failed",
-      value: issue.data,
-    }));
-
-    return new ValidationException("Validation failed", errors, {
-      name: "ValidationError",
-    });
-  }
-
-  return new ValidationException(error.message || "Validation failed", undefined, {
+  return new ValidationException(error.message || "Validation failed", {
     name: "ValidationError",
   });
 };
@@ -105,7 +80,7 @@ const logError = (exception: HttpException, request: FastifyRequest, originalErr
  */
 export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
   const { logErrors = true } = config || {};
-
+  
   return async (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
     let exception: HttpException;
 
@@ -114,12 +89,11 @@ export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
     } else if (isValidationError(error)) {
       exception = createValidationException(error);
     } else {
-      const errorLike = error as Error;
-      exception = new InternalServerErrorException(errorLike.message || "Internal server error", {
+      exception = new InternalServerErrorException((error as Error).message || "Internal server error", {
         name: "InternalServerError",
       });
     }
-
+    
     if (logErrors) {
       logError(exception, request, error);
     }
@@ -128,76 +102,5 @@ export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
     const response = await formatter(exception, request, reply);
 
     return reply.code(exception.statusCode).send(response);
-  };
-};
-
-/**
- * Creates middleware that catches and formats validation errors.
- * This middleware transforms validation errors into ValidationException instances.
- *
- * @param options - Configuration options for validation handling
- * @returns Fastify middleware function
- *
- * @example
- * ```typescript
- * const middleware = createValidationMiddleware({ errorLimit: 5 });
- * app.addHook('preHandler', middleware);
- * ```
- */
-export const createValidationMiddleware = (options: ValidationMiddlewareOptions = {}) => {
-  const { errorLimit = 10 } = options;
-
-  return async (request: FastifyRequest, reply: FastifyReply, done: () => Promise<void>) => {
-    try {
-      await done();
-    } catch (error: unknown) {
-      if (isValidationError(error)) {
-        throw formatValidationError(error, { errorLimit });
-      }
-      throw error;
-    }
-  };
-};
-
-/**
- * Creates a handler function for processing validation errors.
- * Converts validation errors from various sources into ValidationException instances.
- *
- * @param options - Configuration options for validation handling
- * @returns Function that processes validation errors
- *
- * @example
- * ```typescript
- * const handler = createValidationHandler({ errorLimit: 5 });
- * try {
- *   // validation logic
- * } catch (error) {
- *   handler(error);
- * }
- * ```
- */
-export const createValidationHandler = (options: ValidationMiddlewareOptions = {}) => {
-  const { errorLimit = 10 } = options;
-
-  return (error: ValidationErrorBase) => {
-    if (error.name === "ZodError" && error.issues) {
-      throw ValidationException.fromZodError(error as ZodError);
-    }
-
-    if (error.validation) {
-      const errors = error.validation.slice(0, errorLimit).map((issue) => ({
-        field: issue.instancePath || issue.dataPath || "unknown",
-        message: issue.message || "Validation failed",
-        value: issue.data,
-      }));
-
-      throw new ValidationException("Validation failed", errors, {
-        name: "ValidationError",
-      });
-    }
-
-    throw new ValidationException(error.message || "Validation failed", undefined, {
-      name: "ValidationError",
-    });
   };
 };
