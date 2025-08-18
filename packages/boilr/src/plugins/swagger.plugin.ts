@@ -2,6 +2,7 @@ import swagger, { type FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
+import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
  * Swagger documentation plugin that automatically generates OpenAPI specs and provides
@@ -27,7 +28,7 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance, options: Fastif
     hideUntagged: false,
   };
 
-  const mergedOptions = { ...defaultOptions, ...options };
+  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
 
   // Register swagger schema generator
   await fastify.register(swagger, mergedOptions);

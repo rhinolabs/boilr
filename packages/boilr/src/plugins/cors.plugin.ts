@@ -1,6 +1,7 @@
 import cors, { type FastifyCorsOptions } from "@fastify/cors";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
+import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
  * CORS (Cross-Origin Resource Sharing) plugin that configures cross-origin request
@@ -9,13 +10,13 @@ import fp from "fastify-plugin";
  * For configuration options, see: https://www.npmjs.com/package/@fastify/cors
  */
 export const corsPlugin = fp(async (fastify: FastifyInstance, options: FastifyCorsOptions = {}) => {
-  const defaultOptions = {
+  const defaultOptions: FastifyCorsOptions = {
     origin: true,
     methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
     credentials: true,
   };
 
-  const mergedOptions = { ...defaultOptions, ...options };
+  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
 
   await fastify.register(cors, mergedOptions);
 });

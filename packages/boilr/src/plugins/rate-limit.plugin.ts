@@ -1,6 +1,7 @@
 import rateLimit from "@fastify/rate-limit";
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
  * Context information provided to rate limit error response builder.
@@ -29,7 +30,7 @@ export const rateLimitPlugin = fp(async (fastify: FastifyInstance, options: Fast
     }),
   };
 
-  const mergedOptions = { ...defaultOptions, ...options };
+  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
 
   await fastify.register(rateLimit, mergedOptions);
 });

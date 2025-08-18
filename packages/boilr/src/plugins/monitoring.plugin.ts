@@ -1,6 +1,7 @@
 import fastifyMonitor, { type PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
+import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
  * Development performance monitoring plugin that automatically tracks request timing
@@ -26,7 +27,7 @@ export const monitorPlugin = fp(async (fastify: FastifyInstance, options: Perfor
     ],
   };
 
-  const mergedOptions: PerformanceMonitorOptions = { ...defaultOptions, ...options };
+  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
 
   await fastify.register(fastifyMonitor, mergedOptions);
 });
