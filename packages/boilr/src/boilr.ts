@@ -62,8 +62,6 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   const app = fastify(config.fastify);
 
-  app.decorate("boilrConfig", config);
-
   // Set up global exception handler with configuration support
   const exceptionHandler = createGlobalExceptionHandler({
     formatter: config.exceptions?.formatter,
@@ -120,7 +118,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   }
 
   // Register routes
-  typedApp.register(routerPlugin, config);
+  typedApp.register(routerPlugin, config.routes || {});
 
   return decorateServer(typedApp, config);
 }

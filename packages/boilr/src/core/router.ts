@@ -2,25 +2,20 @@ import path from "node:path";
 import { fastifyFileRoutes } from "@rhinolabs/fastify-file-routes";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
-import type { BoilrConfig } from "./config.js";
+import type { BoilrRoutesConfig } from "./config.js";
 
 /**
  * The Next.js style router plugin that uses @rhinolabs/fastify-file-routes
  */
-export const routerPlugin = fp<BoilrConfig>(async (fastify: FastifyInstance, config: BoilrConfig) => {
-  // Store boilr config on fastify instance for access in schema transforms
-  if (!fastify.hasDecorator("boilrConfig")) {
-    fastify.decorate("boilrConfig", config);
-  }
-
+export const routerPlugin = fp<BoilrRoutesConfig>(async (fastify: FastifyInstance, options: BoilrRoutesConfig) => {
   await fastify.register(fastifyFileRoutes, {
-    routesDir: path.isAbsolute(config.routes?.dir || "")
-      ? config.routes?.dir || ""
-      : path.join(process.cwd(), config.routes?.dir || "./routes"),
-    prefix: config.routes?.prefix || "",
+    routesDir: path.isAbsolute(options?.dir || "")
+      ? options?.dir || ""
+      : path.join(process.cwd(), options?.dir || "./routes"),
+    prefix: options?.prefix || "",
     options: {
-      ignore: config.routes?.options?.ignore,
-      extensions: config.routes?.options?.extensions,
+      ignore: options?.options?.ignore,
+      extensions: options?.options?.extensions,
     },
   });
 });
