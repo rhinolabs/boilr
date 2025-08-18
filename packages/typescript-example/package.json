@@ -1,8 +1,13 @@
 {
   "name": "typescript-example",
   "version": "0.1.0",
-  "private": true,
   "description": "TypeScript example of a Todo CRUD using @rhinolabs/boilr",
+  "author": {
+    "name": "Rhinolabs Agency",
+    "email": "hello@rhinolabs.agency",
+    "url": "https://rhinolabs.agency"
+  },
+  "private": true,
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
@@ -10,6 +15,7 @@
     "start": "boilr start",
     "dev": "boilr dev"
   },
+  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript", "demo", "api"],
   "dependencies": {
     "@rhinolabs/boilr": "workspace:*",
     "@rhinolabs/boilr-cli": "workspace:*",
@@ -23,6 +29,5 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
-  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript"],
   "license": "MIT"
 }

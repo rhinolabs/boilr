@@ -2,6 +2,11 @@
   "name": "@rhinolabs/boilr",
   "version": "0.2.0",
   "description": "Convention-based Fastify framework with batteries included",
+  "author": {
+    "name": "Rhinolabs Agency",
+    "email": "hello@rhinolabs.agency",
+    "url": "https://rhinolabs.agency"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,6 +17,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --apply ."
   },
+  "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod", "typescript", "swagger", "openapi", "validation"],
   "dependencies": {
     "@fastify/autoload": "^6.3.0",
     "@fastify/cors": "^11.0.1",
@@ -33,6 +39,5 @@
   "peerDependencies": {
     "zod": "^4.0.0"
   },
-  "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod"],
   "license": "MIT"
 }
