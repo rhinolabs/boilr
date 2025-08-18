@@ -2,12 +2,18 @@
   "name": "@rhinolabs/boilr-cli",
   "version": "0.1.0",
   "description": "CLI tool for Boilr framework",
+  "author": {
+    "name": "Rhinolabs Agency",
+    "email": "hello@rhinolabs.agency",
+    "url": "https://rhinolabs.agency"
+  },
   "type": "module",
   "exports": "./dist/index.js",
   "bin": {
     "boilr": "./bin/run.js"
   },
   "files": ["/bin", "/dist", "/src/templates"],
+  "keywords": ["cli", "boilr", "framework", "fastify", "tool", "generator", "scaffolding", "typescript"],
   "scripts": {
     "build": "rm -rf dist && tsc && cp -R src/templates dist",
     "dev": "tsc --watch"
@@ -24,7 +30,5 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["cli", "boilr", "framework"],
-  "author": "",
   "license": "MIT"
 }
