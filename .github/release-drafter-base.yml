@@ -5,6 +5,7 @@ version-resolver:
   minor:
     labels:
       - "enhancement"
+      - "feature"
   default: "patch"
 
 template: |
