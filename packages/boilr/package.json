@@ -11,13 +11,24 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist/**/*"],
+  "keywords": [
+    "fastify",
+    "framework",
+    "api",
+    "rest",
+    "conventions",
+    "zod",
+    "typescript",
+    "swagger",
+    "openapi",
+    "validation"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "biome check .",
     "lint:fix": "biome check --apply ."
   },
-  "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod", "typescript", "swagger", "openapi", "validation"],
   "dependencies": {
     "@fastify/autoload": "^6.3.0",
     "@fastify/cors": "^11.0.1",

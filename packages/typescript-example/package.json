@@ -10,12 +10,12 @@
   "private": true,
   "main": "dist/server.js",
   "type": "module",
+  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript", "demo", "api"],
   "scripts": {
     "build": "boilr build",
     "start": "boilr start",
     "dev": "boilr dev"
   },
-  "keywords": ["fastify", "boilr", "todos", "crud", "example", "typescript", "demo", "api"],
   "dependencies": {
     "@rhinolabs/boilr": "workspace:*",
     "@rhinolabs/boilr-cli": "workspace:*",

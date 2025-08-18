@@ -13,11 +13,11 @@
     "boilr": "./bin/run.js"
   },
   "files": ["/bin", "/dist", "/src/templates"],
+  "keywords": ["cli", "boilr", "framework", "fastify", "tool", "generator", "scaffolding", "typescript"],
   "scripts": {
     "build": "rm -rf dist && tsc && cp -R src/templates dist",
     "dev": "tsc --watch"
   },
-  "keywords": ["cli", "boilr", "framework", "fastify", "tool", "generator", "scaffolding", "typescript"],
   "dependencies": {
     "commander": "^14.0.0",
     "dotenv": "^16.4.5",

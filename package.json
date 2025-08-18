@@ -8,6 +8,7 @@
     "url": "https://rhinolabs.agency"
   },
   "private": true,
+  "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod", "monorepo", "typescript", "boilerplate"],
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel dev",
@@ -15,8 +16,6 @@
     "lint:fix": "biome check . --fix --unsafe",
     "format": "biome format . --fix"
   },
-  "workspaces": ["packages/*"],
-  "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod", "monorepo", "typescript", "boilerplate"],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^20.15.20",
