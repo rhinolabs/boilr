@@ -7,7 +7,7 @@ import { applyGlobalMiddleware } from "./middleware/index.js";
 import { plugins } from "./plugins/index.js";
 import {
   type ZodTypeProvider,
-  jsonSchemaTransform,
+  createJsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
 } from "./validation/index.js";
@@ -101,7 +101,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
     let swaggerOptions = config.plugins?.swagger === true ? {} : config.plugins?.swagger || {};
     swaggerOptions = {
       ...swaggerOptions,
-      transform: jsonSchemaTransform,
+      transform: createJsonSchemaTransform(config),
     };
 
     typedApp.register(plugins.swagger, swaggerOptions);
@@ -120,11 +120,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   }
 
   // Register routes
-  typedApp.register(routerPlugin, {
-    routesDir: config.routes?.dir,
-    prefix: config.routes?.prefix,
-    options: config.routes?.options,
-  });
+  typedApp.register(routerPlugin, config);
 
   return decorateServer(typedApp, config);
 }

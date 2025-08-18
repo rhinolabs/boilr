@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import type { ZodType } from "zod";
 import type { HttpException } from "../exceptions/index.js";
 
 /**
@@ -72,6 +73,37 @@ export interface ExceptionConfig {
   formatter?: ErrorFormatter;
   /** Whether to log errors to console (default: true) */
   logErrors?: boolean;
+  /**
+   * HTTP status codes for which to automatically include default error response schemas in all routes.
+   * Provide an array of status codes to include default error schemas for, or false to disable completely.
+   *
+   * @default [500] - Only include 500 Internal Server Error by default
+   *
+   * @example
+   * ```typescript
+   * defaultErrorStatusCodes: [400, 401, 403, 404, 500] // Include multiple error schemas
+   * defaultErrorStatusCodes: [] // Disable all default error schemas
+   * defaultErrorStatusCodes: false // Disable all default error schemas
+   * defaultErrorStatusCodes: [500] // Only server errors (default)
+   * ```
+   */
+  defaultErrorStatusCodes?: number[] | false;
+  /**
+   * Zod schema that matches the structure returned by the custom formatter.
+   * If not provided, uses the default error response schema.
+   * Required when using a custom formatter to ensure Swagger documentation matches the actual response structure.
+   *
+   * @example
+   * ```typescript
+   * formatterSchema: z.object({
+   *   success: z.boolean(),
+   *   error: z.string(),
+   *   message: z.string(),
+   *   timestamp: z.string()
+   * })
+   * ```
+   */
+  formatterSchema?: ZodType<unknown>;
 }
 
 /**

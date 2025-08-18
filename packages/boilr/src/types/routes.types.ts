@@ -131,6 +131,20 @@ export interface MethodSchema {
   tags?: string[];
 
   /**
+   * HTTP status codes for which to include default error response schemas for this method.
+   * Overrides global configuration when specified. Use false or empty array to disable completely.
+   *
+   * @example
+   * ```typescript
+   * defaultErrorStatusCodes: [] // Disable all default error schemas for this method
+   * defaultErrorStatusCodes: false // Disable all default error schemas for this method
+   * defaultErrorStatusCodes: [401, 500] // Only include 401 and 500 schemas
+   * defaultErrorStatusCodes: [400, 401, 403, 404, 500] // Include common error schemas
+   * ```
+   */
+  defaultErrorStatusCodes?: number[] | false;
+
+  /**
    * Route parameter validation schema specific to this method.
    * This overrides or extends the common params schema defined at the route level.
    *

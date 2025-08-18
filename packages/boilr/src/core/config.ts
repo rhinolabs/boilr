@@ -258,6 +258,7 @@ export const defaultConfig: BoilrConfig = {
   validation: true,
   exceptions: {
     logErrors: true,
+    defaultErrorStatusCodes: [500],
   },
 };
 
