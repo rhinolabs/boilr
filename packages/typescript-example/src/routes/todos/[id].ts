@@ -32,7 +32,7 @@ export const schema = defineSchema({
     }),
     response: {
       200: TodoSchema.extend({
-        updatedAt: z.string().datetime(),
+        updatedAt: z.iso.datetime(),
       }),
       404: z.object({
         error: z.string(),

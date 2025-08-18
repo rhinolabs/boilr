@@ -23,13 +23,15 @@
     "@rhinolabs/fastify-monitor": "^0.2.0",
     "fastify": "^5.3.3",
     "fastify-plugin": "^5.0.1",
-    "fastify-type-provider-zod": "^4.0.2",
-    "zod": "^3.22.4",
-    "zod-to-json-schema": "^3.22.4"
+    "fastify-type-provider-zod": "^5.0.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "openapi-types": "^12.1.3"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
   },
   "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod"],
   "license": "MIT"
