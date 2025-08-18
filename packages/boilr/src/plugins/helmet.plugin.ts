@@ -1,6 +1,7 @@
 import helmet from "@fastify/helmet";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
+import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
  * Helmet security plugin that adds essential HTTP security headers to protect against
@@ -20,7 +21,7 @@ export const helmetPlugin = fp(async (fastify: FastifyInstance, options: Fastify
     },
   };
 
-  const mergedOptions = { ...defaultOptions, ...options };
+  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
 
   await fastify.register(helmet, mergedOptions);
 });

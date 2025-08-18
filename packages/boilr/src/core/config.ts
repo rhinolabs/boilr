@@ -5,6 +5,7 @@ import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
 import type { ExceptionConfig } from "../types/error.types.js";
+import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 export interface BoilrServerConfig {
   /**
@@ -278,13 +279,5 @@ export const defaultConfig: BoilrConfig = {
  * ```
  */
 export function mergeConfig(userConfig: BoilrConfig = {}): BoilrConfig {
-  return {
-    server: { ...defaultConfig.server, ...userConfig.server },
-    routes: { ...defaultConfig.routes, ...userConfig.routes },
-    plugins: { ...defaultConfig.plugins, ...userConfig.plugins },
-    middleware: { ...defaultConfig.middleware, ...userConfig.middleware },
-    validation: userConfig.validation !== undefined ? userConfig.validation : defaultConfig.validation,
-    exceptions: { ...defaultConfig.exceptions, ...userConfig.exceptions },
-    fastify: userConfig.fastify || {},
-  };
+  return mergeConfigRecursively(defaultConfig, userConfig);
 }
