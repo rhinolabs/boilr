@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { ZodType } from "zod";
+import type { ZodType, z } from "zod";
 import type { HttpException } from "../exceptions/index.js";
 
 /**
@@ -68,9 +68,9 @@ export type ErrorFormatter<T = ErrorResponse> = (
 /**
  * Global configuration for exception handling in Boilr applications.
  */
-export interface ExceptionConfig {
+export interface ExceptionConfig<TSchema extends ZodType = ZodType<ErrorResponse>> {
   /** Custom error formatter function to control response structure */
-  formatter?: ErrorFormatter<unknown>;
+  formatter?: ErrorFormatter<z.infer<TSchema>>;
   /** Whether to log errors to console (default: true) */
   logErrors?: boolean;
   /**
@@ -89,21 +89,29 @@ export interface ExceptionConfig {
    */
   defaultErrorStatusCodes?: number[] | false;
   /**
-   * Zod schema that matches the structure returned by the custom formatter.
+   * Zod schema that defines the structure returned by the custom formatter.
+   * The formatter's return type will be automatically inferred from this schema.
    * If not provided, uses the default error response schema.
-   * Required when using a custom formatter to ensure Swagger documentation matches the actual response structure.
    *
    * @example
    * ```typescript
-   * formatterSchema: z.object({
-   *   success: z.boolean(),
-   *   error: z.string(),
-   *   message: z.string(),
-   *   timestamp: z.string()
-   * })
+   * const config: ExceptionConfig<typeof customSchema> = {
+   *   formatterSchema: z.object({
+   *     success: z.boolean(),
+   *     error: z.string(),
+   *     message: z.string(),
+   *     timestamp: z.string()
+   *   }),
+   *   formatter: (exception, request, reply) => ({
+   *     success: false,
+   *     error: exception.name,
+   *     message: exception.message,
+   *     timestamp: new Date().toISOString()
+   *   })
+   * }
    * ```
    */
-  formatterSchema?: ZodType<unknown>;
+  formatterSchema?: TSchema;
 }
 
 /**
