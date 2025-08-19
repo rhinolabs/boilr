@@ -9,7 +9,7 @@ import {
 import type { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
 import type { BoilrConfig } from "../core/config.js";
 import { enhanceSchemaWithDefaultError } from "../schemas/enhancer.js";
-import type { RouteSchema } from "../types/routes.types.js";
+import type { MethodSchema } from "../types/routes.types.js";
 
 type TransformResult = ReturnType<typeof baseJsonSchemaTransform> & {
   tags?: string[];
@@ -33,8 +33,8 @@ export const createJsonSchemaTransform = (config: BoilrConfig) => {
 
     // Enhance schema with error responses if it's a RouteSchema
     let enhancedSchema = schema;
-    if (schema && typeof schema === "object" && isRouteSchema(schema)) {
-      enhancedSchema = enhanceSchemaWithDefaultError(schema as RouteSchema, config.exceptions);
+    if (schema && typeof schema === "object") {
+      enhancedSchema = enhanceSchemaWithDefaultError(schema as MethodSchema, config.exceptions);
     }
 
     // Apply the base transformation
@@ -58,17 +58,6 @@ export const createJsonSchemaTransform = (config: BoilrConfig) => {
 
     return transformed;
   };
-};
-
-/**
- * Type guard to check if a schema object is a RouteSchema
- */
-export const isRouteSchema = (schema: unknown): schema is RouteSchema => {
-  if (!schema || typeof schema !== "object") return false;
-
-  // Check if it has any HTTP method properties
-  const httpMethods = ["get", "post", "put", "patch", "delete", "head", "options"];
-  return httpMethods.some((method) => method in schema);
 };
 
 export { ZodTypeProvider, validatorCompiler, serializerCompiler, createJsonSchemaTransformObject };
