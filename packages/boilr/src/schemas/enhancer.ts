@@ -1,6 +1,6 @@
 import type { ZodType } from "zod";
 import type { ExceptionConfig } from "../types/error.types.js";
-import type { HttpMethod, MethodSchema, RouteSchema } from "../types/routes.types.js";
+import type { MethodSchema } from "../types/routes.types.js";
 import { DEFAULT_ERROR_CODES, createMultipleErrorSchemas } from "./error.schema.js";
 
 /**
@@ -76,7 +76,7 @@ const enhanceMethodSchema = (
  * });
  * ```
  */
-export const enhanceSchemaWithDefaultError = (schema: RouteSchema, config?: ExceptionConfig): RouteSchema => {
+export const enhanceSchemaWithDefaultError = (schema: MethodSchema, config?: ExceptionConfig): MethodSchema => {
   // Get status codes from config or use defaults
   const statusCodes = config?.defaultErrorStatusCodes ?? DEFAULT_ERROR_CODES;
 
@@ -90,18 +90,6 @@ export const enhanceSchemaWithDefaultError = (schema: RouteSchema, config?: Exce
   // Create error schemas with optional custom schema from config
   const customSchema = config?.formatter && config?.formatterSchema ? config.formatterSchema : undefined;
   const errorSchemas = createMultipleErrorSchemas(validStatusCodes, customSchema);
-  const enhancedSchema = { ...schema };
 
-  // List of HTTP methods to process
-  const httpMethods: HttpMethod[] = ["get", "post", "put", "patch", "delete", "head", "options"];
-
-  // Process each HTTP method if it exists in the schema
-  for (const method of httpMethods) {
-    const methodSchema = enhancedSchema[method];
-    if (methodSchema) {
-      enhancedSchema[method] = enhanceMethodSchema(methodSchema, errorSchemas, validStatusCodes);
-    }
-  }
-
-  return enhancedSchema;
+  return enhanceMethodSchema(schema, errorSchemas, validStatusCodes);
 };
