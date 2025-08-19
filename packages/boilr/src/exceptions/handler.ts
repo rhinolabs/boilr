@@ -9,7 +9,7 @@ const isValidationError = (error: unknown): error is ValidationErrorBase => {
     typedError.validation ||
     typedError.validationContext ||
     typedError.name === "ZodError" ||
-    typedError.code?.startsWith("FST_ERR_VALIDATION")
+    typedError.code?.startsWith?.("FST_ERR_VALIDATION")
   );
 };
 
