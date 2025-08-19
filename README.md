@@ -21,7 +21,7 @@ Boilr simplifies building TypeScript APIs with Fastify by providing:
 
 - **Convention-based file routing** with Next.js-style patterns
 - **Integrated schema validation** using Zod with automatic type inference
-- **Automatic OpenAPI documentation** generation from Zod schemas
+- **Automatic OpenAPI documentation** generation from Zod schemas with error response schemas
 - **Built-in error handling** with comprehensive exception classes and automatic HTTP status codes
 - **Preconfigured security and performance optimizations** (CORS, Helmet, Rate limiting)
 - **Developer-friendly tooling** for rapid development and deployment
@@ -125,7 +125,7 @@ throw new ValidationException('Invalid data', validationErrors);
 
 ### 📚 Automatic API Documentation
 
-Your OpenAPI/Swagger documentation is automatically generated from your Zod schemas:
+Your OpenAPI/Swagger documentation is automatically generated from your Zod schemas, including automatic error response schemas:
 
 ```typescript
 // server.ts

@@ -7,6 +7,9 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 import type { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
+import type { BoilrConfig } from "../core/config.js";
+import { enhanceSchemaWithDefaultError } from "../schemas/enhancer.js";
+import type { MethodSchema } from "../types/routes.types.js";
 
 type TransformResult = ReturnType<typeof baseJsonSchemaTransform> & {
   tags?: string[];
@@ -19,25 +22,42 @@ type RouteContext = {
   openapiObject?: Partial<OpenAPIV3.Document | OpenAPIV3_1.Document>;
 };
 
-// Extended transform function that handles Swagger tags
-function jsonSchemaTransform({ schema, url, route, openapiObject }: RouteContext): TransformResult {
-  if (!openapiObject) {
-    throw new Error("openapiObject is missing in the transform context. This should not happen.");
-  }
-  // First, apply the base transformation
-  const transformed = baseJsonSchemaTransform({ schema, url, route, openapiObject });
-  // Check if the schema has tags and include them in the transformation
-  if (schema && typeof schema === "object" && "tags" in schema) {
-    const tags = schema.tags;
-    if (Array.isArray(tags) && tags.length > 0) {
-      return {
-        ...transformed,
-        tags,
-      };
+/**
+ * Creates a jsonSchemaTransform function with access to Boilr configuration
+ */
+export const createJsonSchemaTransform = (config: BoilrConfig) => {
+  return function jsonSchemaTransform({ schema, url, route, openapiObject }: RouteContext): TransformResult {
+    if (!openapiObject) {
+      throw new Error("openapiObject is missing in the transform context. This should not happen.");
     }
-  }
 
-  return transformed;
-}
+    // Enhance schema with error responses if it's a RouteSchema
+    let enhancedSchema = schema;
+    if (schema && typeof schema === "object") {
+      enhancedSchema = enhanceSchemaWithDefaultError(schema as MethodSchema, config.exceptions);
+    }
 
-export { ZodTypeProvider, validatorCompiler, serializerCompiler, createJsonSchemaTransformObject, jsonSchemaTransform };
+    // Apply the base transformation
+    const transformed = baseJsonSchemaTransform({
+      schema: enhancedSchema,
+      url,
+      route,
+      openapiObject,
+    });
+
+    // Check if the schema has tags and include them in the transformation
+    if (enhancedSchema && typeof enhancedSchema === "object" && "tags" in enhancedSchema) {
+      const tags = enhancedSchema.tags;
+      if (Array.isArray(tags) && tags.length > 0) {
+        return {
+          ...transformed,
+          tags,
+        };
+      }
+    }
+
+    return transformed;
+  };
+};
+
+export { ZodTypeProvider, validatorCompiler, serializerCompiler, createJsonSchemaTransformObject };

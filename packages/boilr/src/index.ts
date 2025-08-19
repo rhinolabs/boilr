@@ -12,7 +12,7 @@ export {
   ZodTypeProvider,
   validatorCompiler,
   serializerCompiler,
-  jsonSchemaTransform,
+  createJsonSchemaTransform,
   createJsonSchemaTransformObject,
 } from "./validation/index.js";
 
@@ -79,3 +79,5 @@ export {
   getTypedBody,
   getCatchAllParam,
 } from "./utils/routes.utils.js";
+
+export { DefaultErrorSchema } from "./schemas/error.schema.js";

@@ -13,7 +13,7 @@ A convention-based Fastify framework with batteries included. Boilr brings Next.
 - **🗂️ File-based routing** - Next.js style API routes with dynamic parameters and catch-all support
 - **🛡️ Type-safe validation** - First-class Zod integration with TypeScript type inference and automatic request/response validation
 - **🚨 Error handling** - Comprehensive HTTP exception classes with structured responses and automatic validation error conversion
-- **📚 Auto-generated API docs** - Swagger/OpenAPI documentation automatically generated from your Zod schemas
+- **📚 Auto-generated API docs** - Swagger/OpenAPI documentation automatically generated from your Zod schemas with automatic error response schemas
 - **🔒 Security & Performance** - Pre-configured CORS, Helmet security headers, and rate limiting
 - **🧩 Plugin system** - Built on Fastify's powerful plugin architecture with easy extensibility
 - **🛠️ Developer experience** - CLI tools, hot-reload development server, and comprehensive TypeScript support
@@ -193,6 +193,74 @@ const app = createApp({
   }
 });
 ```
+
+## Automatic Error Schema Generation
+
+Boilr automatically adds error response schemas to your Swagger documentation. By default, all routes include a 500 (Internal Server Error) response schema, but you can customize this behavior:
+
+### Global Configuration
+
+```typescript
+const app = createApp({
+  exceptions: {
+    // Customize which error status codes to include by default
+    defaultErrorStatusCodes: [400, 401, 404, 500],
+    
+    // Custom error response format
+    formatter: (exception, request, reply) => ({
+      success: false,
+      error: exception.message,
+      code: exception.statusCode
+    }),
+    
+    // Custom error schema for documentation
+    formatterSchema: z.object({
+      success: z.boolean(),
+      error: z.string(),
+      code: z.number()
+    })
+  }
+});
+```
+
+### Per-Route Configuration
+
+Override error schemas for specific routes by adding `defaultErrorStatusCodes` to your method schemas:
+
+```typescript
+export const schema = defineSchema({
+  get: {
+    // Include specific error codes for this endpoint
+    defaultErrorStatusCodes: [401, 403, 404],
+    response: {
+      200: z.object({ data: z.string() })
+    }
+  },
+  post: {
+    // Disable automatic error schemas for this method
+    defaultErrorStatusCodes: false,
+    body: z.object({ name: z.string() }),
+    response: {
+      201: z.object({ id: z.number() })
+    }
+  }
+});
+```
+
+### Default Error Schema
+
+The default error response schema matches the built-in error format:
+
+```typescript
+{
+  status: number;     // HTTP status code
+  message: string;    // Error message
+  error: string;      // Error type (e.g., "NotFound")
+  details?: unknown;  // Optional error details
+}
+```
+
+This ensures your API documentation always includes comprehensive error response information, making it easier for API consumers to understand and handle errors properly.
 
 ## Error Handling
 
