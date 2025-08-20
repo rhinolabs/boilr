@@ -1,4 +1,5 @@
 import fastify from "fastify";
+import type { ZodType } from "zod";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
@@ -57,7 +58,9 @@ import {
  * await app.start();
  * ```
  */
-export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
+export function createApp<TSchema extends ZodType>(
+  userConfig: BoilrConfig<TSchema> = {} as BoilrConfig<TSchema>,
+): BoilrInstance {
   const config = mergeConfig(userConfig);
 
   const app = fastify(config.fastify);
