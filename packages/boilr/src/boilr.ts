@@ -44,7 +44,7 @@ import {
  *   },
  *   exceptions: {
  *     formatter: (exception, request, reply) => ({
- *       status: exception.statusCode,
+ *       statusCode: exception.statusCode,
  *       message: exception.message,
  *       error: exception.name.replace("Exception", ""),
  *       details: exception.details

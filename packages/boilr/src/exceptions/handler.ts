@@ -41,7 +41,7 @@ const logError = (exception: HttpException, request: FastifyRequest, originalErr
     timestamp: new Date().toISOString(),
     level: exception.statusCode >= 500 ? "error" : "warn",
     message: exception.message,
-    status: exception.statusCode,
+    statusCode: exception.statusCode,
     path: request.url,
     method: request.method,
     details: exception.details,
