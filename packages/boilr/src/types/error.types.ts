@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { ZodType } from "zod";
+import type { ZodType, z } from "zod";
 import type { HttpException } from "../exceptions/index.js";
 
 /**
@@ -59,18 +59,18 @@ export interface ValidationError {
  * });
  * ```
  */
-export type ErrorFormatter = (
+export type ErrorFormatter<T = ErrorResponse> = (
   exception: HttpException,
   request: FastifyRequest,
   reply: FastifyReply,
-) => ErrorResponse | Promise<ErrorResponse>;
+) => T | Promise<T>;
 
 /**
  * Global configuration for exception handling in Boilr applications.
  */
-export interface ExceptionConfig {
+export interface ExceptionConfig<TSchema extends ZodType = ZodType<unknown>> {
   /** Custom error formatter function to control response structure */
-  formatter?: ErrorFormatter;
+  formatter?:  ErrorFormatter<z.infer<TSchema>>;
   /** Whether to log errors to console (default: true) */
   logErrors?: boolean;
   /**
@@ -103,7 +103,7 @@ export interface ExceptionConfig {
    * })
    * ```
    */
-  formatterSchema?: ZodType<unknown>;
+  formatterSchema?: TSchema;
 }
 
 /**

@@ -11,6 +11,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "./validation/index.js";
+import { ZodType } from "zod";
 
 /**
  * Creates a new Boilr application instance with the specified configuration.
@@ -57,7 +58,7 @@ import {
  * await app.start();
  * ```
  */
-export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
+export function createApp<TSchema extends ZodType>(userConfig: BoilrConfig<TSchema> = {} as BoilrConfig<TSchema>): BoilrInstance {
   const config = mergeConfig(userConfig);
 
   const app = fastify(config.fastify);

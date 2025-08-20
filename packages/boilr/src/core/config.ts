@@ -4,6 +4,7 @@ import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
+import type { ZodType } from "zod";
 import type { ExceptionConfig } from "../types/error.types.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 
@@ -189,7 +190,7 @@ export interface BoilrMiddlewareConfig {
  *    };
  * ```
  */
-export interface BoilrConfig {
+export interface BoilrConfig<TSchema extends ZodType = ZodType<unknown>> {
   /**
    * Server configuration options.
    */
@@ -220,7 +221,7 @@ export interface BoilrConfig {
    * Exception handling configuration for HTTP errors and validation.
    * Configure custom error formatters, logging, and validation behavior.
    */
-  exceptions?: ExceptionConfig;
+  exceptions?: ExceptionConfig<TSchema>;
 
   /**
    * Raw Fastify server options.
