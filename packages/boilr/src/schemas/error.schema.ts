@@ -2,12 +2,12 @@ import { z } from "zod";
 
 /**
  * Default error response schema structure that matches the default error formatter.
- * This is the base schema used for all error status codes.
+ * This is the base schema used for all error statusCode codes.
  *
  * @example
  * ```typescript
  * {
- *   status: 500,
+ *   statusCode: 500,
  *   message: "Internal server error",
  *   error: "InternalServerError",
  *   details: undefined
@@ -15,7 +15,7 @@ import { z } from "zod";
  * ```
  */
 export const DefaultErrorSchema = z.object({
-  status: z.number(),
+  statusCode: z.number(),
   message: z.string(),
   error: z.string(),
   details: z.unknown().optional(),
@@ -36,7 +36,7 @@ export const DefaultErrorSchema = z.object({
  */
 export const createErrorResponseSchema = (statusCode: number) => {
   return z.object({
-    status: z.literal(statusCode),
+    statusCode: z.literal(statusCode),
     message: z.string(),
     error: z.string(),
     details: z.unknown().optional(),
