@@ -15,7 +15,7 @@ import type { HttpException } from "./exceptions.js";
  * ```typescript
  * // Response format:
  * {
- *   status: 404,
+ *   statusCode: 404,
  *   message: "User not found",
  *   error: "NotFound",
  *   details: { userId: "123" }
@@ -27,7 +27,7 @@ export const defaultFormatter: ErrorFormatter = (
   request: FastifyRequest,
   reply: FastifyReply,
 ): ErrorResponse => ({
-  status: exception.statusCode,
+  statusCode: exception.statusCode,
   message: exception.message,
   error: exception.name,
   details: exception.details,

@@ -1,4 +1,5 @@
 import fastify from "fastify";
+import type { ZodType } from "zod";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
@@ -11,7 +12,6 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "./validation/index.js";
-import { ZodType } from "zod";
 
 /**
  * Creates a new Boilr application instance with the specified configuration.
@@ -45,7 +45,7 @@ import { ZodType } from "zod";
  *   },
  *   exceptions: {
  *     formatter: (exception, request, reply) => ({
- *       status: exception.statusCode,
+ *       statusCode: exception.statusCode,
  *       message: exception.message,
  *       error: exception.name.replace("Exception", ""),
  *       details: exception.details
@@ -58,7 +58,9 @@ import { ZodType } from "zod";
  * await app.start();
  * ```
  */
-export function createApp<TSchema extends ZodType>(userConfig: BoilrConfig<TSchema> = {} as BoilrConfig<TSchema>): BoilrInstance {
+export function createApp<TSchema extends ZodType>(
+  userConfig: BoilrConfig<TSchema> = {} as BoilrConfig<TSchema>,
+): BoilrInstance {
   const config = mergeConfig(userConfig);
 
   const app = fastify(config.fastify);

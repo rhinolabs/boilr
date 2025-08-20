@@ -8,7 +8,7 @@ import type { HttpException } from "../exceptions/index.js";
  */
 export interface ErrorResponse {
   /** HTTP status code (e.g., 400, 404, 500) */
-  status: number;
+  statusCode: number;
   /** Human-readable error message */
   message: string;
   /** Error type name (e.g., "BadRequest", "NotFound") */
@@ -52,7 +52,7 @@ export interface ValidationError {
  * @example
  * ```typescript
  * const customFormatter: ErrorFormatter = (exception, request, reply) => ({
- *   status: exception.statusCode,
+ *   statusCode: exception.statusCode,
  *   message: exception.message,
  *   error: exception.name.replace("Exception", ""),
  *   details: exception.details
@@ -70,7 +70,7 @@ export type ErrorFormatter<T = ErrorResponse> = (
  */
 export interface ExceptionConfig<TSchema extends ZodType = ZodType<unknown>> {
   /** Custom error formatter function to control response structure */
-  formatter?:  ErrorFormatter<z.infer<TSchema>>;
+  formatter?: ErrorFormatter<z.infer<TSchema>>;
   /** Whether to log errors to console (default: true) */
   logErrors?: boolean;
   /**

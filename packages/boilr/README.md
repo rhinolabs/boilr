@@ -253,7 +253,7 @@ The default error response schema matches the built-in error format:
 
 ```typescript
 {
-  status: number;     // HTTP status code
+  statusCode: number;     // HTTP status code
   message: string;    // Error message
   error: string;      // Error type (e.g., "NotFound")
   details?: unknown;  // Optional error details
@@ -332,7 +332,7 @@ All exceptions are automatically formatted into a consistent JSON response:
 
 ```json
 {
-  "status": 404,
+  "statusCode": 404,
   "message": "User not found",
   "error": "NotFound",
   "details": { "userId": "123" }
@@ -376,7 +376,7 @@ Log format includes:
   "timestamp": "2024-01-01T00:00:00.000Z",
   "level": "error",
   "message": "User not found",
-  "status": 404,
+  "statusCode": 404,
   "path": "/api/users/123",
   "method": "GET",
   "details": { "userId": "123" }
