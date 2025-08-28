@@ -1,12 +1,12 @@
 import path from "node:path";
-import { fastifyFileRoutes } from "@rhinolabs/fastify-file-routes";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import type { BoilrRoutesConfig } from "./config.js";
+import { fastifyFileRoutes } from "./file-routes/index.js";
 
 /**
- * The Next.js style router plugin that uses @rhinolabs/fastify-file-routes
- */
+ * The Next.js style router plugin
+ * */
 export const routerPlugin = fp<BoilrRoutesConfig>(async (fastify: FastifyInstance, options: BoilrRoutesConfig) => {
   await fastify.register(fastifyFileRoutes, {
     routesDir: path.isAbsolute(options?.dir || "")
