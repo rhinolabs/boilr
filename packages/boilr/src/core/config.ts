@@ -5,7 +5,7 @@ import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
-import type { AuthConfig } from "../auth/types.js";
+import type { AuthConfig } from "../types/auth.types.js";
 import type { ExceptionConfig } from "../types/error.types.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 

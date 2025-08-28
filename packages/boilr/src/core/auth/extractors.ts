@@ -1,40 +1,40 @@
 import type { FastifyRequest } from "fastify";
-import type { AuthLocation, BasicCredentials } from "./types.js";
+import type { AuthLocation, BasicCredentials } from "../../types/auth.types.js";
 
-export function extractBearerToken(request: FastifyRequest, scheme = "Bearer"): string | null {
+export function extractBearerToken(request: FastifyRequest, scheme = "Bearer"): string | undefined {
   const authorization = request.headers.authorization;
 
   if (!authorization) {
-    return null;
+    return;
   }
 
   const prefix = `${scheme} `;
 
   if (!authorization.startsWith(prefix)) {
-    return null;
+    return;
   }
 
   return authorization.slice(prefix.length);
 }
 
-export function extractApiKey(request: FastifyRequest, location: AuthLocation, key: string): string | null {
+export function extractApiKey(request: FastifyRequest, location: AuthLocation, key: string): string | undefined {
   switch (location) {
     case "header":
-      return (request.headers[key] as string) || null;
+      return (request.headers[key] as string) || undefined;
     case "query":
-      return (request.query as Record<string, any>)?.[key] || null;
+      return (request.query as Record<string, any>)?.[key] || undefined;
     case "cookie":
-      return request.cookies?.[key] || null;
+      return request.cookies?.[key] || undefined;
     default:
-      return null;
+      return;
   }
 }
 
-export function extractBasicCredentials(request: FastifyRequest): BasicCredentials | null {
+export function extractBasicCredentials(request: FastifyRequest): BasicCredentials | undefined {
   const authorization = request.headers.authorization;
 
   if (!authorization || !authorization.startsWith("Basic ")) {
-    return null;
+    return;
   }
 
   try {
@@ -43,11 +43,11 @@ export function extractBasicCredentials(request: FastifyRequest): BasicCredentia
     const [username, password] = decoded.split(":", 2);
 
     if (!username || password === undefined) {
-      return null;
+      return;
     }
 
     return { username, password };
   } catch {
-    return null;
+    return;
   }
 }

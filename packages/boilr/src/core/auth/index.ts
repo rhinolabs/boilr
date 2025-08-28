@@ -1,6 +1,6 @@
 export { extractBearerToken, extractApiKey, extractBasicCredentials } from "./extractors.js";
 export { validateAuthMethod, validateAuthMethods } from "./validators.js";
-export { generateSecuritySchemes, generateSecurityRequirement } from "./swagger-utils.js";
+export { generateSecuritySchemes, generateSecurityRequirement } from "../../utils/swagger.utils.js";
 export type {
   AuthType,
   AuthLocation,
@@ -9,4 +9,4 @@ export type {
   AuthValidator,
   AuthConfig,
   BasicCredentials,
-} from "./types.js";
+} from "../../types/auth.types.js";

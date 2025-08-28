@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { RouteInfo } from "./types.js";
+import type { RouteInfo } from "../../types/file-routes.types.js";
 
 interface ScanOptions {
   ignore?: RegExp[];

@@ -1,6 +1,6 @@
 import type { FastifyRequest } from "fastify";
-import { UnauthorizedException } from "../exceptions/index.js";
-import type { AuthMethod } from "./types.js";
+import { UnauthorizedException } from "../../exceptions/index.js";
+import type { AuthMethod } from "../../types/auth.types.js";
 
 export async function validateAuthMethod(request: FastifyRequest, authMethod: AuthMethod): Promise<any> {
   try {

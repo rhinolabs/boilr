@@ -89,7 +89,7 @@ export {
   extractBasicCredentials,
   validateAuthMethod,
   validateAuthMethods,
-} from "./auth/index.js";
+} from "./core/auth/index.js";
 
 export type {
   AuthType,
@@ -99,4 +99,4 @@ export type {
   AuthValidator,
   AuthConfig,
   BasicCredentials,
-} from "./auth/index.js";
+} from "./core/auth/index.js";
