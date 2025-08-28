@@ -1,4 +1,5 @@
 import fastify from "fastify";
+import { authPlugin } from "./auth/index.js";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
@@ -95,12 +96,13 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   }
 
   if (config.plugins?.swagger !== false) {
-    // Configure Swagger with Zod transformation
+    // Configure Swagger with Zod transformation and auth integration
     let swaggerOptions = config.plugins?.swagger === true ? {} : config.plugins?.swagger || {};
     swaggerOptions = {
       ...swaggerOptions,
       transform: createJsonSchemaTransform(config),
-    };
+      boilrConfig: config,
+    } as any;
 
     typedApp.register(plugins.swagger, swaggerOptions);
   }
@@ -108,6 +110,11 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   if (config.plugins?.monitor !== false) {
     const monitorOptions = config.plugins?.monitor === true ? {} : config.plugins?.monitor || {};
     typedApp.register(plugins.monitor, monitorOptions);
+  }
+
+  // Register authentication plugin
+  if (config.auth) {
+    typedApp.register(authPlugin, { authConfig: config.auth });
   }
 
   // Register middleware

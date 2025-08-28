@@ -4,6 +4,7 @@ import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
+import type { AuthConfig } from "../auth/types.js";
 import type { ExceptionConfig } from "../types/error.types.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 
@@ -209,6 +210,28 @@ export interface BoilrConfig {
    * Middleware configuration options.
    */
   middleware?: BoilrMiddlewareConfig;
+
+  /**
+   * Authentication configuration.
+   * Define auth methods that can be applied to routes.
+   *
+   * @example
+   * ```typescript
+   * auth: {
+   *   methods: [
+   *     {
+   *       name: "bearer",
+   *       type: "bearer",
+   *       validator: async (request) => {
+   *         const token = extractBearerToken(request);
+   *         return await verifyJwtToken(token);
+   *       }
+   *     }
+   *   ]
+   * }
+   * ```
+   */
+  auth?: AuthConfig;
 
   /**
    * Enable or disable request/response validation using Zod schemas.

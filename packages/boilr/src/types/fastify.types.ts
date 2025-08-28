@@ -13,6 +13,14 @@ declare module "fastify" {
      */
     boilrConfig: BoilrConfig;
   }
+
+  interface FastifyRequest {
+    /**
+     * Authentication context set by the auth system.
+     * Contains the result of the successful auth validator.
+     */
+    ctx?: any;
+  }
 }
 
 // biome-ignore lint/complexity/noUselessEmptyExport: Export empty object to make this a module
