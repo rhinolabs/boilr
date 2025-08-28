@@ -179,6 +179,25 @@ export interface BoilrMiddlewareConfig {
 }
 
 /**
+ * Generic type for plugin options that includes boilrConfig.
+ * Use this type for all plugin option interfaces to ensure consistent access to boilrConfig.
+ *
+ * @example
+ * ```typescript
+ * export const myPlugin = fp(async (
+ *   fastify: FastifyInstance,
+ *   options: BoilrPluginOptions<MyPluginOptions> = {}
+ * ) => {
+ *   const { boilrConfig, ...pluginOptions } = options;
+ *   // ...
+ * });
+ * ```
+ */
+
+// biome-ignore lint/complexity/noBannedTypes: boilrConfig wrapper
+export type BoilrPluginOptions<T = {}> = T & { boilrConfig: BoilrConfig };
+
+/**
  * Main configuration interface for Boilr applications.
  * This interface defines all available configuration options for customizing your Boilr app.
  *

@@ -1,6 +1,7 @@
-import helmet from "@fastify/helmet";
-import type { FastifyInstance, FastifyPluginOptions } from "fastify";
+import helmet, { type FastifyHelmetOptions } from "@fastify/helmet";
+import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
+import type { BoilrPluginOptions } from "../core/config.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
@@ -9,8 +10,10 @@ import { mergeConfigRecursively } from "../utils/config.utils.js";
  *
  * For configuration options, see: https://www.npmjs.com/package/@fastify/helmet
  */
-export const helmetPlugin = fp(async (fastify: FastifyInstance, options: FastifyPluginOptions = {}) => {
-  const defaultOptions = {
+export const helmetPlugin = fp(async (fastify: FastifyInstance, options: BoilrPluginOptions<FastifyHelmetOptions>) => {
+  const { boilrConfig } = options;
+
+  const defaultOptions: FastifyHelmetOptions = {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -21,7 +24,16 @@ export const helmetPlugin = fp(async (fastify: FastifyInstance, options: Fastify
     },
   };
 
-  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
+  if (boilrConfig?.plugins?.helmet === false) {
+    return;
+  }
+
+  let helmetConfig = {};
+  if (typeof boilrConfig?.plugins?.helmet === "object") {
+    helmetConfig = boilrConfig.plugins.helmet;
+  }
+
+  const mergedOptions = mergeConfigRecursively(defaultOptions, helmetConfig);
 
   await fastify.register(helmet, mergedOptions);
 });

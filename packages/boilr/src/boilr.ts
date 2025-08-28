@@ -78,58 +78,51 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   // Apply type provider
   const typedApp = app.withTypeProvider<ZodTypeProvider>();
 
-  // Register plugins
+  // Create boilr instance early to access addPlugin method
+  const boilrApp = decorateServer(typedApp, config);
+
+  // Register plugins using addPlugin
   if (config.plugins?.cookie !== false) {
-    const cookieOptions = config.plugins?.cookie === true ? {} : config.plugins?.cookie || {};
-    typedApp.register(plugins.cookie, cookieOptions);
+    boilrApp.addPlugin(plugins.cookie);
   }
 
   if (config.plugins?.helmet !== false) {
-    const helmetOptions = config.plugins?.helmet === true ? {} : config.plugins?.helmet || {};
-    typedApp.register(plugins.helmet, helmetOptions);
+    boilrApp.addPlugin(plugins.helmet);
   }
 
   if (config.plugins?.rateLimit !== false) {
-    const rateLimitOptions = config.plugins?.rateLimit === true ? {} : config.plugins?.rateLimit || {};
-    typedApp.register(plugins.rateLimit, rateLimitOptions);
+    boilrApp.addPlugin(plugins.rateLimit);
   }
 
   if (config.plugins?.cors !== false) {
-    const corsOptions = config.plugins?.cors === true ? {} : config.plugins?.cors || {};
-    typedApp.register(plugins.cors, corsOptions);
+    boilrApp.addPlugin(plugins.cors);
   }
 
   if (config.plugins?.swagger !== false) {
-    // Configure Swagger with Zod transformation and auth integration
-    let swaggerOptions = config.plugins?.swagger === true ? {} : config.plugins?.swagger || {};
-    swaggerOptions = {
-      ...swaggerOptions,
+    const swaggerOptions = {
       transform: createJsonSchemaTransform(config),
-      boilrConfig: config,
-    } as any;
-
-    typedApp.register(plugins.swagger, swaggerOptions);
+    };
+    boilrApp.addPlugin(plugins.swagger, swaggerOptions);
   }
 
   if (config.plugins?.monitor !== false) {
-    const monitorOptions = config.plugins?.monitor === true ? {} : config.plugins?.monitor || {};
-    typedApp.register(plugins.monitor, monitorOptions);
+    boilrApp.addPlugin(plugins.monitor);
   }
 
   // Register authentication plugin
   if (config.auth) {
-    typedApp.register(plugins.auth, { authConfig: config.auth });
+    boilrApp.addPlugin(plugins.auth);
   }
 
   // Register middleware
   if (config.middleware?.global) {
     for (const middleware of config.middleware.global) {
-      applyGlobalMiddleware(typedApp, middleware);
+      applyGlobalMiddleware(boilrApp, middleware);
     }
   }
 
   // Register routes
-  typedApp.register(routerPlugin, config.routes || {});
+  boilrApp.register(routerPlugin, config.routes || {});
 
-  return decorateServer(typedApp, config);
+  return boilrApp;
 }

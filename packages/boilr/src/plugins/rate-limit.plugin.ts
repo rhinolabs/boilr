@@ -1,6 +1,7 @@
-import rateLimit from "@fastify/rate-limit";
-import type { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import rateLimit, { type RateLimitPluginOptions } from "@fastify/rate-limit";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import type { BoilrPluginOptions } from "../core/config.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 /**
@@ -19,18 +20,31 @@ interface RateLimitContext {
  *
  * For configuration options, see: https://www.npmjs.com/package/@fastify/rate-limit
  */
-export const rateLimitPlugin = fp(async (fastify: FastifyInstance, options: FastifyPluginOptions = {}) => {
-  const defaultOptions = {
-    max: 100,
-    timeWindow: "1 minute",
-    errorResponseBuilder: (req: FastifyRequest, context: RateLimitContext) => ({
-      statusCode: 429,
-      error: "Too Many Requests",
-      message: `Rate limit exceeded, retry in ${context.after}`,
-    }),
-  };
+export const rateLimitPlugin = fp(
+  async (fastify: FastifyInstance, options: BoilrPluginOptions<RateLimitPluginOptions>) => {
+    const { boilrConfig } = options;
 
-  const mergedOptions = mergeConfigRecursively(defaultOptions, options);
+    const defaultOptions: RateLimitPluginOptions = {
+      max: 100,
+      timeWindow: "1 minute",
+      errorResponseBuilder: (req: FastifyRequest, context: RateLimitContext) => ({
+        statusCode: 429,
+        error: "Too Many Requests",
+        message: `Rate limit exceeded, retry in ${context.after}`,
+      }),
+    };
 
-  await fastify.register(rateLimit, mergedOptions);
-});
+    if (boilrConfig?.plugins?.rateLimit === false) {
+      return;
+    }
+
+    let rateLimitConfig = {};
+    if (typeof boilrConfig?.plugins?.rateLimit === "object") {
+      rateLimitConfig = boilrConfig.plugins.rateLimit;
+    }
+
+    const mergedOptions = mergeConfigRecursively(defaultOptions, rateLimitConfig);
+
+    await fastify.register(rateLimit, mergedOptions);
+  },
+);

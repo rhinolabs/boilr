@@ -22,7 +22,7 @@ export function extractApiKey(request: FastifyRequest, location: AuthLocation, k
     case "header":
       return (request.headers[key] as string) || undefined;
     case "query":
-      return (request.query as Record<string, any>)?.[key] || undefined;
+      return (request.query as Record<string, string>)?.[key] || undefined;
     case "cookie":
       return request.cookies?.[key] || undefined;
     default:

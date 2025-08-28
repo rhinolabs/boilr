@@ -1,14 +1,16 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import { validateAuthMethods } from "../core/auth/index.js";
-import type { AuthConfig } from "../types/auth.types.js";
+import type { BoilrPluginOptions } from "../core/config.js";
 
-async function authPluginFunction(fastify: FastifyInstance, options: { authConfig?: AuthConfig }) {
-  if (!options.authConfig?.methods) {
+async function authPluginFunction(fastify: FastifyInstance, options: BoilrPluginOptions) {
+  const authConfig = options.boilrConfig?.auth;
+
+  if (!authConfig?.methods) {
     return;
   }
 
-  const { methods } = options.authConfig;
+  const { methods } = authConfig;
 
   fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
     const url = request.url;
@@ -23,6 +25,7 @@ async function authPluginFunction(fastify: FastifyInstance, options: { authConfi
       return;
     }
 
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const routeOptions = request.routeOptions as any;
     const schema = routeOptions?.schema;
 
