@@ -2,9 +2,9 @@ import swagger, { type FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
-import { generateSecuritySchemes } from "../utils/swagger.utils.js";
 import type { BoilrConfig } from "../core/config.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
+import { generateSecuritySchemes } from "../utils/swagger.utils.js";
 
 /**
  * Swagger documentation plugin that automatically generates OpenAPI specs and provides

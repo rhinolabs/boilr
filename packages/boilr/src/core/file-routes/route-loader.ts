@@ -1,7 +1,13 @@
 import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import type { RouteOptions } from "fastify";
-import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "../../types/file-routes.types.js";
+import type {
+  FastifyInstance,
+  HttpMethod,
+  RouteHandler,
+  RouteInfo,
+  RouteModule,
+} from "../../types/file-routes.types.js";
 
 export async function loadRouteModule(filePath: string): Promise<RouteModule | undefined> {
   try {

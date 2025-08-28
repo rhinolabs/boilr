@@ -7,10 +7,10 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 import type { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
-import { generateSecurityRequirement } from "../utils/swagger.utils.js";
 import type { BoilrConfig } from "../core/config.js";
 import { enhanceSchemaWithDefaultError } from "../schemas/enhancer.js";
 import type { MethodSchema } from "../types/routes.types.js";
+import { generateSecurityRequirement } from "../utils/swagger.utils.js";
 
 type TransformResult = ReturnType<typeof baseJsonSchemaTransform>;
 

@@ -31,7 +31,6 @@ async function authPluginFunction(fastify: FastifyInstance, options: { authConfi
 
     const routeOptions = request.routeOptions as any;
     const schema = routeOptions?.schema;
-    const method = request.method.toLowerCase();
 
     let authConfig: string[] | false | undefined;
 
@@ -54,8 +53,7 @@ async function authPluginFunction(fastify: FastifyInstance, options: { authConfi
     if (requiredAuthNames.length === 0) {
       return;
     }
-    const authContext = await validateAuthMethods(request, methods, requiredAuthNames);
-    request.ctx = authContext;
+    request.ctx = await validateAuthMethods(request, methods, requiredAuthNames);
   });
 }
 
