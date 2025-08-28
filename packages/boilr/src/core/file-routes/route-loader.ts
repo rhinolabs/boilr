@@ -89,7 +89,7 @@ export function extractMethodHandlers(module: RouteModule, filePath: string): Ma
 export async function registerRoutes(
   fastify: FastifyInstance,
   routes: RouteInfo[],
-  globalHooks: Partial<RouteOptions> = {}
+  globalHooks: Partial<RouteOptions> = {},
 ): Promise<void> {
   for (const route of routes) {
     try {
