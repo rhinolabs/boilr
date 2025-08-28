@@ -10,7 +10,9 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "keywords": [
     "fastify",
     "framework",
@@ -31,6 +33,7 @@
   },
   "dependencies": {
     "@fastify/autoload": "^6.3.0",
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.1",
     "@fastify/helmet": "^13.0.1",
     "@fastify/rate-limit": "^10.3.0",
@@ -43,8 +46,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
-    "typescript": "^5.4.5",
-    "openapi-types": "^12.1.3"
+    "openapi-types": "^12.1.3",
+    "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "zod": "^4.0.0"

@@ -1,3 +1,4 @@
+import type { FastifyCookieOptions } from "@fastify/cookie";
 import type { FastifyCorsOptions } from "@fastify/cors";
 import type { FastifyHelmetOptions } from "@fastify/helmet";
 import type { CreateRateLimitOptions } from "@fastify/rate-limit";
@@ -49,6 +50,25 @@ export interface BoilrRoutesConfig {
 }
 
 export interface BoilrPluginsConfig {
+  /**
+   * Cookie plugin configuration for parsing and setting cookies.
+   * Set to `false` to disable, `true` for defaults, or an object for custom config.
+   * @default true
+   *
+   * For available options, see: https://www.npmjs.com/package/@fastify/cookie
+   *
+   * @example
+   * ```typescript
+   * cookie: {
+   *   secret: "my-secret-key",
+   *   parseOptions: {
+   *     httpOnly: true
+   *   }
+   * }
+   * ```
+   */
+  cookie?: boolean | FastifyCookieOptions;
+
   /**
    * Helmet plugin configuration for security headers.
    * Set to `false` to disable, `true` for defaults, or an object for custom config.
@@ -269,6 +289,7 @@ export const defaultConfig: BoilrConfig = {
     prefix: "",
   },
   plugins: {
+    cookie: true,
     helmet: true,
     rateLimit: true,
     cors: true,

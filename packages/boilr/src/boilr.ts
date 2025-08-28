@@ -1,5 +1,4 @@
 import fastify from "fastify";
-import { authPlugin } from "./auth/index.js";
 import { type BoilrConfig, mergeConfig } from "./core/config.js";
 import { routerPlugin } from "./core/router.js";
 import { type BoilrInstance, decorateServer } from "./core/server.js";
@@ -80,6 +79,11 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   const typedApp = app.withTypeProvider<ZodTypeProvider>();
 
   // Register plugins
+  if (config.plugins?.cookie !== false) {
+    const cookieOptions = config.plugins?.cookie === true ? {} : config.plugins?.cookie || {};
+    typedApp.register(plugins.cookie, cookieOptions);
+  }
+
   if (config.plugins?.helmet !== false) {
     const helmetOptions = config.plugins?.helmet === true ? {} : config.plugins?.helmet || {};
     typedApp.register(plugins.helmet, helmetOptions);
@@ -114,7 +118,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
 
   // Register authentication plugin
   if (config.auth) {
-    typedApp.register(authPlugin, { authConfig: config.auth });
+    typedApp.register(plugins.auth, { authConfig: config.auth });
   }
 
   // Register middleware

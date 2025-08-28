@@ -24,7 +24,7 @@ export function extractApiKey(request: FastifyRequest, location: AuthLocation, k
     case "query":
       return (request.query as Record<string, any>)?.[key] || null;
     case "cookie":
-      return ((request as any).cookies as Record<string, any>)?.[key] || null;
+      return request.cookies?.[key] || null;
     default:
       return null;
   }

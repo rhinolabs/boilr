@@ -1,7 +1,7 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
-import type { AuthConfig } from "./types.js";
-import { validateAuthMethods } from "./validators.js";
+import type { AuthConfig } from "../auth/types.js";
+import { validateAuthMethods } from "../auth/validators.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -9,7 +9,7 @@ declare module "fastify" {
   }
 }
 
-async function authPlugin(fastify: FastifyInstance, options: { authConfig?: AuthConfig }) {
+async function authPluginFunction(fastify: FastifyInstance, options: { authConfig?: AuthConfig }) {
   if (!options.authConfig?.methods) {
     return;
   }
@@ -59,6 +59,6 @@ async function authPlugin(fastify: FastifyInstance, options: { authConfig?: Auth
   });
 }
 
-export default fp(authPlugin, {
+export const authPlugin = fp(authPluginFunction, {
   name: "boilr-auth",
 });
