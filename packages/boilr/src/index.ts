@@ -89,7 +89,6 @@ export {
   extractBasicCredentials,
   validateAuthMethod,
   validateAuthMethods,
-  authPlugin,
 } from "./auth/index.js";
 
 export type {
