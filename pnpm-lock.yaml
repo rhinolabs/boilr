@@ -38,9 +38,6 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^5.2.2
         version: 5.2.3
-      '@rhinolabs/fastify-file-routes':
-        specifier: ^0.1.1
-        version: 0.1.1(fastify@5.5.0)
       '@rhinolabs/fastify-monitor':
         specifier: ^0.2.0
         version: 0.2.0(fastify@5.5.0)
@@ -396,11 +393,6 @@ packages:
   '@lukeed/ms@2.0.2':
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
-
-  '@rhinolabs/fastify-file-routes@0.1.1':
-    resolution: {integrity: sha512-+LDT+qlrPaK9HZL6LIF4t0TQYbYUwg/ZS5NN+kP8DaLyjGqzdw7Aj8XbvQ15Dl/xuL8/vuwopzdsQWW+mvkhXg==}
-    peerDependencies:
-      fastify: ^5.0.0
 
   '@rhinolabs/fastify-monitor@0.2.0':
     resolution: {integrity: sha512-uF7UWP2JtKETbQGYLDftTCCpv3iJol9SZsbz+Rz1St8OcoIsAMd25RqBRtWmckoPm7m9cpN5u/YQZAv3TfF2+w==}
@@ -1306,11 +1298,6 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@lukeed/ms@2.0.2': {}
-
-  '@rhinolabs/fastify-file-routes@0.1.1(fastify@5.5.0)':
-    dependencies:
-      fastify: 5.5.0
-      fastify-plugin: 5.0.1
 
   '@rhinolabs/fastify-monitor@0.2.0(fastify@5.5.0)':
     dependencies:

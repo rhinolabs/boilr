@@ -36,7 +36,6 @@
     "@fastify/rate-limit": "^10.3.0",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.2",
-    "@rhinolabs/fastify-file-routes": "^0.1.1",
     "@rhinolabs/fastify-monitor": "^0.2.0",
     "fastify": "^5.3.3",
     "fastify-plugin": "^5.0.1",
