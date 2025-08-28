@@ -9,4 +9,5 @@ export type {
   AuthValidator,
   AuthConfig,
   BasicCredentials,
+  BoilrAuthContext,
 } from "../../types/auth.types.js";

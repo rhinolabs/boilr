@@ -1,11 +1,10 @@
 import type { FastifyRequest } from "fastify";
 import { UnauthorizedException } from "../../exceptions/index.js";
-import type { AuthMethod } from "../../types/auth.types.js";
+import type { AuthMethod, BoilrAuthContext } from "../../types/auth.types.js";
 
-export async function validateAuthMethod(request: FastifyRequest, authMethod: AuthMethod): Promise<any> {
+export async function validateAuthMethod(request: FastifyRequest, authMethod: AuthMethod): Promise<BoilrAuthContext> {
   try {
-    const result = await authMethod.validator(request);
-    return result;
+    return await authMethod.validator(request);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Authentication failed";
     throw new UnauthorizedException(message);
@@ -16,7 +15,7 @@ export async function validateAuthMethods(
   request: FastifyRequest,
   authMethods: AuthMethod[],
   requiredAuthNames: string[],
-): Promise<any> {
+): Promise<BoilrAuthContext> {
   const errors: string[] = [];
 
   for (const authName of requiredAuthNames) {
@@ -28,8 +27,7 @@ export async function validateAuthMethods(
     }
 
     try {
-      const result = await validateAuthMethod(request, authMethod);
-      return result;
+      return await validateAuthMethod(request, authMethod);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Authentication failed";
       errors.push(`${authName}: ${message}`);

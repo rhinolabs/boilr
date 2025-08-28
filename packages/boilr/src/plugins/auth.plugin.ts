@@ -3,12 +3,6 @@ import fp from "fastify-plugin";
 import { validateAuthMethods } from "../core/auth/index.js";
 import type { AuthConfig } from "../types/auth.types.js";
 
-declare module "fastify" {
-  interface FastifyRequest {
-    ctx?: any;
-  }
-}
-
 async function authPluginFunction(fastify: FastifyInstance, options: { authConfig?: AuthConfig }) {
   if (!options.authConfig?.methods) {
     return;

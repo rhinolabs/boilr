@@ -99,4 +99,5 @@ export type {
   AuthValidator,
   AuthConfig,
   BasicCredentials,
+  BoilrAuthContext,
 } from "./core/auth/index.js";
