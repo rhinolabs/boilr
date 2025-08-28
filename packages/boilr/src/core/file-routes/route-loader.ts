@@ -115,9 +115,11 @@ export async function registerRoutes(
         }
 
         if (module.schema?.[method === "del" ? "delete" : method]) {
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           const methodSchema = module.schema[method === "del" ? "delete" : method] as any;
 
           let processedSchema = { ...methodSchema };
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           let authConfig: any;
 
           if (methodSchema && typeof methodSchema === "object") {
@@ -130,7 +132,7 @@ export async function registerRoutes(
                 if (!routeOptions.schema) {
                   routeOptions.schema = {};
                 }
-                (routeOptions.schema as any).tags = tags;
+                routeOptions.schema.tags = tags;
               }
             }
 
@@ -150,6 +152,7 @@ export async function registerRoutes(
             if (!routeOptions.schema) {
               routeOptions.schema = {};
             }
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             (routeOptions.schema as any).auth = authConfig;
           }
         }
