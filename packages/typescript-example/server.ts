@@ -1,4 +1,4 @@
-import { createApp, extractApiKey, extractBearerToken } from "@rhinolabs/boilr";
+import { UnauthorizedException, createApp, extractApiKey, extractBearerToken } from "@rhinolabs/boilr";
 
 async function verifyJwtToken(token: string) {
   if (token === "valid-jwt") {
@@ -8,7 +8,7 @@ async function verifyJwtToken(token: string) {
 }
 
 async function verifyApiKey(apiKey: string) {
-  const validKeys: Record<string, any> = {
+  const validKeys: Record<string, unknown> = {
     "api-key-123": { clientId: "client1", name: "Test Client" },
   };
   const client = validKeys[apiKey];
@@ -39,7 +39,8 @@ const app = createApp({
         type: "bearer",
         validator: async (request) => {
           const token = extractBearerToken(request);
-          return await verifyJwtToken(token!);
+          if (!token) throw new UnauthorizedException("No token provided");
+          return await verifyJwtToken(token);
         },
       },
       {
@@ -48,7 +49,8 @@ const app = createApp({
         options: { key: "x-api-key", location: "header" },
         validator: async (request) => {
           const apiKey = extractApiKey(request, "header", "x-api-key");
-          return await verifyApiKey(apiKey!);
+          if (!apiKey) throw new UnauthorizedException("No API key provided");
+          return await verifyApiKey(apiKey);
         },
       },
     ],

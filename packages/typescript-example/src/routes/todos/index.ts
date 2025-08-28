@@ -5,7 +5,6 @@ import { z } from "zod";
 export const schema = defineSchema({
   get: {
     tags: ["To-do"],
-    auth: ["bearer", "apiKey"],
     response: {
       200: z.array(
         z.object({
@@ -19,7 +18,6 @@ export const schema = defineSchema({
   },
   post: {
     tags: ["To-do"],
-    auth: ["bearer", "apiKey"],
     body: z.object({
       title: z.string().min(1, "Title is required"),
       completed: z.boolean().optional().default(false),
