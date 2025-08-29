@@ -50,6 +50,7 @@ async function authPluginFunction(fastify: FastifyInstance, options: BoilrPlugin
     if (requiredAuthNames.length === 0) {
       return;
     }
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     (request as any).ctx = await validateAuthMethods(request, methods, requiredAuthNames);
   });
 }
