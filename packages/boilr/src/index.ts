@@ -100,4 +100,4 @@ export type {
   AuthConfig,
   BasicCredentials,
   BoilrAuthContext,
-} from "./core/auth/index.js";
+} from "./types/auth.types.js";
