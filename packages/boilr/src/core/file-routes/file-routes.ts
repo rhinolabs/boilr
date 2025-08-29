@@ -1,9 +1,9 @@
 import path from "node:path";
 import type { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
+import type { FastifyInstance, FileRoutesOptions } from "../../types/file-routes.types.js";
 import { registerRoutes } from "./route-loader.js";
 import { extractRouteInfo, scanDirectories } from "./scanner.js";
-import type { FastifyInstance, FileRoutesOptions } from "./types.js";
 
 const pluginImpl: FastifyPluginAsync<FileRoutesOptions> = async (
   fastify: FastifyInstance,

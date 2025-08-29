@@ -10,10 +10,9 @@ import type { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
 import type { BoilrConfig } from "../core/config.js";
 import { enhanceSchemaWithDefaultError } from "../schemas/enhancer.js";
 import type { MethodSchema } from "../types/routes.types.js";
+import { generateSecurityRequirement } from "../utils/swagger.utils.js";
 
-type TransformResult = ReturnType<typeof baseJsonSchemaTransform> & {
-  tags?: string[];
-};
+type TransformResult = ReturnType<typeof baseJsonSchemaTransform>;
 
 type RouteContext = {
   schema: FastifySchema;
@@ -35,28 +34,32 @@ export const createJsonSchemaTransform = (config: BoilrConfig) => {
     let enhancedSchema = schema;
     if (schema && typeof schema === "object") {
       enhancedSchema = enhanceSchemaWithDefaultError(schema as MethodSchema, config.exceptions);
+
+      // Add OpenAPI operation properties to the schema
+      if (config.auth?.methods) {
+        const authConfig = "auth" in enhancedSchema ? enhancedSchema.auth : undefined;
+
+        if (authConfig === false || (Array.isArray(authConfig) && authConfig.length === 0)) {
+          // No security required - explicitly set empty security array
+          enhancedSchema.security = [];
+        } else if (Array.isArray(authConfig)) {
+          // Convert auth method names to security requirements
+          enhancedSchema.security = [generateSecurityRequirement(authConfig)];
+        } else {
+          // Default: use all configured auth methods when auth is not specified
+          const allMethodNames = config.auth.methods.map((method) => method.name);
+          enhancedSchema.security = [generateSecurityRequirement(allMethodNames)];
+        }
+      }
     }
 
-    // Apply the base transformation
-    const transformed = baseJsonSchemaTransform({
+    // Apply the base transformation with the enhanced schema
+    return baseJsonSchemaTransform({
       schema: enhancedSchema,
       url,
       route,
       openapiObject,
     });
-
-    // Check if the schema has tags and include them in the transformation
-    if (enhancedSchema && typeof enhancedSchema === "object" && "tags" in enhancedSchema) {
-      const tags = enhancedSchema.tags;
-      if (Array.isArray(tags) && tags.length > 0) {
-        return {
-          ...transformed,
-          tags,
-        };
-      }
-    }
-
-    return transformed;
   };
 };
 

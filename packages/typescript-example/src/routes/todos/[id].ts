@@ -11,6 +11,7 @@ import { TodoSchema, todos } from "./index.js"; // Ensure .js extension for ESM 
 // Define schema for endpoints
 export const schema = defineSchema({
   get: {
+    tags: ["To-do"],
     params: z.object({
       id: z.string().transform((val) => Number.parseInt(val, 10)),
     }),
@@ -23,6 +24,7 @@ export const schema = defineSchema({
     },
   },
   put: {
+    tags: ["To-do"],
     params: z.object({
       id: z.string().transform((val) => Number.parseInt(val, 10)),
     }),

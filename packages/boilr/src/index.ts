@@ -81,3 +81,23 @@ export {
 } from "./utils/routes.utils.js";
 
 export { DefaultErrorSchema } from "./schemas/error.schema.js";
+
+// Export authentication system
+export {
+  extractBearerToken,
+  extractApiKey,
+  extractBasicCredentials,
+  validateAuthMethod,
+  validateAuthMethods,
+} from "./core/auth/index.js";
+
+export type {
+  AuthType,
+  AuthLocation,
+  AuthMethodOptions,
+  AuthMethod,
+  AuthValidator,
+  AuthConfig,
+  BasicCredentials,
+  BoilrAuthContext,
+} from "./types/auth.types.js";

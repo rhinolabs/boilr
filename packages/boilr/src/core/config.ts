@@ -1,9 +1,11 @@
+import type { FastifyCookieOptions } from "@fastify/cookie";
 import type { FastifyCorsOptions } from "@fastify/cors";
 import type { FastifyHelmetOptions } from "@fastify/helmet";
 import type { CreateRateLimitOptions } from "@fastify/rate-limit";
 import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
 import type { FastifyServerOptions } from "fastify";
+import type { AuthConfig } from "../types/auth.types.js";
 import type { ExceptionConfig } from "../types/error.types.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 
@@ -48,6 +50,25 @@ export interface BoilrRoutesConfig {
 }
 
 export interface BoilrPluginsConfig {
+  /**
+   * Cookie plugin configuration for parsing and setting cookies.
+   * Set to `false` to disable, `true` for defaults, or an object for custom config.
+   * @default true
+   *
+   * For available options, see: https://www.npmjs.com/package/@fastify/cookie
+   *
+   * @example
+   * ```typescript
+   * cookie: {
+   *   secret: "my-secret-key",
+   *   parseOptions: {
+   *     httpOnly: true
+   *   }
+   * }
+   * ```
+   */
+  cookie?: boolean | FastifyCookieOptions;
+
   /**
    * Helmet plugin configuration for security headers.
    * Set to `false` to disable, `true` for defaults, or an object for custom config.
@@ -158,6 +179,25 @@ export interface BoilrMiddlewareConfig {
 }
 
 /**
+ * Generic type for plugin options that includes boilrConfig.
+ * Use this type for all plugin option interfaces to ensure consistent access to boilrConfig.
+ *
+ * @example
+ * ```typescript
+ * export const myPlugin = fp(async (
+ *   fastify: FastifyInstance,
+ *   options: BoilrPluginOptions<MyPluginOptions> = {}
+ * ) => {
+ *   const { boilrConfig, ...pluginOptions } = options;
+ *   // ...
+ * });
+ * ```
+ */
+
+// biome-ignore lint/complexity/noBannedTypes: boilrConfig wrapper
+export type BoilrPluginOptions<T = {}> = T & { boilrConfig: BoilrConfig };
+
+/**
  * Main configuration interface for Boilr applications.
  * This interface defines all available configuration options for customizing your Boilr app.
  *
@@ -211,6 +251,28 @@ export interface BoilrConfig {
   middleware?: BoilrMiddlewareConfig;
 
   /**
+   * Authentication configuration.
+   * Define auth methods that can be applied to routes.
+   *
+   * @example
+   * ```typescript
+   * auth: {
+   *   methods: [
+   *     {
+   *       name: "bearer",
+   *       type: "bearer",
+   *       validator: async (request) => {
+   *         const token = extractBearerToken(request);
+   *         return await verifyJwtToken(token);
+   *       }
+   *     }
+   *   ]
+   * }
+   * ```
+   */
+  auth?: AuthConfig;
+
+  /**
    * Enable or disable request/response validation using Zod schemas.
    * @default true
    */
@@ -246,6 +308,7 @@ export const defaultConfig: BoilrConfig = {
     prefix: "",
   },
   plugins: {
+    cookie: true,
     helmet: true,
     rateLimit: true,
     cors: true,

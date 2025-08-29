@@ -118,6 +118,22 @@ export interface RouteSchema {
  */
 export interface MethodSchema {
   /**
+   * Authentication configuration for this method.
+   * - `false` or `[]`: Makes the route public (no auth required)
+   * - `string[]`: Array of auth method names that can be used (OR logic)
+   * - `undefined`: Uses all configured auth methods by default
+   *
+   * @example
+   * ```typescript
+   * auth: false // Public route
+   * auth: [] // Public route
+   * auth: ["bearer"] // Only JWT Bearer tokens
+   * auth: ["bearer", "apiKey"] // JWT or API key
+   * ```
+   */
+  auth?: string[] | false;
+
+  /**
    * Swagger tags for grouping and organizing API endpoints in documentation.
    * Tags help categorize your endpoints in the Swagger UI for better organization.
    *

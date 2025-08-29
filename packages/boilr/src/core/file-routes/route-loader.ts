@@ -1,18 +1,24 @@
 import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import type { RouteOptions } from "fastify";
-import type { FastifyInstance, HttpMethod, RouteHandler, RouteInfo, RouteModule } from "./types.js";
+import type {
+  FastifyInstance,
+  HttpMethod,
+  RouteHandler,
+  RouteInfo,
+  RouteModule,
+} from "../../types/file-routes.types.js";
 
-export async function loadRouteModule(filePath: string): Promise<RouteModule | null> {
+export async function loadRouteModule(filePath: string): Promise<RouteModule | undefined> {
   try {
     if (!existsSync(filePath)) {
       console.error(`File does not exist: ${filePath}`);
-      return null;
+      return;
     }
 
     if (filePath.endsWith(".d.ts")) {
       console.warn(`Skipping TypeScript declaration file: ${filePath}`);
-      return null;
+      return;
     }
 
     let actualFilePath = filePath;
@@ -41,16 +47,16 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | n
             return imported as RouteModule;
           } catch (fallbackError) {
             console.error(`Fallback JS import also failed for: ${jsFilePath}`, fallbackError);
-            return null;
+            return;
           }
         }
       }
 
-      return null;
+      return;
     }
   } catch (error) {
     console.error(`Unexpected error loading route module: ${filePath}`, error);
-    return null;
+    return;
   }
 }
 
@@ -96,7 +102,7 @@ export async function registerRoutes(
       const module = await loadRouteModule(route.filePath);
 
       if (!module) {
-        fastify.log.warn(`Failed to load route module: ${route.filePath}`);
+        console.warn(`Failed to load route module: ${route.filePath}`);
         continue;
       }
 
@@ -158,10 +164,9 @@ export async function registerRoutes(
         }
 
         fastify.route(routeOptions);
-        fastify.log.debug(`Registered route: ${method.toUpperCase()} ${route.routePath} from ${route.filePath}`);
       }
     } catch (error) {
-      fastify.log.error({ error, filePath: route.filePath }, `Failed to register route from file: ${route.filePath}`);
+      console.error({ error, filePath: route.filePath }, `Failed to register route from file: ${route.filePath}`);
     }
   }
 }

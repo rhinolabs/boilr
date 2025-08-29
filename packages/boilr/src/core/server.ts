@@ -1,8 +1,9 @@
-import type { FastifyInstance } from "fastify";
-import type { BoilrConfig } from "./config.js";
+import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type { BoilrConfig, BoilrPluginOptions } from "./config.js";
 
 export interface BoilrInstance extends FastifyInstance {
   start: (options?: BoilrStartOptions) => Promise<{ app: FastifyInstance; address: string }>;
+  addPlugin: <T = unknown>(plugin: FastifyPluginCallback<BoilrPluginOptions<T>>, options?: T) => BoilrInstance;
 }
 
 export interface BoilrStartOptions {
@@ -33,6 +34,16 @@ export function decorateServer(app: FastifyInstance, config: BoilrConfig): Boilr
       this.log.error(err);
       process.exit(1);
     }
+  };
+
+  boilrApp.addPlugin = function <T = unknown>(plugin: FastifyPluginCallback<BoilrPluginOptions<T>>, options?: T) {
+    const enhancedOptions = {
+      ...options,
+      boilrConfig: config,
+    } as BoilrPluginOptions<T>;
+
+    this.register(plugin, enhancedOptions);
+    return this;
   };
 
   return boilrApp;

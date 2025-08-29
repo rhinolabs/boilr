@@ -383,6 +383,143 @@ Log format includes:
 }
 ```
 
+## Authentication System
+
+Boilr includes a flexible authentication system that supports multiple authentication methods and can be applied selectively to routes. The system automatically extracts tokens/credentials and passes them to your validators.
+
+### Auth Context Type Declaration
+
+First, declare your authentication context interface globally:
+
+```typescript
+// types/auth.ts or in your main file
+declare global {
+  namespace Boilr {
+    interface AuthContext {
+      user: {
+        id: string;
+        email: string;
+        role: 'admin' | 'user';
+      };
+    }
+  }
+}
+```
+
+### Configuration & Validator Types
+
+Configure authentication methods with type-specific validators:
+
+```typescript
+import { createApp } from '@rhinolabs/boilr';
+
+const app = createApp({
+  auth: {
+    methods: [
+      // Bearer Token Authentication
+      {
+        name: 'jwt',
+        type: 'bearer', // Validator: (request, token: string | undefined) => AuthContext
+        validator: async (request, token) => {
+          if (!token) throw new UnauthorizedException('Bearer token required');
+          const user = await verifyJwtToken(token);
+          return { user, authMethod: 'jwt' };
+        }
+      },
+      
+      // API Key Authentication  
+      {
+        name: 'apikey',
+        type: 'apiKey', // Validator: (request, apiKey: string | undefined) => AuthContext
+        options: { key: 'x-api-key', location: 'header' },
+        validator: async (request, apiKey) => {
+          if (!apiKey) throw new UnauthorizedException('API key required');
+          const user = await validateApiKey(apiKey);
+          return { user, authMethod: 'apikey' };
+        }
+      },
+      
+      // Cookie Authentication
+      {
+        name: 'session',
+        type: 'cookie', // Validator: (request, cookieValue: string | undefined) => AuthContext  
+        options: { key: 'sessionId', location: 'cookie' },
+        validator: async (request, sessionId) => {
+          if (!sessionId) throw new UnauthorizedException('Session required');
+          const user = await getSessionUser(sessionId);
+          return { user, authMethod: 'session' };
+        }
+      },
+      
+      // Basic Authentication
+      {
+        name: 'basic',
+        type: 'basic', // Validator: (request, username?: string, password?: string) => AuthContext
+        validator: async (request, username, password) => {
+          if (!username || !password) throw new UnauthorizedException('Credentials required');
+          const user = await validateCredentials(username, password);
+          return { user, authMethod: 'basic' };
+        }
+      }
+    ]
+  }
+});
+```
+
+### Applying Authentication to Routes
+
+Apply authentication to routes using the `auth` field in your schema:
+
+```typescript
+// routes/protected.ts
+import { z } from 'zod';
+import { defineSchema, GetHandler } from '@rhinolabs/boilr';
+
+export const schema = defineSchema({
+  get: {
+    // Require any configured auth method
+    auth: true,
+    
+    // Or specify specific auth methods
+    auth: ['jwt', 'apikey'],
+    
+    // Or disable auth for this route (even if globally configured)
+    auth: false,
+    
+    response: {
+      200: z.object({
+        message: z.string(),
+        user: z.object({
+          id: z.number(),
+          name: z.string()
+        })
+      })
+    }
+  }
+});
+
+export const get: GetHandler<typeof schema> = async (request) => {
+  // Access typed authenticated context
+  const { user } = request.ctx; // Fully typed based on your AuthContext
+  
+  return {
+    message: `Hello ${user.email}!}`,
+    user
+  };
+};
+```
+
+### Available Validator Types
+
+Each authentication type provides a specific validator signature:
+
+- **`'bearer'`**: `(request: FastifyRequest, token: string | undefined) => AuthContext`
+- **`'apiKey'`**: `(request: FastifyRequest, apiKey: string | undefined) => AuthContext` 
+- **`'cookie'`**: `(request: FastifyRequest, cookieValue: string | undefined) => AuthContext`
+- **`'basic'`**: `(request: FastifyRequest, username: string | undefined, password: string | undefined) => AuthContext`
+
+The system automatically extracts tokens/credentials using the built-in extractors and passes them to your validators. You focus on validation logic, not extraction.
+
 ## Examples
 
 Check out complete examples:
