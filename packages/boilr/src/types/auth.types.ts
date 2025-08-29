@@ -9,14 +9,55 @@ export interface AuthMethodOptions {
   location?: AuthLocation;
 }
 
-export interface AuthMethod {
+export interface BearerAuthMethod {
   name: string;
-  type: AuthType;
+  type: "bearer";
   options?: AuthMethodOptions;
-  validator: AuthValidator;
+  validator: BearerAuthValidator;
 }
 
-export type AuthValidator = (request: FastifyRequest) => Promise<BoilrAuthContext> | BoilrAuthContext;
+export interface ApiKeyAuthMethod {
+  name: string;
+  type: "apiKey";
+  options?: AuthMethodOptions;
+  validator: ApiKeyAuthValidator;
+}
+
+export interface CookieAuthMethod {
+  name: string;
+  type: "cookie";
+  options?: AuthMethodOptions;
+  validator: CookieAuthValidator;
+}
+
+export interface BasicAuthMethod {
+  name: string;
+  type: "basic";
+  options?: AuthMethodOptions;
+  validator: BasicAuthValidator;
+}
+
+export type AuthMethod = BearerAuthMethod | ApiKeyAuthMethod | CookieAuthMethod | BasicAuthMethod;
+
+export type BearerAuthValidator = (
+  request: FastifyRequest,
+  token: string | undefined,
+) => Promise<BoilrAuthContext> | BoilrAuthContext;
+export type ApiKeyAuthValidator = (
+  request: FastifyRequest,
+  token: string | undefined,
+) => Promise<BoilrAuthContext> | BoilrAuthContext;
+export type CookieAuthValidator = (
+  request: FastifyRequest,
+  token: string | undefined,
+) => Promise<BoilrAuthContext> | BoilrAuthContext;
+export type BasicAuthValidator = (
+  request: FastifyRequest,
+  username: string | undefined,
+  password: string | undefined,
+) => Promise<BoilrAuthContext> | BoilrAuthContext;
+
+export type AuthValidator = BearerAuthValidator | ApiKeyAuthValidator | CookieAuthValidator | BasicAuthValidator;
 
 export interface AuthConfig {
   methods: AuthMethod[];

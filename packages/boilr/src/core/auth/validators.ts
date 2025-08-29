@@ -1,10 +1,35 @@
 import type { FastifyRequest } from "fastify";
 import { UnauthorizedException } from "../../exceptions/index.js";
 import type { AuthMethod, BoilrAuthContext } from "../../types/auth.types.js";
+import { extractApiKey, extractBasicCredentials, extractBearerToken } from "./extractors.js";
 
 export async function validateAuthMethod(request: FastifyRequest, authMethod: AuthMethod): Promise<BoilrAuthContext> {
   try {
-    return await authMethod.validator(request);
+    switch (authMethod.type) {
+      case "bearer": {
+        const token = extractBearerToken(request);
+        return await authMethod.validator(request, token);
+      }
+
+      case "apiKey": {
+        const apiKey = extractApiKey(request, authMethod.options?.location || "header", authMethod.options?.key || "");
+        return await authMethod.validator(request, apiKey);
+      }
+
+      case "cookie": {
+        const cookieValue = extractApiKey(
+          request,
+          authMethod.options?.location || "cookie",
+          authMethod.options?.key || "",
+        );
+        return await authMethod.validator(request, cookieValue);
+      }
+
+      case "basic": {
+        const credentials = extractBasicCredentials(request);
+        return await authMethod.validator(request, credentials?.username, credentials?.password);
+      }
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Authentication failed";
     throw new UnauthorizedException(message);

@@ -123,6 +123,36 @@ throw new NotFoundException('User not found');
 throw new ValidationException('Invalid data', validationErrors);
 ```
 
+### 🔐 Authentication System
+
+Flexible multi-method authentication with automatic token extraction:
+
+```typescript
+// Configure authentication methods
+const app = createApp({
+  auth: {
+    methods: [
+      {
+        name: 'jwt',
+        type: 'bearer', // Auto-extracts Bearer token
+        validator: async (request, token) => {
+          const user = await verifyJwtToken(token);
+          return { user };
+        }
+      }
+    ]
+  }
+});
+
+// Apply to routes selectively
+export const schema = defineSchema({
+  get: {
+    auth: ['jwt'], // or auth: true, or auth: false
+    response: { 200: UserSchema }
+  }
+});
+```
+
 ### 📚 Automatic API Documentation
 
 Your OpenAPI/Swagger documentation is automatically generated from your Zod schemas, including automatic error response schemas:
