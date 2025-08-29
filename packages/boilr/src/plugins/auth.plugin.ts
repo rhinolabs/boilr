@@ -50,7 +50,7 @@ async function authPluginFunction(fastify: FastifyInstance, options: BoilrPlugin
     if (requiredAuthNames.length === 0) {
       return;
     }
-    request.ctx = await validateAuthMethods(request, methods, requiredAuthNames);
+    (request as any).ctx = await validateAuthMethods(request, methods, requiredAuthNames);
   });
 }
 

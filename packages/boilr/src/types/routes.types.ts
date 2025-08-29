@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { type ZodType, z } from "zod";
+import { BoilrAuthContext } from "./auth.types.js";
 
 /**
  * Supported HTTP methods in Boilr routes
@@ -295,12 +296,20 @@ type ExtractResponse<S extends RouteSchema, M extends HttpMethod, Status extends
  * };
  * ```
  */
-export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = FastifyRequest<{
+export type TypedRequest<
+  S extends RouteSchema,
+  M extends HttpMethod,
+> = FastifyRequest<{
   Params: ExtractParams<S, M>;
   Querystring: ExtractQuery<S, M>;
   Headers: ExtractHeaders<S, M>;
   Body: ExtractBody<S, M>;
-}>;
+}> &
+  (S[M] extends { auth: false }
+    ?
+      Record<string, never>
+    :
+      { ctx: BoilrAuthContext });
 
 /**
  * Generic route handler type with automatic type inference from schema.
