@@ -302,7 +302,7 @@ export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = FastifyR
   Headers: ExtractHeaders<S, M>;
   Body: ExtractBody<S, M>;
 }> &
-  (S[M] extends { auth: false } ? Record<string, never> : { ctx: BoilrAuthContext });
+  (S[M] extends { auth: false } ? never : { ctx: BoilrAuthContext });
 
 /**
  * Generic route handler type with automatic type inference from schema.

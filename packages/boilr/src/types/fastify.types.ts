@@ -15,27 +15,27 @@ declare module "fastify" {
     boilrConfig: BoilrConfig;
   }
 
-  // interface FastifyRequest {
-  //   /**
-  //    * Authentication context set by the auth system.
-  //    * Contains the result of the successful auth validator.
-  //    *
-  //    * Users can extend the AuthContext interface to provide custom typing:
-  //    *
-  //    * @example
-  //    * ```typescript
-  //    * declare global {
-  //    *   namespace Boilr {
-  //    *     interface AuthContext {
-  //    *       userId: string;
-  //    *       role: 'admin' | 'user';
-  //    *     }
-  //    *   }
-  //    * }
-  //    * ```
-  //    */
-  //   ctx?: BoilrAuthContext;
-  // }
+  interface FastifyRequest {
+    /**
+     * Authentication context set by the auth system.
+     * Contains the result of the successful auth validator.
+     *
+     * Users can extend the AuthContext interface to provide custom typing:
+     *
+     * @example
+     * ```typescript
+     * declare global {
+     *   namespace Boilr {
+     *     interface AuthContext {
+     *       userId: string;
+     *       role: 'admin' | 'user';
+     *     }
+     *   }
+     * }
+     * ```
+     */
+    ctx?: BoilrAuthContext;
+  }
 }
 
 // biome-ignore lint/complexity/noUselessEmptyExport: Export empty object to make this a module
