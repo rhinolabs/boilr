@@ -279,6 +279,14 @@ type ExtractResponse<S extends RouteSchema, M extends HttpMethod, Status extends
   ? R
   : unknown;
 
+// A base request type to avoid repetition and for use with Omit.
+type BaseRequest<S extends RouteSchema, M extends HttpMethod> = FastifyRequest<{
+  Params: ExtractParams<S, M>;
+  Querystring: ExtractQuery<S, M>;
+  Headers: ExtractHeaders<S, M>;
+  Body: ExtractBody<S, M>;
+}>;
+
 /**
  * Typed request object that provides type-safe access to route parameters, query strings, headers, and body.
  * The types are automatically inferred from your route schema definition.
@@ -296,13 +304,9 @@ type ExtractResponse<S extends RouteSchema, M extends HttpMethod, Status extends
  * };
  * ```
  */
-export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = FastifyRequest<{
-  Params: ExtractParams<S, M>;
-  Querystring: ExtractQuery<S, M>;
-  Headers: ExtractHeaders<S, M>;
-  Body: ExtractBody<S, M>;
-}> &
-  (S[M] extends { auth: false } ? never : { ctx: BoilrAuthContext });
+export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = S[M] extends { auth: false }
+  ? Omit<BaseRequest<S, M>, "ctx">
+  : BaseRequest<S, M> & { ctx: BoilrAuthContext };
 
 /**
  * Generic route handler type with automatic type inference from schema.
