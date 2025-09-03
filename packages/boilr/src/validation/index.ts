@@ -46,9 +46,11 @@ export const createJsonSchemaTransform = (config: BoilrConfig) => {
           // Convert auth method names to security requirements
           enhancedSchema.security = [generateSecurityRequirement(authConfig)];
         } else {
-          // Default: use all configured auth methods when auth is not specified
-          const allMethodNames = config.auth.methods.map((method) => method.name);
-          enhancedSchema.security = [generateSecurityRequirement(allMethodNames)];
+          // Default: use only auth methods with default !== false when auth is not specified
+          const defaultMethodNames = config.auth.methods
+            .filter((method) => method.default !== false)
+            .map((method) => method.name);
+          enhancedSchema.security = [generateSecurityRequirement(defaultMethodNames)];
         }
       }
     }
