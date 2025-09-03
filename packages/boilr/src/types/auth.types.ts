@@ -14,6 +14,7 @@ export interface BearerAuthMethod {
   type: "bearer";
   options?: AuthMethodOptions;
   validator: BearerAuthValidator;
+  default?: boolean;
 }
 
 export interface ApiKeyAuthMethod {
@@ -21,6 +22,7 @@ export interface ApiKeyAuthMethod {
   type: "apiKey";
   options?: AuthMethodOptions;
   validator: ApiKeyAuthValidator;
+  default?: boolean;
 }
 
 export interface CookieAuthMethod {
@@ -28,6 +30,7 @@ export interface CookieAuthMethod {
   type: "cookie";
   options?: AuthMethodOptions;
   validator: CookieAuthValidator;
+  default?: boolean;
 }
 
 export interface BasicAuthMethod {
@@ -35,6 +38,7 @@ export interface BasicAuthMethod {
   type: "basic";
   options?: AuthMethodOptions;
   validator: BasicAuthValidator;
+  default?: boolean;
 }
 
 export type AuthMethod = BearerAuthMethod | ApiKeyAuthMethod | CookieAuthMethod | BasicAuthMethod;

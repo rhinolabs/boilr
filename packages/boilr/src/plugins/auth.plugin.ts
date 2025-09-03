@@ -44,7 +44,9 @@ async function authPluginFunction(fastify: FastifyInstance, options: BoilrPlugin
     if (Array.isArray(authConfig)) {
       requiredAuthNames = authConfig;
     } else if (authConfig === undefined) {
-      requiredAuthNames = methods.map((method) => method.name);
+      requiredAuthNames = methods
+        .filter((method) => method.default !== false)
+        .map((method) => method.name);
     }
 
     if (requiredAuthNames.length === 0) {
