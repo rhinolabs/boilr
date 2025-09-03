@@ -9,7 +9,7 @@ export function generateSecuritySchemes(authConfig?: AuthConfig): OpenAPIV3.Comp
   const securitySchemes: OpenAPIV3.ComponentsObject["securitySchemes"] = {};
 
   for (const method of authConfig.methods) {
-    if (method && method.default !== false) {
+    if (method) {
       const scheme = mapAuthMethodToSecurityScheme(method);
       if (scheme) {
         securitySchemes[method.name] = scheme;
