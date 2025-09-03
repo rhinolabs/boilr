@@ -420,6 +420,7 @@ const app = createApp({
       {
         name: 'jwt',
         type: 'bearer', // Validator: (request, token: string | undefined) => AuthContext
+        default: true, // Applied to all routes by default
         validator: async (request, token) => {
           if (!token) throw new UnauthorizedException('Bearer token required');
           const user = await verifyJwtToken(token);
@@ -432,6 +433,7 @@ const app = createApp({
         name: 'apikey',
         type: 'apiKey', // Validator: (request, apiKey: string | undefined) => AuthContext
         options: { key: 'x-api-key', location: 'header' },
+        default: false, // Only applied when explicitly specified
         validator: async (request, apiKey) => {
           if (!apiKey) throw new UnauthorizedException('API key required');
           const user = await validateApiKey(apiKey);
@@ -477,8 +479,8 @@ import { defineSchema, GetHandler } from '@rhinolabs/boilr';
 
 export const schema = defineSchema({
   get: {
-    // Require any configured auth method
-    auth: true,
+    // Uses only auth methods with default: true
+    // (no auth field = apply default methods)
     
     // Or specify specific auth methods
     auth: ['jwt', 'apikey'],
