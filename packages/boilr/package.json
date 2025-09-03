@@ -1,6 +1,6 @@
 {
   "name": "@rhinolabs/boilr",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Convention-based Fastify framework with batteries included",
   "author": {
     "name": "Rhinolabs Agency",
