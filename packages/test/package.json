@@ -1,0 +1,41 @@
+{
+  "name": "@rhinolabs/boilr-test",
+  "version": "0.1.0",
+  "description": "Testing utilities for Boilr framework",
+  "author": {
+    "name": "Rhinolabs Agency",
+    "email": "hello@rhinolabs.agency",
+    "url": "https://rhinolabs.agency"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist/**/*"],
+  "keywords": [
+    "boilr",
+    "testing",
+    "fastify",
+    "vitest",
+    "test-utils",
+    "convention-based"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "biome check .",
+    "lint:fix": "biome check --apply . --unsafe"
+  },
+  "dependencies": {
+    "@rhinolabs/boilr": "workspace:*"
+  },
+  "peerDependencies": {
+    "vitest": "^2.0.0",
+    "zod": "^4.0.0",
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.4.5"
+  },
+  "license": "MIT"
+}

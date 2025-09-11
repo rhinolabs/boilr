@@ -14,7 +14,10 @@
     "dev": "pnpm -r --parallel dev",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe",
-    "format": "biome format . --fix"
+    "format": "biome format . --fix",
+    "test": "cd packages/typescript-example && boilr test --run",
+    "test:watch": "cd packages/typescript-example && boilr test --watch",
+    "test:coverage": "cd packages/typescript-example && boilr test --coverage"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

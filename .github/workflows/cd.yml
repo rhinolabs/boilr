@@ -102,3 +102,53 @@ jobs:
           file_pattern: 'packages/boilr/package.json pnpm-lock.yaml'
           branch: main
           push_options: '--force'
+
+  publish-boilr-test:
+    if: startsWith(github.event.release.tag_name, 'test@')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛠 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 🏷️ Get version from release
+        id: get_version
+        run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/test@//')" >> $GITHUB_OUTPUT
+
+      - name: 🔄 Update package version
+        run: npx tsx scripts/version.ts test ${{ steps.get_version.outputs.VERSION }}
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 🛠️ Build test package
+        run: |-
+          pnpm --filter @rhinolabs/boilr build
+          pnpm --filter @rhinolabs/boilr-test build
+
+      - name: ✏️ Fix linting issues
+        run: pnpm lint:fix
+
+      - name: 📢 Publish test package
+        run: cd packages/test && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 💾 Commit version changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Bump @rhinolabs/boilr-test version to ${{ steps.get_version.outputs.VERSION }}"
+          file_pattern: 'packages/test/package.json pnpm-lock.yaml'
+          branch: main
+          push_options: '--force'

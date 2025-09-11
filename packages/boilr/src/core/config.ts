@@ -179,6 +179,92 @@ export interface BoilrMiddlewareConfig {
 }
 
 /**
+ * Testing configuration for Boilr applications.
+ * Configure test framework, coverage, and test-specific settings.
+ * 
+ * @example
+ * ```typescript
+ * const testConfig: BoilrTestConfig = {
+ *   framework: 'vitest',
+ *   setupFiles: ['./test/setup.ts'],
+ *   coverage: {
+ *     enabled: true,
+ *     threshold: 80,
+ *     reporter: ['text', 'html']
+ *   },
+ *   testTimeout: 10000
+ * };
+ * ```
+ */
+export interface BoilrTestConfig {
+  /**
+   * Test framework to use.
+   * @default 'vitest'
+   */
+  framework?: 'vitest' | 'jest';
+  
+  /**
+   * Files to run before each test file.
+   * Useful for global setup, mocks, and configuration.
+   */
+  setupFiles?: string[];
+  
+  /**
+   * Coverage configuration.
+   */
+  coverage?: {
+    /**
+     * Enable coverage collection.
+     * @default false
+     */
+    enabled?: boolean;
+    
+    /**
+     * Coverage threshold percentage.
+     * @default 80
+     */
+    threshold?: number;
+    
+    /**
+     * Coverage reporters to use.
+     * @default ['text']
+     */
+    reporter?: string[];
+    
+    /**
+     * Files to exclude from coverage.
+     */
+    exclude?: string[];
+  };
+  
+  /**
+   * Global test timeout in milliseconds.
+   * @default 5000
+   */
+  testTimeout?: number;
+  
+  /**
+   * Environment variables to set during testing.
+   */
+  env?: Record<string, string>;
+  
+  /**
+   * Test database configuration.
+   */
+  database?: {
+    /**
+     * Setup function to run before tests.
+     */
+    setup?: () => Promise<void>;
+    
+    /**
+     * Teardown function to run after tests.
+     */
+    teardown?: () => Promise<void>;
+  };
+}
+
+/**
  * Generic type for plugin options that includes boilrConfig.
  * Use this type for all plugin option interfaces to ensure consistent access to boilrConfig.
  *
@@ -277,6 +363,23 @@ export interface BoilrConfig {
    * @default true
    */
   validation?: boolean;
+
+  /**
+   * Testing configuration options.
+   * Configure test framework, coverage, and test-specific settings.
+   * 
+   * @example
+   * ```typescript
+   * test: {
+   *   framework: 'vitest',
+   *   coverage: {
+   *     enabled: true,
+   *     threshold: 80
+   *   }
+   * }
+   * ```
+   */
+  test?: BoilrTestConfig;
 
   /**
    * Exception handling configuration for HTTP errors and validation.

@@ -5,7 +5,7 @@ import "./types/fastify.types.js";
 export { createApp } from "./boilr.js";
 
 // Export from other modules
-export { BoilrConfig } from "./core/config.js";
+export { BoilrConfig, BoilrTestConfig } from "./core/config.js";
 export { registerMiddleware, createRouteMiddleware } from "./middleware/index.js";
 export { BoilrInstance } from "./core/server.js";
 export {
