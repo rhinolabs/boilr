@@ -78,9 +78,6 @@ importers:
       picocolors:
         specifier: ^1.1.1
         version: 1.1.1
-      tsc-alias:
-        specifier: ^1.8.10
-        version: 1.8.16
     devDependencies:
       '@types/node':
         specifier: ^20.15.20
@@ -116,6 +113,9 @@ importers:
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.19.11)(typescript@5.9.2)
+      tsc-alias:
+        specifier: ^1.8.10
+        version: 1.8.16
       typescript:
         specifier: ^5.8.3
         version: 5.9.2

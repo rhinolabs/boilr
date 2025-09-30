@@ -78,7 +78,7 @@ export function registerBuildCommand(program: Command): void {
           if (hasPathWithAliases) {
             log.progress("Resolving TypeScript path aliases");
 
-            const tscAliasChild = spawn("tsc-alias", ["-p", "tsconfig.json"], {
+            const tscAliasChild = spawn("npx", ["tsc-alias", "-p", "tsconfig.json"], {
               stdio: "inherit",
               shell: true,
             });
