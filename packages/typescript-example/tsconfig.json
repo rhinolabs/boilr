@@ -9,6 +9,10 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "sourceMap": false,
     "declaration": false,
     "declarationMap": false,
