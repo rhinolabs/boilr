@@ -64,10 +64,45 @@ export function registerBuildCommand(program: Command): void {
           ]);
           process.exit(code || 1);
         } else {
-          log.successWithSteps("Build completed successfully", [
-            `Output files available in: ${log.path(outDir)}`,
-            `Run ${log.command("boilr start")} to start production server`,
-          ]);
+          const tsconfigPath = path.join(cwd, "tsconfig.json");
+          let hasPathWithAliases: boolean;
+
+          try {
+            const tsconfigContent = fs.readFileSync(tsconfigPath, "utf-8");
+            const tsconfig = JSON.parse(tsconfigContent);
+            hasPathWithAliases = tsconfig?.compilerOptions?.paths !== undefined;
+          } catch (error) {
+            hasPathWithAliases = false;
+          }
+
+          if (hasPathWithAliases) {
+            log.progress("Resolving TypeScript path aliases");
+
+            const tscAliasChild = spawn("tsc-alias", ["-p", "tsconfig.json"], {
+              stdio: "inherit",
+              shell: true,
+            });
+
+            tscAliasChild.on("close", (aliasCode) => {
+              if (aliasCode !== 0) {
+                log.errorWithSuggestion(`Path alias resolution failed with code ${aliasCode}`, [
+                  "Check if your tsconfig.json has correct path aliases configured",
+                  "Install tsc-alias: npm install --save-dev tsc-alias",
+                ]);
+                process.exit(aliasCode || 1);
+              } else {
+                log.successWithSteps("Build completed successfully", [
+                  `Output files available in: ${log.path(outDir)}`,
+                  `Run ${log.command("boilr start")} to start production server`,
+                ]);
+              }
+            });
+          } else {
+            log.successWithSteps("Build completed successfully", [
+              `Output files available in: ${log.path(outDir)}`,
+              `Run ${log.command("boilr start")} to start production server`,
+            ]);
+          }
         }
       });
     });
