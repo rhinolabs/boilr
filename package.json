@@ -13,8 +13,7 @@
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel dev",
     "lint": "biome check .",
-    "lint:fix": "biome check . --fix --unsafe",
-    "format": "biome format . --fix"
+    "lint:fix": "biome check . --fix --unsafe"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
