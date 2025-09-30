@@ -11,7 +11,7 @@
     "rootDir": "./",
     "baseUrl": "./",
     "paths": {
-      "@app/*": ["./src/*"]
+      "@/*": ["./src/*"]
     },
     "sourceMap": false,
     "declaration": false,
