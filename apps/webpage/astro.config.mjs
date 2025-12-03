@@ -8,13 +8,19 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   integrations: [
     starlight({
-      title: "My Docs",
-      social: [{ icon: "github", label: "GitHub", href: "https://github.com/withastro/starlight" }],
+      title: "Boilr",
+      logo: {
+        src: "./src/assets/boilr_logo.svg",
+        replacesTitle: true,
+        alt: "Boilr Logo",
+      },
+      social: [{ icon: "github", label: "GitHub", href: "https://github.com/rhinolabs/boilr" }],
       sidebar: [
         {
           label: "Guides",
           items: [
             // Each item here is one entry in the navigation menu.
+            { label: "Getting Started", slug: "guides/get-started" },
             { label: "Example Guide", slug: "guides/example" },
           ],
         },
@@ -25,7 +31,7 @@ export default defineConfig({
       ],
       customCss: [
         // Path to your Tailwind base styles:
-        "./src/styles/global.css",
+        './src/styles/global.css',
       ],
     }),
   ],

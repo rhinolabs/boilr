@@ -1,5 +1,131 @@
-@layer base, starlight, theme, components, utilities;
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@layer reset, base, starlight, theme, components, utilities, override;
 
-@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/preflight.css' layer(reset);
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
+@import '@astrojs/starlight-tailwind';
+@import './sl-utils.css' layer(starlight.utils);
+
+/* @import "tailwindcss"; */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer override {
+  @theme {
+    --color-background: oklch(50% 0.5 0);
+    --color-foreground: oklch(15.3% 0.014 28.25);
+    --color-card: oklch(100% 0 0);
+    --color-card-foreground: oklch(15.3% 0.014 28.25);
+    --color-popover: oklch(100% 0 0);
+    --color-popover-foreground: oklch(15.3% 0.014 28.25);
+    --color-primary: oklch(64.2% 0.191 50.5);
+    --color-primary-foreground: oklch(98.7% 0.013 106.9);
+    --color-secondary: oklch(96.1% 0.013 106.9);
+    --color-secondary-foreground: oklch(19.8% 0.019 28.25);
+    --color-muted: oklch(96.1% 0.013 106.9);
+    --color-muted-foreground: oklch(52.5% 0.026 46.27);
+    --color-accent: oklch(96.1% 0.013 106.9);
+    --color-accent-foreground: oklch(19.8% 0.019 28.25);
+    --color-destructive: oklch(62.8% 0.257 29.23);
+    --color-destructive-foreground: oklch(98.7% 0.013 106.9);
+    --color-border: oklch(91.9% 0.027 106.9);
+    --color-input: oklch(91.9% 0.027 106.9);
+    --color-ring: oklch(64.2% 0.191 50.5);
+    --color-radius: 0.5rem;
+    --color-chart-1: oklch(69.71% 0.186 42.9);
+    --color-chart-2: oklch(51.13% 0.137 195.8);
+    --color-chart-3: oklch(35.67% 0.08 239.7);
+    --color-chart-4: oklch(74.42% 0.167 65.33);
+    --color-chart-5: oklch(71.65% 0.2 28.36);
+    
+    --font-epilogue: 'Epilogue', sans-serif;
+    --font-jakarta: "Plus Jakarta Sans", sans-serif;
+    --font-code: "Fira Code", monospace;
+
+  
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+  }
+  
+  .dark {
+    @theme  {
+      --color-background: #0F0F0F;
+      --color-foreground: oklch(98.7% 0.013 106.9);
+      --color-card: oklch(15.3% 0.014 28.25);
+      --color-card-foreground: oklch(98.7% 0.013 106.9);
+      --color-popover: oklch(15.3% 0.014 28.25);
+      --color-popover-foreground: oklch(98.7% 0.013 106.9);
+      --color-primary: #25201A;
+      --color-primary-foreground: #FFD09A;
+      --color-secondary: #171717;
+      --color-secondary-foreground: oklch(98.7% 0.013 106.9);
+      --color-muted: oklch(26.57% 0.025 28.25);
+      --color-muted-foreground: #A8A8A8;
+      --color-accent: oklch(26.57% 0.025 28.25);
+      --color-accent-foreground: oklch(98.7% 0.013 106.9);
+      --color-destructive: oklch(59.18% 0.227 29.7);
+      --color-destructive-foreground: oklch(98.7% 0.013 106.9);
+      --color-border: #303030;
+      --color-input: oklch(26.57% 0.025 28.25);
+      --color-ring: oklch(58.56% 0.191 28.89);
+      --color-chart-1: oklch(69.71% 0.186 264.7);
+      --color-chart-2: oklch(64.61% 0.137 164.9);
+      --color-chart-3: oklch(74.42% 0.167 65.33);
+      --color-chart-4: oklch(72.06% 0.167 300.2);
+      --color-chart-5: oklch(71.65% 0.2 350.1);
+  
+    }
+  }
+  
+  :root {
+    --sl-color-bg: var(--color-background);
+    --sl-color-text-accent: var(--color-primary-foreground);
+    --sl-color-text-invert: var(--color-primary);
+    --sl-color-bg-sidebar: var(--color-background);
+    --sl-color-bg-nav: var(--color-secondary);
+    
+    font-family: var(--font-jakarta);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-epilogue);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  
+  dialog {
+    color: inherit;
+  }
+  
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+  
+  kbd {
+    font-size: 0.9em;
+  }
+  
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-muted-foreground) var(--color-secondary);
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-muted-foreground);
+    border-radius: 4px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background-color: var(--color-secondary);
+  } 
+}
