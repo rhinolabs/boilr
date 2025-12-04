@@ -1,10 +1,10 @@
+import { FileTsIcon, FolderSimpleIcon } from "@phosphor-icons/react";
 import { Pre, highlight } from "codehike/code";
 import type { AnnotationHandler, HighlightedCode, RawCode } from "codehike/code";
-import { useEffect, useState, type ReactNode } from "react";
-import { FolderSimpleIcon, FileTsIcon } from "@phosphor-icons/react";
-import { lineNumbers } from "./handlers/LineNumbers";
+import { type ReactNode, useEffect, useState } from "react";
 import { files } from "./data";
 import { focus } from "./handlers/Focus";
+import { lineNumbers } from "./handlers/LineNumbers";
 
 const FolderNav = ({ children }: { children: ReactNode }) => {
   return (

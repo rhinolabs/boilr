@@ -21,6 +21,6 @@
     }
   },
   "files": {
-    "ignore": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.next/**", "**/*.min.js"]
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.next/**", "**/*.min.js", "**/.astro"]
   }
 }

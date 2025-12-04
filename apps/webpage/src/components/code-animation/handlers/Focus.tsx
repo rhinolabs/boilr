@@ -1,5 +1,5 @@
-import { useLayoutEffect, useRef } from "react";
 import { type AnnotationHandler, InnerLine, InnerPre, getPreRef } from "codehike/code";
+import { useLayoutEffect, useRef } from "react";
 
 export const PreWithFocus: AnnotationHandler["PreWithRef"] = (props) => {
   const ref = getPreRef(props);

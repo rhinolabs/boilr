@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from "@phosphor-icons/react";
-import { CodeAnimation } from "./CodeAnimation";
 import { useState } from "react";
+import { CodeAnimation } from "./CodeAnimation";
 
 const Battery = ({ title, description }: { title: string; description: string }) => {
   return (
