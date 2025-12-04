@@ -4,37 +4,37 @@ import starlight from "@astrojs/starlight";
 
 import tailwindcss from "@tailwindcss/vite";
 
+import react from "@astrojs/react";
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    starlight({
-      title: "Boilr",
-      logo: {
-        src: "./src/assets/boilr_logo.svg",
-        replacesTitle: true,
-        alt: "Boilr Logo",
+  integrations: [starlight({
+    title: "Boilr",
+    logo: {
+      src: "./src/assets/boilr_logo.svg",
+      replacesTitle: true,
+      alt: "Boilr Logo",
+    },
+    social: [{ icon: "github", label: "GitHub", href: "https://github.com/rhinolabs/boilr" }],
+    sidebar: [
+      {
+        label: "Guides",
+        items: [
+          // Each item here is one entry in the navigation menu.
+          { label: "Getting Started", slug: "guides/get-started" },
+          { label: "Example Guide", slug: "guides/example" },
+        ],
       },
-      social: [{ icon: "github", label: "GitHub", href: "https://github.com/rhinolabs/boilr" }],
-      sidebar: [
-        {
-          label: "Guides",
-          items: [
-            // Each item here is one entry in the navigation menu.
-            { label: "Getting Started", slug: "guides/get-started" },
-            { label: "Example Guide", slug: "guides/example" },
-          ],
-        },
-        {
-          label: "Reference",
-          autogenerate: { directory: "reference" },
-        },
-      ],
-      customCss: [
-        // Path to your Tailwind base styles:
-        './src/styles/global.css',
-      ],
-    }),
-  ],
+      {
+        label: "Reference",
+        autogenerate: { directory: "reference" },
+      },
+    ],
+    customCss: [
+      // Path to your Tailwind base styles:
+      './src/styles/global.css',
+    ],
+  }), react()],
 
   vite: {
     plugins: [tailwindcss()],
