@@ -35,7 +35,7 @@ import RootLayout from "../layout/RootLayout.astro";
   <main>
     <section id="hero" class="container mx-auto relative">
       <div
-        class="space-y-6 lg:py-0 py-20 lg:h-[85vh] flex flex-col justify-center px-4 lg:px-20"
+        class="space-y-6 lg:py-0 py-20 lg:h-[85vh] flex flex-col justify-center px-6 lg:px-20"
       >
         <MetalicHeading
           tag="h1"
@@ -73,9 +73,9 @@ import RootLayout from "../layout/RootLayout.astro";
     <!-- show only on desktop -->
     <FeatureSection client:media="(min-width: 768px)" />
     <footer class="relative border-t border-border overflow-hidden">
-      <BgShine class="h-[200%] -top-20 -bottom-20 -z-10" />
+      <!-- <BgShine class="h-[200%] -top-20 -bottom-20 -z-10" /> -->
       <div
-        class="container mx-auto py-8 h-full items-left z-20 flex justify-between items-center"
+        class="container mx-auto py-8 h-full items-start z-20 flex justify-between px-6 lg:px-0"
       >
         <div class="flex flex-col justify-start gap-4 h-full">
           <a href="https://rhinolabs.agency/">
@@ -87,10 +87,10 @@ import RootLayout from "../layout/RootLayout.astro";
         </div>
         <div class="flex items-center gap-6">
           <a href="https://github.com/rhinolabs/boilr">
-            <Icon name="github" size="2rem" />
+            <Icon name="github" size="1.5rem" />
           </a>
           <a href="https://www.linkedin.com/company/rhinolabsagency/">
-            <Icon name="linkedin" size="2rem" />
+            <Icon name="linkedin" size="1.5rem" />
           </a>
         </div>
       </div>

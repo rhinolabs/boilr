@@ -4,12 +4,12 @@ import { CodeAnimation } from "./CodeAnimation";
 
 const Battery = ({ title, description }: { title: string; description: string }) => {
   return (
-    <div className="flex flex-col items-center lg:flex-row gap-3">
-      <div className="flex gap-1 items-center text-[#9FCA56]">
+    <div className="flex flex-col lg:items-center lg:flex-row gap-3">
+      {/* <div className="flex gap-1 items-center text-[#9FCA56]">
         <span>Ready</span>
         <CheckCircleIcon size={24} weight="fill" className="" />
-      </div>
-      <h2 className="font-medium text-nowrap">{title}:</h2>
+      </div> */}
+      <h2 className="font-medium text-nowrap">{title}</h2>
       <p className="text-muted-foreground text-pretty">{description}</p>
     </div>
   );
@@ -51,7 +51,7 @@ export const FeatureSection = () => {
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
   return (
     <section
-      className="pt-20 lg:pb-80 pb-36 pl-6 pr-6 lg:pr-0 lg:pl-20 container mx-auto flex flex-col lg:flex-row lg:gap-20 gap-36"
+      className="pt-20 lg:pb-80 pb-36 pl-6 pr-6 lg:pr-0 lg:pl-20 container mx-auto lg:grid flex flex-col lg:grid-cols-3 lg:gap-20 gap-36"
       id="features"
     >
       <div className="lg:min-w-md space-y-20 lg:space-y-60 lg:pt-60">
@@ -81,8 +81,8 @@ export const FeatureSection = () => {
           <p className="text-muted-foreground text-lg text-pretty">Everything you need, ready out of the box.</p>
         </div>
       </div>
-      <div className="w-full flex flex-col gap-14">
-        <div className="relative flex-1 hidden lg:block">
+      <div className="w-full flex flex-col gap-14 col-span-2 ">
+        <div className="relative flex-1 hidden lg:block md:pr-6  pr-0">
           <CodeAnimation selectedFeature={selectedFeature} />
         </div>
         <div className="space-y-12 lg:space-y-4">

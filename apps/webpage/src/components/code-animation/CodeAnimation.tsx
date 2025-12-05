@@ -95,7 +95,7 @@ export const CodeAnimation = ({ selectedFeature }: { selectedFeature: string | n
     return null;
   }
   return (
-    <div className="sticky top-20 self-start max-w-5xl border border-border rounded-md  bg-background h-[60vh] flex ">
+    <div className="sticky top-20 self-start max-w-5xl border border-border rounded-md  bg-background max-h-[60vh] w-full aspect-video flex">
       <div
         className={`flex flex-col p-3 rounded-s-md border pr-5  ${selectedFeature === "file-routing" ? "bg-secondary border-secondary-foreground " : "border-transparent"}`}
       >
@@ -145,8 +145,8 @@ export const CodeAnimation = ({ selectedFeature }: { selectedFeature: string | n
           </FileNav>
         </NavIndentation>
       </div>
-      <div className="p-3 flex-1 w-full overflow-auto h-full  scrollbar-thin">
-        <div className="bg-zinc-600/10 p-3 rounded-sm w-fit h-full">
+      <div className="p-3 flex-1 w-full overflow-auto h-full scrollbar-thin bg-zinc-600/10 rounded-sm">
+        <div className="p-1">
           <Pre code={highlighted} handlers={[lineNumbers, ...handlers]} />
         </div>
       </div>
