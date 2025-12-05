@@ -4,7 +4,11 @@ export const files = [
     name: "users/[id].ts",
     code: `// routes/api/users/[id].ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema, NotFoundException } from '@rhinolabs/boilr';
+import {
+  type GetHandler,
+  defineSchema,
+  NotFoundException,
+} from "@rhinolabs/boilr";
 ​
 // !focus(1:14)
 export const schema = defineSchema({
