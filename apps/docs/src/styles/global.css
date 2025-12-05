@@ -82,7 +82,7 @@
     --sl-color-bg-sidebar: var(--color-background);
     --sl-color-bg-nav: var(--color-card);
 
-    font-family: var(--font-jakarta);
+    font-family: var(--font-jakarta), sans-serif;
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
@@ -93,7 +93,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-epilogue);
+    font-family: var(--font-epilogue), sans-serif;
   }
 
   dialog {
@@ -104,7 +104,7 @@
   kbd,
   samp,
   pre {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
   }
 
   kbd {

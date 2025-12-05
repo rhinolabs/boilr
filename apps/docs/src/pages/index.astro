@@ -4,16 +4,16 @@ import Search from "@astrojs/starlight/components/Search.astro";
 import logo from "../assets/boilr_logo.svg";
 import RhinolabsLogo from "../assets/rhinolabs_logo.svg";
 import { FeatureSection } from "../components/code-animation/FeatureSection.tsx";
-import BgShine from "../components/ui/BgShine.astro";
-import MetalicHeading from "../components/ui/MetalicHeading.astro";
-import RootLayout from "../layout/RootLayout.astro";
+import BgShine from "../components/ui/bg-shine.astro";
+import MetalicHeading from "../components/ui/metalic-heading.astro";
+import RootLayout from "../layout/root-layout.astro";
 ---
 
 <RootLayout>
   <BgShine class="h-[80vh]" />
   <header class="py-2 md:py-6 px-4 lg:px-20 relative">
     <div class="h-14 container mx-auto flex items-center justify-between">
-      <a href="/"> <img src={logo.src} class="lg:h-10 h-8" /></a>
+      <a href="/"> <img src={logo.src} class="lg:h-10 h-8" alt="The Boilr Framework" /></a>
       <div class="flex items-center gap-4 lg:gap-8">
         <div class="w-[250px] hidden lg:block">
           <Search />
@@ -79,7 +79,7 @@ import RootLayout from "../layout/RootLayout.astro";
       >
         <div class="flex flex-col justify-start gap-4 h-full">
           <a href="https://rhinolabs.agency/">
-            <img src={RhinolabsLogo.src} class="h-8 w-fit" />
+            <img src={RhinolabsLogo.src} class="h-8 w-fit" alt="Rhinolabs Agency" />
           </a>
           <span class="text-muted-foreground text-sm"
             >© 2025 Rhinolabs Agency. All rights reserved.</span
