@@ -51,7 +51,7 @@ export const FeatureSection = () => {
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
   return (
     <section
-      className="pt-20 lg:pb-80 pb-36 pl-6 pr-6 lg:pr-0 lg:pl-20 container mx-auto lg:grid flex flex-col lg:grid-cols-3 lg:gap-20 gap-36"
+      className="pt-20 pb-36 px-6 lg:px-0 container mx-auto lg:grid flex flex-col lg:grid-cols-3 lg:gap-20 gap-36"
       id="features"
     >
       <div className="lg:min-w-md space-y-20 lg:space-y-60 lg:pt-60">

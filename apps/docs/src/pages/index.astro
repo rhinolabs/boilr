@@ -9,7 +9,7 @@ import RootLayout from "../layout/root-layout.astro";
 ---
 
 <RootLayout>
-  <BgShine class="h-[80vh]" />
+  <BgShine class="h-screen" />
   <header class="py-2 md:py-6 px-4 lg:px-20 relative">
     <div class="h-14 container mx-auto flex items-center justify-between">
       <a href="/">
@@ -38,21 +38,21 @@ import RootLayout from "../layout/root-layout.astro";
         </a>
         <MetalicHeading
           tag="h1"
-          class="text-4xl lg:text-7xl font-extrabold text-balance max-w-3xl"
+          class="text-4xl lg:text-7xl font-extrabold text-balance max-w-5xl"
         >
           Build production-ready APIs in minutes, not days.
         </MetalicHeading>
         <p
-          class="text-pretty max-w-3xl text-sm lg:text-lg text-muted-foreground"
+          class="text-pretty max-w-4xl text-sm lg:text-lg text-muted-foreground"
         >
           A convention-based web framework built on top of Fastify, designed to
           streamline API development through standardized patterns and built-in
           features.
         </p>
-        <div class="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-0">
+        <div class="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-0 pb-24">
           <button
             id="copy-btn"
-            class="inline-flex items-center gap-2 bg-white text-zinc-900 px-4 py-2 rounded-md cursor-pointer font-mono text-sm hover:opacity-90 transition-opacity"
+            class="inline-flex items-center gap-2 bg-white text-zinc-900 px-4 py-2 rounded-md cursor-pointer font-mono text-xs md:text-sm hover:opacity-90 transition-opacity"
           >
             <span class="text-zinc-500 font-medium">&gt;_</span>
             <span id="copy-text">pnpm install -g @rhinolabs/boilr-cli</span>
@@ -68,60 +68,53 @@ import RootLayout from "../layout/root-layout.astro";
     </section>
     <!-- show only on desktop -->
     <FeatureSection client:media="(min-width: 768px)" />
-    <<<<<<< HEAD:apps/webpage/src/pages/index.astro
     <footer class="relative border-t border-border overflow-hidden">
-      <!-- <BgShine class="h-[200%] -top-20 -bottom-20 -z-10" /> -->
-      =======
-      <footer class="relative overflow-hidden">
-        <BgShine class="h-[200%] -top-20 -bottom-20 -z-10" />
-        >>>>>>> 33b3eada8aa3ac9442f0506483758366f6d868b5:apps/docs/src/pages/index.astro
-        <div
-          class="container mx-auto py-8 h-full items-start z-20 flex justify-between px-6 lg:px-0"
-        >
-          <div class="flex flex-col justify-start gap-4 h-full">
-            <a href="https://rhinolabs.agency/">
-              <img
-                src={RhinolabsLogo.src}
-                class="h-8 w-fit"
-                alt="Rhinolabs Agency"
-              />
-            </a>
-            <span class="text-muted-foreground text-sm"
-              >© 2025 Rhinolabs Agency. All rights reserved.</span
-            >
-          </div>
-          <div class="flex items-center gap-6 text-white">
-            <a href="https://github.com/rhinolabs/boilr">
-              <Icon name="github" size="1.5rem" />
-            </a>
-            <a href="https://www.linkedin.com/company/rhinolabsagency/">
-              <Icon name="linkedin" size="1.5rem" />
-            </a>
-          </div>
+      <div
+        class="container mx-auto py-8 h-full items-start z-20 flex justify-between px-6 lg:px-0"
+      >
+        <div class="flex flex-col justify-start gap-4 h-full">
+          <a href="https://rhinolabs.agency/">
+            <img
+              src={RhinolabsLogo.src}
+              class="h-8 w-fit"
+              alt="Rhinolabs Agency"
+            />
+          </a>
+          <span class="text-muted-foreground text-sm"
+            >© 2025 Rhinolabs Agency. All rights reserved.</span
+          >
         </div>
-      </footer>
+        <div class="flex items-center gap-6 text-white">
+          <a href="https://github.com/rhinolabs/boilr">
+            <Icon name="github" size="1.5rem" />
+          </a>
+          <a href="https://www.linkedin.com/company/rhinolabsagency/">
+            <Icon name="linkedin" size="1.5rem" />
+          </a>
+        </div>
+      </div>
     </footer>
   </main>
-
-  <script>
-    const scrollButton = document.getElementById("scroll");
-    scrollButton?.addEventListener("click", () => {
-      const featuresSection = document.getElementById("features");
-      featuresSection?.scrollIntoView({ behavior: "smooth" });
-    });
-
-    const copyBtn = document.getElementById("copy-btn");
-    const copyText = document.getElementById("copy-text");
-    const originalText = copyText?.textContent;
-
-    copyBtn?.addEventListener("click", () => {
-      navigator.clipboard.writeText("pnpm install -g @rhinolabs/boilr-cli");
-      if (copyText) {
-        copyText.textContent = "Copied!";
-        setTimeout(() => {
-          copyText.textContent = originalText || "";
-        }, 2000);
-      }
-    });
-  </script>
 </RootLayout>
+
+<script>
+  const scrollButton = document.getElementById("scroll");
+  scrollButton?.addEventListener("click", () => {
+    const featuresSection = document.getElementById("features");
+    featuresSection?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  const copyBtn = document.getElementById("copy-btn");
+  const copyText = document.getElementById("copy-text");
+  const originalText = copyText?.textContent;
+
+  copyBtn?.addEventListener("click", () => {
+    navigator.clipboard.writeText("pnpm install -g @rhinolabs/boilr-cli");
+    if (copyText) {
+      copyText.textContent = "Copied!";
+      setTimeout(() => {
+        copyText.textContent = originalText || "";
+      }, 2000);
+    }
+  });
+</script>
