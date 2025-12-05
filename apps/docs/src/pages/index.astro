@@ -1,6 +1,5 @@
 ---
 import { Icon } from "@astrojs/starlight/components";
-import Search from "@astrojs/starlight/components/Search.astro";
 import logo from "../assets/boilr_logo.svg";
 import RhinolabsLogo from "../assets/rhinolabs_logo.svg";
 import { FeatureSection } from "../components/code-animation/FeatureSection.tsx";
@@ -15,14 +14,6 @@ import RootLayout from "../layout/root-layout.astro";
     <div class="h-14 container mx-auto flex items-center justify-between">
       <a href="/"> <img src={logo.src} class="lg:h-10 h-8" alt="The Boilr Framework" /></a>
       <div class="flex items-center gap-4 lg:gap-8">
-        <div class="w-[250px] hidden lg:block">
-          <Search />
-        </div>
-        <a
-          href="/guides/get-started"
-          class="text-muted-foreground hover:text-secondary-foreground text-sm lg:text-base"
-          >Documentation</a
-        >
         <a
           href="https://github.com/rhinolabs/boilr"
           class="text-white"
@@ -35,8 +26,17 @@ import RootLayout from "../layout/root-layout.astro";
   <main>
     <section id="hero" class="container mx-auto relative">
       <div
-        class="space-y-6 lg:py-0 py-20 lg:h-[85vh] flex flex-col justify-center px-4 lg:px-20"
+        class="space-y-6 lg:py-0 py-20 lg:h-[85vh] flex flex-col justify-center items-center text-center px-4 lg:px-20"
       >
+        <a
+          href="https://github.com/rhinolabs/boilr"
+          class="inline-flex items-center gap-2 bg-zinc-800/50 border border-zinc-700 rounded-full px-4 py-2 text-sm text-muted-foreground hover:border-primary transition-colors"
+          target="_blank"
+          rel="noopener"
+        >
+          <Icon name="github" size="1rem" />
+          <span>Contribute on GitHub</span>
+        </a>
         <MetalicHeading
           tag="h1"
           class="text-4xl lg:text-7xl font-extrabold text-balance max-w-3xl"
@@ -51,16 +51,13 @@ import RootLayout from "../layout/root-layout.astro";
           features.
         </p>
         <div class="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-0">
-          <a
-            href="/guides/get-started"
-            class="block bg-primary text-primary-foreground px-4 py-2 rounded-md text-center"
-            >Get Started</a
-          >
           <button
-            onclick="navigator.clipboard.writeText('pnpm install -g @rhinolabs/boilr-cli')"
-            class="bg-secondary text-secondary-foreground px-4 py-2 rounded-md cursor-pointer"
-            >pnpm install -g @rhinolabs/boilr-cli</button
+            id="copy-btn"
+            class="inline-flex items-center gap-2 bg-white text-zinc-900 px-4 py-2 rounded-md cursor-pointer font-mono text-sm hover:opacity-90 transition-opacity"
           >
+            <span class="text-zinc-500 font-medium">&gt;_</span>
+            <span id="copy-text">pnpm install -g @rhinolabs/boilr-cli</span>
+          </button>
         </div>
       </div>
       <button
@@ -103,5 +100,19 @@ import RootLayout from "../layout/root-layout.astro";
   scrollButton?.addEventListener("click", () => {
     const featuresSection = document.getElementById("features");
     featuresSection?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  const copyBtn = document.getElementById("copy-btn");
+  const copyText = document.getElementById("copy-text");
+  const originalText = copyText?.textContent;
+
+  copyBtn?.addEventListener("click", () => {
+    navigator.clipboard.writeText("pnpm install -g @rhinolabs/boilr-cli");
+    if (copyText) {
+      copyText.textContent = "Copied!";
+      setTimeout(() => {
+        copyText.textContent = originalText || "";
+      }, 2000);
+    }
   });
 </script>
