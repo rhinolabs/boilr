@@ -16,6 +16,9 @@ export default defineConfig({
         replacesTitle: true,
         alt: "Boilr Logo",
       },
+      components: {
+        ThemeSelect: "./src/components/theme-select.astro",
+      },
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/rhinolabs/boilr" }],
       sidebar: [
         {

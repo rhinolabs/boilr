@@ -48,9 +48,9 @@
 
   .dark {
     @theme {
-      --color-background: #0f0f0f;
+      --color-background: #0a0a0a;
       --color-foreground: oklch(98.7% 0.013 106.9);
-      --color-card: #1a1a1a;
+      --color-card: #0a0a0a;
       --color-card-foreground: oklch(98.7% 0.013 106.9);
       --color-popover: oklch(15.3% 0.014 28.25);
       --color-popover-foreground: oklch(98.7% 0.013 106.9);
@@ -80,9 +80,9 @@
     --sl-color-text-accent: var(--color-primary);
     --sl-color-text-invert: var(--color-primary-foreground);
     --sl-color-bg-sidebar: var(--color-background);
-    --sl-color-bg-nav: var(--color-card);
+    --sl-color-bg-nav: var(--color-background);
 
-    font-family: var(--font-jakarta);
+    font-family: var(--font-jakarta), sans-serif;
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
@@ -93,7 +93,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-epilogue);
+    font-family: var(--font-epilogue), sans-serif;
   }
 
   dialog {
@@ -104,7 +104,7 @@
   kbd,
   samp,
   pre {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
   }
 
   kbd {
@@ -128,5 +128,71 @@
 
   .scrollbar-thin::-webkit-scrollbar-track {
     background-color: var(--color-secondary);
+  }
+
+  /* Layout */
+  nav.sidebar,
+  .sidebar,
+  .sidebar-pane {
+    background: var(--color-background) !important;
+    border-right: none !important;
+    border-inline-end: none !important;
+  }
+
+  header.header,
+  .header {
+    background: var(--color-background) !important;
+    border-bottom: none !important;
+  }
+
+  .content-panel,
+  .main-pane {
+    background: var(--color-background) !important;
+  }
+
+  .right-sidebar,
+  starlight-toc {
+    background: var(--color-background) !important;
+    border-left: none !important;
+  }
+
+  .main-frame,
+  .content-panel {
+    border: none !important;
+  }
+
+  .header ~ *,
+  header ~ * {
+    border-top: none !important;
+  }
+
+  starlight-menu-button + nav {
+    border: none !important;
+  }
+
+  starlight-menu-button + nav,
+  dialog {
+    background: var(--color-background) !important;
+  }
+
+  /* Social icons */
+  .social-icons a,
+  .social-icons a svg,
+  a[href*="github.com"] svg,
+  .social-icons a:hover,
+  .social-icons a:hover svg {
+    color: #ffffff !important;
+  }
+
+  .social-icons::after,
+  .social-icons + *::before,
+  header .right-group > *:not(:last-child)::after {
+    display: none !important;
+    border: none !important;
+  }
+
+  .right-group,
+  .right-group > * {
+    border: none !important;
   }
 }
