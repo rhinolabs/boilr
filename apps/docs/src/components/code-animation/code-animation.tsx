@@ -5,7 +5,7 @@ import { AnimatePresence } from "motion/react";
 import * as motion from "motion/react-client";
 import { type ReactNode, useEffect, useState } from "react";
 import { files } from "./data";
-import { lineNumbers } from "./handlers/LineNumbers";
+import { lineNumbers } from "./handlers/line-numbers";
 
 const FolderNav = ({ children }: { children: ReactNode }) => {
   return (

@@ -1,8 +1,8 @@
 import type { AnnotationHandler } from "codehike/code";
 import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { CodeAnimation } from "./CodeAnimation";
-import { focus } from "./handlers/Focus";
+import { CodeAnimation } from "./code-animation";
+import { focus } from "./handlers/focus";
 
 const Battery = ({ title, description }: { title: string; description: string }) => {
   return (
