@@ -1,0 +1,120 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+import logo from "../assets/boilr_logo.svg";
+import RhinolabsLogo from "../assets/rhinolabs_logo.svg";
+import { FeatureSection } from "../components/code-animation/feature-section.tsx";
+import BgShine from "../components/ui/bg-shine.astro";
+import MetalicHeading from "../components/ui/metalic-heading.astro";
+import RootLayout from "../layout/root-layout.astro";
+---
+
+<RootLayout>
+  <BgShine class="h-screen" />
+  <header class="py-2 md:py-6 px-4 lg:px-20 relative">
+    <div class="h-14 container mx-auto flex items-center justify-between">
+      <a href="/">
+        <img src={logo.src} class="lg:h-10 h-8" alt="The Boilr Framework" /></a
+      >
+      <div class="flex items-center gap-4 lg:gap-8">
+        <a href="https://github.com/rhinolabs/boilr" class="text-white">
+          <Icon name="github" size="1.5rem" />
+        </a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section id="hero" class="container mx-auto relative">
+      <div
+        class="space-y-6 lg:py-0 py-20 lg:h-[85vh] flex flex-col justify-center items-center text-center px-6 lg:px-20"
+      >
+        <a
+          href="https://github.com/rhinolabs/boilr"
+          class="inline-flex items-center gap-2 bg-zinc-800/50 border border-zinc-700 rounded-full px-4 py-2 text-sm text-muted-foreground hover:border-primary transition-colors"
+          target="_blank"
+          rel="noopener"
+        >
+          <Icon name="github" size="1rem" />
+          <span>Contribute on GitHub</span>
+        </a>
+        <MetalicHeading
+          tag="h1"
+          class="text-4xl lg:text-7xl font-extrabold text-balance max-w-5xl"
+        >
+          Build production-ready APIs in minutes, not days.
+        </MetalicHeading>
+        <p
+          class="text-pretty max-w-4xl text-sm lg:text-lg text-muted-foreground"
+        >
+          A convention-based web framework built on top of Fastify, designed to
+          streamline API development through standardized patterns and built-in
+          features.
+        </p>
+        <div class="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-0 pb-24">
+          <button
+            id="copy-btn"
+            class="inline-flex items-center gap-2 bg-white text-zinc-900 px-4 py-2 rounded-md cursor-pointer font-mono text-xs md:text-sm hover:opacity-90 transition-opacity"
+          >
+            <span class="text-zinc-500 font-medium">&gt;_</span>
+            <span id="copy-text">pnpm install -g @rhinolabs/boilr-cli</span>
+          </button>
+        </div>
+      </div>
+      <button
+        id="scroll"
+        class="hidden lg:flex absolute bottom-0 left-1/2 text-muted-foreground -translate-x-1/2 pl-4 pr-2.5 py-2 rounded-full border border-border hover:bg-zinc-800 bg-background shadow-md hover:text-accent-foreground items-center gap-1 cursor-pointer"
+        >See more
+        <Icon name="down-caret" size="1.5rem" />
+      </button>
+    </section>
+    <!-- show only on desktop -->
+    <FeatureSection client:media="(min-width: 768px)" />
+    <footer class="relative border-t border-border overflow-hidden">
+      <div
+        class="container mx-auto py-8 h-full items-start z-20 flex justify-between px-6 lg:px-0"
+      >
+        <div class="flex flex-col justify-start gap-4 h-full">
+          <a href="https://rhinolabs.agency/">
+            <img
+              src={RhinolabsLogo.src}
+              class="h-8 w-fit"
+              alt="Rhinolabs Agency"
+            />
+          </a>
+          <span class="text-muted-foreground text-sm"
+            >© 2025 Rhinolabs Agency. All rights reserved.</span
+          >
+        </div>
+        <div class="flex items-center gap-6 text-white">
+          <a href="https://github.com/rhinolabs/boilr">
+            <Icon name="github" size="1.5rem" />
+          </a>
+          <a href="https://www.linkedin.com/company/rhinolabsagency/">
+            <Icon name="linkedin" size="1.5rem" />
+          </a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</RootLayout>
+
+<script>
+  const scrollButton = document.getElementById("scroll");
+  scrollButton?.addEventListener("click", () => {
+    const featuresSection = document.getElementById("features");
+    featuresSection?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  const copyBtn = document.getElementById("copy-btn");
+  const copyText = document.getElementById("copy-text");
+  const originalText = copyText?.textContent;
+
+  copyBtn?.addEventListener("click", () => {
+    navigator.clipboard.writeText("pnpm install -g @rhinolabs/boilr-cli");
+    if (copyText) {
+      copyText.textContent = "Copied!";
+      setTimeout(() => {
+        copyText.textContent = originalText || "";
+      }, 2000);
+    }
+  });
+</script>

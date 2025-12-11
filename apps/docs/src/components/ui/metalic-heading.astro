@@ -1,0 +1,52 @@
+---
+export interface Props {
+  tag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  class?: string;
+}
+
+const { tag = "h1", class: className = "" } = Astro.props;
+const Tag = tag;
+---
+
+<Tag class={`metalic-heading relative ${className}`}>
+  <slot />
+  <div
+    class="absolute top-0 left-0 -z-10"
+    style="-webkit-text-stroke: 0.015em #fff;"
+  >
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .metalic-heading {
+    background: linear-gradient(
+      65deg,
+      #b0b0b0 0%,
+      #b0b0b0 20%,
+      #888 45%,
+      #fff 50%,
+      #888 55%,
+      #b0b0b0 80%,
+      #b0b0b0 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    animation: metalic-shine 30s linear infinite;
+  }
+
+  @keyframes metalic-shine {
+    0% {
+      background-position: -300% 0;
+    }
+    50% {
+      background-position: 300% 0;
+    }
+    100% {
+      background-position: -300% 0;
+    }
+  }
+</style>
