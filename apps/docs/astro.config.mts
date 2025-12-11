@@ -1,13 +1,13 @@
 import starlight from "@astrojs/starlight";
-// @ts-check
+import cloudflare from '@astrojs/cloudflare';
 import { defineConfig } from "astro/config";
-
 import tailwindcss from "@tailwindcss/vite";
-
 import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
+  adapter: cloudflare(),
   integrations: [
     starlight({
       title: "Boilr",
@@ -35,7 +35,6 @@ export default defineConfig({
         },
       ],
       customCss: [
-        // Path to your Tailwind base styles:
         "./src/styles/global.css",
       ],
     }),
