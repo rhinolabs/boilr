@@ -11,6 +11,7 @@
   "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod", "monorepo", "typescript", "boilerplate"],
   "scripts": {
     "build": "pnpm -r build",
+    "build:docs": "pnpm --filter @rhinolabs/boilr-docs build",
     "dev": "pnpm -r --parallel dev",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe"
