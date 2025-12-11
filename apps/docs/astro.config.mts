@@ -1,12 +1,12 @@
-import starlight from "@astrojs/starlight";
-import cloudflare from '@astrojs/cloudflare';
-import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
+import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
+import starlight from "@astrojs/starlight";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
+  output: "server",
   adapter: cloudflare(),
   integrations: [
     starlight({
@@ -34,9 +34,7 @@ export default defineConfig({
           autogenerate: { directory: "reference" },
         },
       ],
-      customCss: [
-        "./src/styles/global.css",
-      ],
+      customCss: ["./src/styles/global.css"],
     }),
     react(),
   ],
