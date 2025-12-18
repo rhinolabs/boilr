@@ -8,6 +8,22 @@ A convention-based Fastify framework with batteries included. Boilr brings Next.
   <img src="https://img.shields.io/github/stars/rhinolabs/boilr" alt="github stars">
 </p>
 
+---
+
+> **⚠️Important**  
+> **_Namespace change notice_**  
+> We would like to inform you that, in our next immediate version, _`boiler`_ will become _`boilerjs`_:  
+> `@rhinolabs/boilr` → `@boilrjs/core`
+>
+> Please update your dependencies:
+>
+> ```bash
+> npm uninstall @rhinolabs/boilr
+> npm install @boilrjs/core
+> ```
+
+---
+
 ## Features
 
 - **🗂️ File-based routing** - Next.js style API routes with dynamic parameters and catch-all support
@@ -36,20 +52,20 @@ npm install @rhinolabs/boilr
 
 ```typescript
 // server.ts - Your entry point
-import { createApp } from '@rhinolabs/boilr';
+import { createApp } from "@rhinolabs/boilr";
 
 // Create the application with configuration
 const app = createApp({
   server: { port: 3000 },
-  routes: { dir: './routes' },
+  routes: { dir: "./routes" },
   plugins: {
     swagger: {
       info: {
-        title: 'My API',
-        version: '1.0.0'
-      }
-    }
-  }
+        title: "My API",
+        version: "1.0.0",
+      },
+    },
+  },
 });
 
 // Start the server
@@ -58,24 +74,24 @@ app.start();
 
 ```typescript
 // routes/hello.ts - A simple route
-import { z } from 'zod';
-import { defineSchema, type GetHandler } from '@rhinolabs/boilr';
+import { z } from "zod";
+import { defineSchema, type GetHandler } from "@rhinolabs/boilr";
 
 export const schema = defineSchema({
   get: {
     querystring: z.object({
-      name: z.string().optional()
+      name: z.string().optional(),
     }),
     response: {
       200: z.object({
-        message: z.string()
-      })
-    }
-  }
+        message: z.string(),
+      }),
+    },
+  },
 });
 
 export const get: GetHandler<typeof schema> = async (request, reply) => {
-  const { name = 'world' } = request.query;
+  const { name = "world" } = request.query;
   return { message: `Hello, ${name}!` };
 };
 ```
@@ -102,36 +118,36 @@ Define your routes with full type safety using Zod schemas:
 
 ```typescript
 // routes/users/[id].ts
-import { z } from 'zod';
-import { defineSchema, GetHandler, PutHandler } from '@rhinolabs/boilr';
+import { z } from "zod";
+import { defineSchema, GetHandler, PutHandler } from "@rhinolabs/boilr";
 
 export const schema = defineSchema({
   get: {
     params: z.object({
-      id: z.string().transform(val => parseInt(val, 10))
-    }),
-    response: {
-      200: z.object({
-        id: z.number(),
-        name: z.string()
-      })
-    }
-  },
-  put: {
-    params: z.object({
-      id: z.string().transform(val => parseInt(val, 10))
-    }),
-    body: z.object({
-      name: z.string().min(1)
+      id: z.string().transform((val) => parseInt(val, 10)),
     }),
     response: {
       200: z.object({
         id: z.number(),
         name: z.string(),
-        updated: z.boolean()
-      })
-    }
-  }
+      }),
+    },
+  },
+  put: {
+    params: z.object({
+      id: z.string().transform((val) => parseInt(val, 10)),
+    }),
+    body: z.object({
+      name: z.string().min(1),
+    }),
+    response: {
+      200: z.object({
+        id: z.number(),
+        name: z.string(),
+        updated: z.boolean(),
+      }),
+    },
+  },
 });
 
 // Type-safe GET handler (id is correctly typed as number)
@@ -144,7 +160,7 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
 export const put: PutHandler<typeof schema> = async (request, reply) => {
   const { id } = request.params;
   const { name } = request.body;
-  
+
   return { id, name, updated: true };
 };
 ```
@@ -169,28 +185,28 @@ Customize your application with a flexible configuration system:
 const app = createApp({
   server: {
     port: 8080,
-    host: '0.0.0.0',
-    logger: true
+    host: "0.0.0.0",
+    logger: true,
   },
   routes: {
-    dir: './api',
-    prefix: '/api/v1'
+    dir: "./api",
+    prefix: "/api/v1",
   },
   plugins: {
     helmet: true,
     rateLimit: {
       max: 100,
-      timeWindow: '1 minute'
+      timeWindow: "1 minute",
     },
     cors: true,
     swagger: {
       info: {
-        title: 'My API',
-        description: 'API documentation',
-        version: '1.0.0'
-      }
-    }
-  }
+        title: "My API",
+        description: "API documentation",
+        version: "1.0.0",
+      },
+    },
+  },
 });
 ```
 
@@ -205,21 +221,21 @@ const app = createApp({
   exceptions: {
     // Customize which error status codes to include by default
     defaultErrorStatusCodes: [400, 401, 404, 500],
-    
+
     // Custom error response format
     formatter: (exception, request, reply) => ({
       success: false,
       error: exception.message,
-      code: exception.statusCode
+      code: exception.statusCode,
     }),
-    
+
     // Custom error schema for documentation
     formatterSchema: z.object({
       success: z.boolean(),
       error: z.string(),
-      code: z.number()
-    })
-  }
+      code: z.number(),
+    }),
+  },
 });
 ```
 
@@ -233,17 +249,17 @@ export const schema = defineSchema({
     // Include specific error codes for this endpoint
     defaultErrorStatusCodes: [401, 403, 404],
     response: {
-      200: z.object({ data: z.string() })
-    }
+      200: z.object({ data: z.string() }),
+    },
   },
   post: {
     // Disable automatic error schemas for this method
     defaultErrorStatusCodes: false,
     body: z.object({ name: z.string() }),
     response: {
-      201: z.object({ id: z.number() })
-    }
-  }
+      201: z.object({ id: z.number() }),
+    },
+  },
 });
 ```
 
@@ -269,14 +285,15 @@ Boilr provides comprehensive error handling with built-in HTTP exception classes
 ### Exception Classes
 
 ```typescript
-import { NotFoundException } from '@rhinolabs/boilr';
+import { NotFoundException } from "@rhinolabs/boilr";
 
-throw new NotFoundException('User not found');
+throw new NotFoundException("User not found");
 ```
 
 **Available Exception Classes:**
 
 **Client Errors (4xx):**
+
 - `BadRequestException` (400) - Invalid request format or parameters
 - `UnauthorizedException` (401) - Authentication required or invalid
 - `ForbiddenException` (403) - Insufficient permissions
@@ -294,6 +311,7 @@ throw new NotFoundException('User not found');
 - `ValidationException` (422) - Validation failed with detailed errors
 
 **Server Errors (5xx):**
+
 - `InternalServerErrorException` (500) - Internal server error
 - `NotImplementedException` (501) - Feature not implemented
 - `BadGatewayException` (502) - Bad gateway response
@@ -304,22 +322,22 @@ throw new NotFoundException('User not found');
 ### Custom Exception Options
 
 ```typescript
-throw new NotFoundException('User not found', {
-  name: 'USER_NOT_FOUND',           // Custom error code
-  details: { userId: id },          // Additional context
-  cause: originalError              // Underlying error
+throw new NotFoundException("User not found", {
+  name: "USER_NOT_FOUND", // Custom error code
+  details: { userId: id }, // Additional context
+  cause: originalError, // Underlying error
 });
 ```
 
 ### Validation Errors
 
 ```typescript
-import { ValidationException } from '@rhinolabs/boilr';
+import { ValidationException } from "@rhinolabs/boilr";
 
 // Manual validation errors
-throw new ValidationException('Validation failed', [
-  { field: 'email', message: 'Invalid email format', value: 'invalid-email' },
-  { field: 'age', message: 'Must be a positive number', value: -5 }
+throw new ValidationException("Validation failed", [
+  { field: "email", message: "Invalid email format", value: "invalid-email" },
+  { field: "age", message: "Must be a positive number", value: -5 },
 ]);
 
 // Zod validation errors are automatically converted
@@ -344,7 +362,7 @@ All exceptions are automatically formatted into a consistent JSON response:
 Configure global error handling behavior:
 
 ```typescript
-import { createApp } from '@rhinolabs/boilr';
+import { createApp } from "@rhinolabs/boilr";
 
 const app = createApp({
   exceptions: {
@@ -355,22 +373,24 @@ const app = createApp({
       message: exception.message,
       timestamp: new Date().toISOString(),
       path: request.url,
-      data: exception.details
+      data: exception.details,
     }),
-    
+
     // Enable/disable error logging (default: true)
-    logErrors: true
-  }
+    logErrors: true,
+  },
 });
 ```
 
 ### Error Logging
 
 Errors are automatically logged with different levels:
+
 - **4xx errors**: Logged as warnings
 - **5xx errors**: Logged as errors
 
 Log format includes:
+
 ```json
 {
   "timestamp": "2024-01-01T00:00:00.000Z",
@@ -399,7 +419,7 @@ declare global {
       user: {
         id: string;
         email: string;
-        role: 'admin' | 'user';
+        role: "admin" | "user";
       };
     }
   }
@@ -411,60 +431,61 @@ declare global {
 Configure authentication methods with type-specific validators:
 
 ```typescript
-import { createApp } from '@rhinolabs/boilr';
+import { createApp } from "@rhinolabs/boilr";
 
 const app = createApp({
   auth: {
     methods: [
       // Bearer Token Authentication
       {
-        name: 'jwt',
-        type: 'bearer', // Validator: (request, token: string | undefined) => AuthContext
+        name: "jwt",
+        type: "bearer", // Validator: (request, token: string | undefined) => AuthContext
         default: true, // Applied to all routes by default
         validator: async (request, token) => {
-          if (!token) throw new UnauthorizedException('Bearer token required');
+          if (!token) throw new UnauthorizedException("Bearer token required");
           const user = await verifyJwtToken(token);
-          return { user, authMethod: 'jwt' };
-        }
+          return { user, authMethod: "jwt" };
+        },
       },
-      
-      // API Key Authentication  
+
+      // API Key Authentication
       {
-        name: 'apikey',
-        type: 'apiKey', // Validator: (request, apiKey: string | undefined) => AuthContext
-        options: { key: 'x-api-key', location: 'header' },
+        name: "apikey",
+        type: "apiKey", // Validator: (request, apiKey: string | undefined) => AuthContext
+        options: { key: "x-api-key", location: "header" },
         default: false, // Only applied when explicitly specified
         validator: async (request, apiKey) => {
-          if (!apiKey) throw new UnauthorizedException('API key required');
+          if (!apiKey) throw new UnauthorizedException("API key required");
           const user = await validateApiKey(apiKey);
-          return { user, authMethod: 'apikey' };
-        }
+          return { user, authMethod: "apikey" };
+        },
       },
-      
+
       // Cookie Authentication
       {
-        name: 'session',
-        type: 'cookie', // Validator: (request, cookieValue: string | undefined) => AuthContext  
-        options: { key: 'sessionId', location: 'cookie' },
+        name: "session",
+        type: "cookie", // Validator: (request, cookieValue: string | undefined) => AuthContext
+        options: { key: "sessionId", location: "cookie" },
         validator: async (request, sessionId) => {
-          if (!sessionId) throw new UnauthorizedException('Session required');
+          if (!sessionId) throw new UnauthorizedException("Session required");
           const user = await getSessionUser(sessionId);
-          return { user, authMethod: 'session' };
-        }
+          return { user, authMethod: "session" };
+        },
       },
-      
+
       // Basic Authentication
       {
-        name: 'basic',
-        type: 'basic', // Validator: (request, username?: string, password?: string) => AuthContext
+        name: "basic",
+        type: "basic", // Validator: (request, username?: string, password?: string) => AuthContext
         validator: async (request, username, password) => {
-          if (!username || !password) throw new UnauthorizedException('Credentials required');
+          if (!username || !password)
+            throw new UnauthorizedException("Credentials required");
           const user = await validateCredentials(username, password);
-          return { user, authMethod: 'basic' };
-        }
-      }
-    ]
-  }
+          return { user, authMethod: "basic" };
+        },
+      },
+    ],
+  },
 });
 ```
 
@@ -474,39 +495,39 @@ Apply authentication to routes using the `auth` field in your schema:
 
 ```typescript
 // routes/protected.ts
-import { z } from 'zod';
-import { defineSchema, GetHandler } from '@rhinolabs/boilr';
+import { z } from "zod";
+import { defineSchema, GetHandler } from "@rhinolabs/boilr";
 
 export const schema = defineSchema({
   get: {
     // Uses only auth methods with default: true
     // (no auth field = apply default methods)
-    
+
     // Or specify specific auth methods
-    auth: ['jwt', 'apikey'],
-    
+    auth: ["jwt", "apikey"],
+
     // Or disable auth for this route (even if globally configured)
     auth: false,
-    
+
     response: {
       200: z.object({
         message: z.string(),
         user: z.object({
           id: z.number(),
-          name: z.string()
-        })
-      })
-    }
-  }
+          name: z.string(),
+        }),
+      }),
+    },
+  },
 });
 
 export const get: GetHandler<typeof schema> = async (request) => {
   // Access typed authenticated context
   const { user } = request.ctx; // Fully typed based on your AuthContext
-  
+
   return {
     message: `Hello ${user.email}!}`,
-    user
+    user,
   };
 };
 ```
@@ -516,7 +537,7 @@ export const get: GetHandler<typeof schema> = async (request) => {
 Each authentication type provides a specific validator signature:
 
 - **`'bearer'`**: `(request: FastifyRequest, token: string | undefined) => AuthContext`
-- **`'apiKey'`**: `(request: FastifyRequest, apiKey: string | undefined) => AuthContext` 
+- **`'apiKey'`**: `(request: FastifyRequest, apiKey: string | undefined) => AuthContext`
 - **`'cookie'`**: `(request: FastifyRequest, cookieValue: string | undefined) => AuthContext`
 - **`'basic'`**: `(request: FastifyRequest, username: string | undefined, password: string | undefined) => AuthContext`
 
@@ -525,6 +546,7 @@ The system automatically extracts tokens/credentials using the built-in extracto
 ## Examples
 
 Check out complete examples:
+
 - [TypeScript Todo API](https://github.com/rhinolabs/boilr/tree/main/packages/typescript-example)
 
 ## License
