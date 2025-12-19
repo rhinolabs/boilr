@@ -1,4 +1,4 @@
-name: Continuous Deployment
+name: Release packages
 
 on:
   release:
@@ -42,8 +42,6 @@ jobs:
 
       - name: 📢 Publish CLI package
         run: cd packages/cli && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 💾 Commit version changes
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -92,8 +90,6 @@ jobs:
 
       - name: 📢 Publish Core package
         run: cd packages/boilr && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 💾 Commit version changes
         uses: stefanzweifel/git-auto-commit-action@v5
