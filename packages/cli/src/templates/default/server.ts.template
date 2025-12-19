@@ -1,4 +1,4 @@
-import { createApp } from "@rhinolabs/boilr";
+import { createApp } from "@boilrjs/core";
 
 // Create the application
 const app = createApp({

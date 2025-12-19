@@ -1,7 +1,7 @@
 {
-  "name": "@rhinolabs/boilr-monorepo",
+  "name": "@boilrjs/monorepo",
   "version": "0.1.0",
-  "description": "Monorepo for boilr framework",
+  "description": "Monorepo for boilrjs framework",
   "author": {
     "name": "Rhinolabs Agency",
     "email": "hello@rhinolabs.agency",
@@ -11,7 +11,7 @@
   "keywords": ["fastify", "framework", "api", "rest", "conventions", "zod", "monorepo", "typescript", "boilerplate"],
   "scripts": {
     "build": "pnpm -r build",
-    "build:docs": "pnpm --filter @rhinolabs/boilr-docs build",
+    "build:docs": "pnpm --filter @boilrjs/docs build",
     "dev": "pnpm -r --parallel dev",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe"

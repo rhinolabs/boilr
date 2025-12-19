@@ -1,4 +1,4 @@
-import { type GetHandler, defineSchema } from "@rhinolabs/boilr";
+import { type GetHandler, defineSchema } from "@boilrjs/core";
 import { z } from "zod";
 
 export const schema = defineSchema({

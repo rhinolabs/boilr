@@ -1,10 +1,4 @@
-import {
-  type DeleteHandler,
-  type GetHandler,
-  NotFoundException,
-  type PutHandler,
-  defineSchema,
-} from "@rhinolabs/boilr";
+import { type DeleteHandler, type GetHandler, NotFoundException, type PutHandler, defineSchema } from "@boilrjs/core";
 import { z } from "zod";
 import { TodoSchema, todos } from "./index.js"; // Ensure .js extension for ESM imports
 

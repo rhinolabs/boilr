@@ -1,4 +1,4 @@
-import { type GetHandler, type PostHandler, defineSchema } from "@rhinolabs/boilr";
+import { type GetHandler, type PostHandler, defineSchema } from "@boilrjs/core";
 import { z } from "zod";
 
 // Define schema for endpoints
@@ -46,7 +46,7 @@ export const TodoSchema = z.object({
 export const todos = [
   {
     id: 1,
-    title: "Learn boilr framework",
+    title: "Learn boilrjs framework",
     completed: false,
     createdAt: new Date().toISOString(),
   },

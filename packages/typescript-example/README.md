@@ -1,6 +1,6 @@
 # TypeScript Todo API Example
 
-A complete Todo CRUD API example built with the `@rhinolabs/boilr` framework, showcasing TypeScript type safety, file-based routing, Zod schema validation, and automatic OpenAPI documentation generation.
+A complete Todo CRUD API example built with the `@boilrjs/core` framework, showcasing TypeScript type safety, file-based routing, Zod schema validation, and automatic OpenAPI documentation generation.
 
 ## Features Demonstrated
 
@@ -36,7 +36,7 @@ The server will start on `http://localhost:3000` with the following features:
 | Method | Endpoint | Description | Example |
 |--------|----------|-------------|---------|
 | GET | `/api/todos` | List all todos | `?completed=true` to filter |
-| POST | `/api/todos` | Create a new todo | `{"title": "Learn Boilr", "completed": false}` |
+| POST | `/api/todos` | Create a new todo | `{"title": "Learn Boilrjs", "completed": false}` |
 | GET | `/api/todos/:id` | Get a specific todo by ID | `/api/todos/1` |
 | PUT | `/api/todos/:id` | Update a todo completely | `{"title": "Updated", "completed": true}` |
 | DELETE | `/api/todos/:id` | Delete a todo | Returns `204 No Content` |
@@ -66,7 +66,7 @@ src/
 ### 1. Server Configuration (server.ts)
 
 ```typescript
-import { createApp } from "@rhinolabs/boilr";
+import { createApp } from "@boilrjs/core";
 
 const app = createApp({
   server: {
@@ -87,7 +87,7 @@ const app = createApp({
     swagger: {
       info: {
         title: "Todo API",
-        description: "A simple Todo CRUD API built with Boilr",
+        description: "A simple Todo CRUD API built with Boilrjs",
         version: "1.0.0"
       }
     }
@@ -101,7 +101,7 @@ app.start();
 
 ```typescript
 import { z } from "zod";
-import { type GetHandler, defineSchema } from "@rhinolabs/boilr";
+import { type GetHandler, defineSchema } from "@boilrjs/core";
 
 export const schema = defineSchema({
   get: {

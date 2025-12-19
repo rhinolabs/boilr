@@ -93,14 +93,14 @@ export function registerBuildCommand(program: Command): void {
               } else {
                 log.successWithSteps("Build completed successfully", [
                   `Output files available in: ${log.path(outDir)}`,
-                  `Run ${log.command("boilr start")} to start production server`,
+                  `Run ${log.command("boilrjs start")} to start production server`,
                 ]);
               }
             });
           } else {
             log.successWithSteps("Build completed successfully", [
               `Output files available in: ${log.path(outDir)}`,
-              `Run ${log.command("boilr start")} to start production server`,
+              `Run ${log.command("boilrjs start")} to start production server`,
             ]);
           }
         }
