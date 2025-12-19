@@ -48,7 +48,7 @@ jobs:
         run: cd packages/cli && npm publish --access public
 
       - name: 💾 Commit version changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Bump @rhinolabs/boilr-cli version to ${{ steps.get_version.outputs.VERSION }}"
           file_pattern: 'packages/cli/package.json pnpm-lock.yaml'
@@ -96,7 +96,7 @@ jobs:
         run: cd packages/boilr && npm publish --access public
 
       - name: 💾 Commit version changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Bump @rhinolabs/boilr version to ${{ steps.get_version.outputs.VERSION }}"
           file_pattern: 'packages/boilr/package.json pnpm-lock.yaml'
