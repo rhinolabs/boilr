@@ -103,4 +103,4 @@ declare global {
  * Type alias for the extensible auth context.
  * Defaults to unknown if not extended by the user.
  */
-export type BoilrAuthContext = Boilr.AuthContext extends Record<string, never> ? unknown : Boilr.AuthContext;
+export type BoilrAuthContext = BoilrJs.AuthContext extends Record<string, never> ? unknown : BoilrJs.AuthContext;
