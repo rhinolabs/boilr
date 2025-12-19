@@ -7,6 +7,17 @@ Command-line interface for the Boilr framework. Provides tools for creating, dev
   <img src="https://img.shields.io/npm/l/@rhinolabs/boilr-cli" alt="license">
 </p>
 
+> **⚠️Important**  
+> **_Namespace change notice_**  
+> We would like to inform you that, in our next immediate version, _`boiler`_ will become _`boilerjs`_:  
+> `@rhinolabs/boilr-cli` → `@boilrjs/cli`
+>
+> Please update:
+>
+> ```bash
+>  npm install -g @boilrjs/cli
+> ```
+
 ## Installation
 
 ```bash
@@ -31,6 +42,7 @@ npm run dev
 ```
 
 **Options:**
+
 - `--template <template>` - Template to use (default: "typescript")
 - `--skip-install` - Skip automatic dependency installation
 
@@ -43,11 +55,13 @@ boilr dev
 ```
 
 **Options:**
+
 - `-p, --port <number>` - Specify the port (default: 3000)
 - `-h, --host <host>` - Specify the host (default: localhost)
 - `-w, --watch` - Watch for file changes (default: true)
 
 **Features:**
+
 - Automatic restart on file changes
 - TypeScript compilation
 - Real-time error reporting
@@ -62,9 +76,11 @@ boilr build
 ```
 
 **Options:**
+
 - `-c, --config <path>` - Specify custom config file path
 
 **Features:**
+
 - TypeScript compilation
 - Optimized for production
 - Tree shaking and minification
@@ -79,6 +95,7 @@ boilr start
 ```
 
 **Options:**
+
 - `-p, --port <number>` - Specify the port (default: 3000)
 - `-h, --host <host>` - Specify the host (default: localhost)
 
