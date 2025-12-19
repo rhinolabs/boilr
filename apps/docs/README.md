@@ -1,6 +1,6 @@
 # Boilr's webpage
 
-A modern documentation website built with Astro and Starlight, providing comprehensive guides and resources for the Boilr project.
+A modern documentation website built with Astro and Starlight, providing comprehensive guides and resources for the BoilrJs project.
 
 
 ### Development

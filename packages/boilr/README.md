@@ -1,6 +1,6 @@
 # @boilrjs/core
 
-A convention-based Fastify framework with batteries included. Boilr brings Next.js-inspired simplicity and TypeScript type safety to Fastify API development.
+A convention-based Fastify framework with batteries included. BoilrJs brings Next.js-inspired simplicity and TypeScript type safety to Fastify API development.
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@boilrjs/core" alt="npm version">
@@ -82,7 +82,7 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
 
 ## File-Based Routing
 
-Boilrjs automatically maps your directory structure to API routes following Next.js conventions:
+BoilrJs automatically maps your directory structure to API routes following Next.js conventions:
 
 ```
 routes/
@@ -196,7 +196,7 @@ const app = createApp({
 
 ## Automatic Error Schema Generation
 
-Boilr automatically adds error response schemas to your Swagger documentation. By default, all routes include a 500 (Internal Server Error) response schema, but you can customize this behavior:
+BoilrJs automatically adds error response schemas to your Swagger documentation. By default, all routes include a 500 (Internal Server Error) response schema, but you can customize this behavior:
 
 ### Global Configuration
 
@@ -264,7 +264,7 @@ This ensures your API documentation always includes comprehensive error response
 
 ## Error Handling
 
-Boilr provides comprehensive error handling with built-in HTTP exception classes and automatic error formatting:
+BoilrJs provides comprehensive error handling with built-in HTTP exception classes and automatic error formatting:
 
 ### Exception Classes
 
@@ -389,16 +389,16 @@ Log format includes:
 
 ## Authentication System
 
-Boilr includes a flexible authentication system that supports multiple authentication methods and can be applied selectively to routes. The system automatically extracts tokens/credentials and passes them to your validators.
+BoilrJs includes a flexible authentication system that supports multiple authentication methods and can be applied selectively to routes. The system automatically extracts tokens/credentials and passes them to your validators.
 
 ### Auth Context Type Declaration
 
-First, declare your authentication context interface globally:
+First, declare your authenticationBoilr  context interface globally:
 
 ```typescript
 // types/auth.ts or in your main file
 declare global {
-  namespace Boilr {
+  namespace BoilrJs {
     interface AuthContext {
       user: {
         id: string;

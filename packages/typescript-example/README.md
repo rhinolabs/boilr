@@ -130,9 +130,9 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
 
 ## Learn More
 
-For more information about Boilr and related technologies:
+For more information about BoilrJs and related technologies:
 
-- [Boilr Framework Documentation](https://github.com/rhinolabs/boilr)
+- [BoilrJs Framework Documentation](https://github.com/rhinolabs/boilr)
 - [Zod Documentation](https://github.com/colinhacks/zod)
 - [Fastify Documentation](https://www.fastify.io/docs/latest/)
 

@@ -18,7 +18,7 @@ import type { CatchAllParam, HttpMethod, PathSegments, RouteSchema } from "../ty
  * ```typescript
  * export const get: GetHandler<typeof schema> = async (request, reply) => {
  *   // Automatic validation - usually you don't need to call this directly
- *   // as Boilr handles it automatically, but it's available if needed
+ *   // as BoilrJs handles it automatically, but it's available if needed
  *   const params = getTypedParams(request, schema, "get");
  *   const { id } = params; // Fully typed
  * };

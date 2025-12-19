@@ -7,17 +7,17 @@ A convention-based web framework built on top of Fastify, designed to streamline
 This project is structured as a monorepo using pnpm workspaces:
 
 - **`packages/boilr`** - Core framework package (`@boilrjs/core`)  
-  The main Boilr framework that provides convention-based routing, configuration, and plugin management around Fastify.
+  The main BoilrJs framework that provides convention-based routing, configuration, and plugin management around Fastify.
 
 - **`packages/cli`** - Command-line interface (`@boilrjs/cli`)  
-  Tools for creating new projects, development server with hot-reload, building, and running Boilr applications.
+  Tools for creating new projects, development server with hot-reload, building, and running BoilrJs applications.
 
 - **`packages/typescript-example`** - Example application  
   A complete Todo CRUD API demonstrating Boilr's key features including type-safe validation and automatic documentation.
 
 ## Overview
 
-Boilr simplifies building TypeScript APIs with Fastify by providing:
+BoilrJs simplifies building TypeScript APIs with Fastify by providing:
 
 - **Convention-based file routing** with Next.js-style patterns
 - **Integrated schema validation** using Zod with automatic type inference
@@ -29,7 +29,7 @@ Boilr simplifies building TypeScript APIs with Fastify by providing:
 
 ## Getting Started
 
-The fastest way to start using Boilr is with the CLI:
+The fastest way to start using BoilrJs is with the CLI:
 
 ```bash
 # Install the CLI globally

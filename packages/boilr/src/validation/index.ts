@@ -22,7 +22,7 @@ type RouteContext = {
 };
 
 /**
- * Creates a jsonSchemaTransform function with access to Boilr configuration
+ * Creates a jsonSchemaTransform function with access to BoilrJs configuration
  */
 export const createJsonSchemaTransform = (config: BoilrConfig) => {
   return function jsonSchemaTransform({ schema, url, route, openapiObject }: RouteContext): TransformResult {

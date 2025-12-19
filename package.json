@@ -1,7 +1,7 @@
 {
   "name": "@boilrjs/monorepo",
   "version": "0.1.0",
-  "description": "Monorepo for boilrjs framework",
+  "description": "Monorepo for BoilrJs framework",
   "author": {
     "name": "Rhinolabs Agency",
     "email": "hello@rhinolabs.agency",

@@ -1,7 +1,7 @@
 {
   "name": "@boilrjs/cli",
   "version": "0.2.1",
-  "description": "CLI tool for Boilr framework",
+  "description": "CLI tool for BoilrJs framework",
   "author": {
     "name": "Rhinolabs Agency",
     "email": "hello@rhinolabs.agency",

@@ -1,6 +1,6 @@
 # @boilrjs/cli
 
-Command-line interface for the Boilr framework. Provides tools for creating, developing, building, and running Boilr applications with hot-reload and TypeScript support.
+Command-line interface for the BoilrJs framework. Provides tools for creating, developing, building, and running BoilrJs applications with hot-reload and TypeScript support.
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@boilrjs/cli" alt="npm version">
@@ -21,7 +21,7 @@ npx @boilrjs/cli [command]
 
 ### `boilrjs new [name]` - Create New Project
 
-Initialize a new Boilr project with TypeScript template and example routes.
+Initialize a new BoilrJs project with TypeScript template and example routes.
 
 ```bash
 boilrjs new my-api-project
@@ -58,7 +58,7 @@ boilrjs dev
 
 ### `boilrjs build` - Production Build
 
-Build the Boilrjs application for production deployment.
+Build the BoilrJs application for production deployment.
 
 ```bash
 boilrjs build

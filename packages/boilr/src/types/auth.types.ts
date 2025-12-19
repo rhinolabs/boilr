@@ -73,11 +73,11 @@ export interface BasicCredentials {
 }
 
 /**
- * Global namespace for Boilr type extensions.
+ * Global namespace for BoilrJs type extensions.
  * Users can extend these interfaces to customize type behavior.
  */
 declare global {
-  namespace Boilr {
+  namespace BoilrJs {
     /**
      * Authentication context interface that users can extend.
      * By default, it's unknown, but users can extend it with their own context.
@@ -85,7 +85,7 @@ declare global {
      * @example
      * ```typescript
      * declare global {
-     *   namespace Boilr {
+     *   namespace BoilrJs {
      *     interface AuthContext {
      *       userId: string;
      *       role: 'admin' | 'user';

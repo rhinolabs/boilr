@@ -13,11 +13,11 @@ import {
 } from "./validation/index.js";
 
 /**
- * Creates a new Boilr application instance with the specified configuration.
- * This is the main entry point for creating Boilr applications.
+ * Creates a new BoilrJs application instance with the specified configuration.
+ * This is the main entry point for creating BoilrJs applications.
  *
  * @param userConfig - Optional configuration object to customize the application
- * @returns A configured Boilr application instance ready to be started
+ * @returns A configured BoilrJs application instance ready to be started
  *
  * @example
  * ```typescript
@@ -78,7 +78,7 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   // Apply type provider
   const typedApp = app.withTypeProvider<ZodTypeProvider>();
 
-  // Create boilr instance early to access addPlugin method
+  // Create boilrjs instance early to access addPlugin method
   const boilrApp = decorateServer(typedApp, config);
 
   // Register plugins using addPlugin

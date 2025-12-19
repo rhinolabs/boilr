@@ -7,7 +7,7 @@ import { log } from "../utils/logger.js";
 export function registerBuildCommand(program: Command): void {
   program
     .command("build")
-    .description("Build the Boilr application for production")
+    .description("Build the BoilrJs application for production")
     .option("-o, --outDir <path>", "specify the output directory", "dist")
     .option("--clean", "clean the output directory before building", false)
     .action((options) => {
@@ -19,8 +19,8 @@ export function registerBuildCommand(program: Command): void {
 
       if (!fs.existsSync(serverPath)) {
         log.errorWithSuggestion("server.ts file not found in the current directory", [
-          "Make sure you are in a Boilr project directory",
-          `Create a new project with ${log.command("boilr new my-app")}`,
+          "Make sure you are in a BoilrJs project directory",
+          `Create a new project with ${log.command("boilrjs new my-app")}`,
           "Check TypeScript files exist",
         ]);
         process.exit(1);

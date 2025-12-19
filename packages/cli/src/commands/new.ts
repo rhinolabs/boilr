@@ -41,14 +41,14 @@ function processTemplateFiles(source: string, destination: string, variables: Re
 export function registerNewCommand(program: Command): void {
   program
     .command("new")
-    .description("Create a new Boilr project")
+    .description("Create a new BoilrJs project")
     .argument("[name]", "project name")
     .option("-t, --template <template>", "template to use", "default")
     .option("--typescript", "use TypeScript", true)
     .option("--skip-install", "skip dependency installation", false)
     .action((name, options) => {
       const projectName = name || "my-boilr-app";
-      log.banner(`Creating new Boilr project: ${projectName}`);
+      log.banner(`Creating new BoilrJs project: ${projectName}`);
 
       const cwd = process.cwd();
       const projectPath = path.join(cwd, projectName);
@@ -77,7 +77,7 @@ export function registerNewCommand(program: Command): void {
 
       if (!fs.existsSync(templatePath)) {
         log.errorWithSuggestion(`Template "${options.template}" not found`, [
-          `Use the default template: ${log.command("boilr new my-app")}`,
+          `Use the default template: ${log.command("boilrjs new my-app")}`,
           "Check available templates",
           "Verify the template name is correct",
         ]);
@@ -115,7 +115,7 @@ export function registerNewCommand(program: Command): void {
               ]);
             } else {
               log.newline();
-              log.successWithSteps("🎉 Your new Boilr project is ready!", [
+              log.successWithSteps("🎉 Your new BoilrJs project is ready!", [
                 `cd ${log.command(projectName)}`,
                 log.command("npm run dev"),
               ]);
@@ -125,7 +125,7 @@ export function registerNewCommand(program: Command): void {
           });
         } else {
           log.newline();
-          log.successWithSteps("🎉 Your new Boilr project is ready!", [
+          log.successWithSteps("🎉 Your new BoilrJs project is ready!", [
             `cd ${log.command(projectName)}`,
             log.command("npm install"),
             log.command("npm run dev"),

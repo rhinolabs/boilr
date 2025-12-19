@@ -46,7 +46,7 @@ export const TodoSchema = z.object({
 export const todos = [
   {
     id: 1,
-    title: "Learn boilrjs framework",
+    title: "Learn BoilrJs framework",
     completed: false,
     createdAt: new Date().toISOString(),
   },
