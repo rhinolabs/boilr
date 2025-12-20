@@ -1,41 +1,30 @@
-# @rhinolabs/boilr-cli
+# @boilrjs/cli
 
-Command-line interface for the Boilr framework. Provides tools for creating, developing, building, and running Boilr applications with hot-reload and TypeScript support.
+Command-line interface for the BoilrJs framework. Provides tools for creating, developing, building, and running BoilrJs applications with hot-reload and TypeScript support.
 
 <p align="center">
-  <img src="https://img.shields.io/npm/v/@rhinolabs/boilr-cli" alt="npm version">
-  <img src="https://img.shields.io/npm/l/@rhinolabs/boilr-cli" alt="license">
+  <img src="https://img.shields.io/npm/v/@boilrjs/cli" alt="npm version">
+  <img src="https://img.shields.io/npm/l/@boilrjs/cli" alt="license">
 </p>
-
-> **⚠️Important**  
-> **_Namespace change notice_**  
-> We would like to inform you that, in our next immediate version, _`boiler`_ will become _`boilerjs`_:  
-> `@rhinolabs/boilr-cli` → `@boilrjs/cli`
->
-> Please update:
->
-> ```bash
->  npm install -g @boilrjs/cli
-> ```
 
 ## Installation
 
 ```bash
 # Install globally for easy access
-npm install -g @rhinolabs/boilr-cli
+npm install -g @boilrjs/cli
 
 # Or use directly with npx
-npx @rhinolabs/boilr-cli [command]
+npx @boilrjs/cli [command]
 ```
 
 ## Commands
 
-### `boilr new [name]` - Create New Project
+### `boilrjs new [name]` - Create New Project
 
-Initialize a new Boilr project with TypeScript template and example routes.
+Initialize a new BoilrJs project with TypeScript template and example routes.
 
 ```bash
-boilr new my-api-project
+boilrjs new my-api-project
 cd my-api-project
 npm install
 npm run dev
@@ -46,12 +35,12 @@ npm run dev
 - `--template <template>` - Template to use (default: "typescript")
 - `--skip-install` - Skip automatic dependency installation
 
-### `boilr dev` - Development Server
+### `boilrjs dev` - Development Server
 
 Start the development server with hot-reload and file watching.
 
 ```bash
-boilr dev
+boilrjs dev
 ```
 
 **Options:**
@@ -67,12 +56,12 @@ boilr dev
 - Real-time error reporting
 - Fast rebuild times
 
-### `boilr build` - Production Build
+### `boilrjs build` - Production Build
 
-Build the Boilr application for production deployment.
+Build the BoilrJs application for production deployment.
 
 ```bash
-boilr build
+boilrjs build
 ```
 
 **Options:**
@@ -86,12 +75,12 @@ boilr build
 - Tree shaking and minification
 - Source map generation
 
-### `boilr start` - Production Server
+### `boilrjs start` - Production Server
 
 Start the production server using the built application.
 
 ```bash
-boilr start
+boilrjs start
 ```
 
 **Options:**
@@ -102,15 +91,15 @@ boilr start
 ### Help and Version
 
 ```bash
-boilr --help      # Display help information
-boilr --version   # Display version information
+boilrjs --help      # Display help information
+boilrjs --version   # Display version information
 ```
 
 ## Quick Start Workflow
 
 ```bash
 # 1. Create a new project
-boilr new my-awesome-api
+boilrjs new my-awesome-api
 
 # 2. Navigate to project
 cd my-awesome-api
@@ -119,13 +108,13 @@ cd my-awesome-api
 npm install
 
 # 4. Start development
-boilr dev
+boilrjs dev
 
 # 5. Build for production
-boilr build
+boilrjs build
 
 # 6. Start production server
-boilr start
+boilrjs start
 ```
 
 ## Development

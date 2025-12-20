@@ -1,6 +1,6 @@
 /**
- * Type declarations for Boilr framework extensions to Fastify.
- * This file extends Fastify's interfaces to include Boilr-specific decorators.
+ * Type declarations for BoilrJs framework extensions to Fastify.
+ * This file extends Fastify's interfaces to include BoilrJs-specific decorators.
  */
 
 import type { BoilrConfig } from "../core/config.js";
@@ -9,7 +9,7 @@ import type { BoilrAuthContext } from "./auth.types.js";
 declare module "fastify" {
   interface FastifyInstance {
     /**
-     * Boilr configuration object stored on the Fastify instance.
+     * BoilrJs configuration object stored on the Fastify instance.
      * This is decorated automatically when using createApp().
      */
     boilrConfig: BoilrConfig;
@@ -25,7 +25,7 @@ declare module "fastify" {
      * @example
      * ```typescript
      * declare global {
-     *   namespace Boilr {
+     *   namespace BoilrJs {
      *     interface AuthContext {
      *       userId: string;
      *       role: 'admin' | 'user';

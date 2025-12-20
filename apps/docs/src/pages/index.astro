@@ -13,7 +13,7 @@ import RootLayout from "../layout/root-layout.astro";
   <header class="py-2 md:py-6 px-4 lg:px-20 relative">
     <div class="h-14 container mx-auto flex items-center justify-between">
       <a href="/">
-        <img src={logo.src} class="lg:h-10 h-8" alt="The Boilr Framework" /></a
+        <img src={logo.src} class="lg:h-10 h-8" alt="The BoilrJs Framework" /></a
       >
       <div class="flex items-center gap-4 lg:gap-8">
         <a href="https://github.com/rhinolabs/boilr" class="text-white">
@@ -55,7 +55,7 @@ import RootLayout from "../layout/root-layout.astro";
             class="inline-flex items-center gap-2 bg-white text-zinc-900 px-4 py-2 rounded-md cursor-pointer font-mono text-xs md:text-sm hover:opacity-90 transition-opacity"
           >
             <span class="text-zinc-500 font-medium">&gt;_</span>
-            <span id="copy-text">pnpm install -g @rhinolabs/boilr-cli</span>
+            <span id="copy-text">pnpm install -g @boilrjs/cli</span>
           </button>
         </div>
       </div>
@@ -109,7 +109,7 @@ import RootLayout from "../layout/root-layout.astro";
   const originalText = copyText?.textContent;
 
   copyBtn?.addEventListener("click", () => {
-    navigator.clipboard.writeText("pnpm install -g @rhinolabs/boilr-cli");
+    navigator.clipboard.writeText("pnpm install -g @boilrjs/cli");
     if (copyText) {
       copyText.textContent = "Copied!";
       setTimeout(() => {

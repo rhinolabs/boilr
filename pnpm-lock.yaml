@@ -136,12 +136,12 @@ importers:
 
   packages/typescript-example:
     dependencies:
-      '@rhinolabs/boilr':
-        specifier: workspace:*
-        version: link:../boilr
-      '@rhinolabs/boilr-cli':
+      '@boilrjs/cli':
         specifier: workspace:*
         version: link:../cli
+      '@boilrjs/core':
+        specifier: workspace:*
+        version: link:../boilr
       fastify:
         specifier: ^5.0.0
         version: 5.5.0

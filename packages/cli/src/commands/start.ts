@@ -23,7 +23,7 @@ export function registerStartCommand(program: Command): void {
 
       if (!fs.existsSync(distDir)) {
         log.errorWithSuggestion(`Build directory not found: ${log.path(distDir)}`, [
-          `Run ${log.command("boilr build")} first to create production build`,
+          `Run ${log.command("boilrjs build")} first to create production build`,
           "Check if you are in the correct project directory",
           "Verify the build was successful",
         ]);
@@ -32,7 +32,7 @@ export function registerStartCommand(program: Command): void {
 
       if (!fs.existsSync(serverPath)) {
         log.errorWithSuggestion(`server.js not found in build directory: ${log.path(serverPath)}`, [
-          `Run ${log.command("boilr build")} first to create production build`,
+          `Run ${log.command("boilrjs build")} first to create production build`,
           "Check if the build completed successfully",
           "Verify all dependencies are installed",
         ]);

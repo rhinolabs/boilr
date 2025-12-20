@@ -1,5 +1,5 @@
 {
-  "name": "@rhinolabs/boilr-docs",
+  "name": "@boilrjs/docs",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

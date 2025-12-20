@@ -16,7 +16,7 @@ export const cookiePlugin = fp(async (fastify: FastifyInstance, options: BoilrPl
   const defaultOptions: FastifyCookieOptions = {
     hook: "onRequest",
   };
-  // If the cookie plugin is explicitly disabled in the boilr config, skip registration
+  // If the cookie plugin is explicitly disabled in the boilrjs config, skip registration
   if (boilrConfig.plugins?.cookie === false) {
     return;
   }

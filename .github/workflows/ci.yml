@@ -27,7 +27,7 @@ jobs:
         run: pnpm install
 
       - name: Build CLI package
-        run: pnpm --filter @rhinolabs/boilr-cli build
+        run: pnpm --filter @boilrjs/cli build
 
       - name: 📦 Sync dependencies with local binaries
         run: pnpm install

@@ -8,7 +8,7 @@ import {
   type GetHandler,
   defineSchema,
   NotFoundException,
-} from "@rhinolabs/boilr";
+} from "@boilrjs/core";
 ​
 // !focus(1:14)
 export const schema = defineSchema({
@@ -42,7 +42,7 @@ export const get: GetHandler<typeof schema> = async (request) => {
     name: "users/index.ts",
     code: `// routes/api/users/index.ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema } from '@rhinolabs/boilr';
+import { type GetHandler, defineSchema } from '@boilrjs/core';
 ​
 // !focus(1:11)
 export const schema = defineSchema({
@@ -66,7 +66,7 @@ export const get: GetHandler<typeof schema> = async () => {
     name: "api/index.ts",
     code: `// routes/api/index.ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema } from '@rhinolabs/boilr';
+import { type GetHandler, defineSchema } from '@boilrjs/core';
 ​
 // !focus(1:9)
 export const schema = defineSchema({
@@ -87,7 +87,7 @@ export const get: GetHandler<typeof schema> = async () => {
     name: "(admin)/settings.ts",
     code: `// routes/(admin)/settings.ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema } from '@rhinolabs/boilr';
+import { type GetHandler, defineSchema } from '@boilrjs/core';
 ​
 // !focus(1:10)
 export const schema = defineSchema({
@@ -110,7 +110,7 @@ export const get: GetHandler<typeof schema> = async () => {
     name: "routes/[...catchAll].ts",
     code: `// routes/[...catchAll].ts
 import { z } from 'zod';
-import { type GetHandler, defineSchema } from '@rhinolabs/boilr';
+import { type GetHandler, defineSchema } from '@boilrjs/core';
 ​
 // !focus(1:12)
 export const schema = defineSchema({
@@ -135,7 +135,7 @@ export const get: GetHandler<typeof schema> = async (request) => {
   {
     name: "src/server.ts",
     code: `// server.ts
-import { createApp } from '@rhinolabs/boilr';
+import { createApp } from '@boilrjs/core';
 
 const app = createApp({
   server: {

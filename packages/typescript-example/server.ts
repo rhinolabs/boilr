@@ -1,4 +1,4 @@
-import { UnauthorizedException, createApp, extractApiKey, extractBearerToken } from "@rhinolabs/boilr";
+import { UnauthorizedException, createApp, extractApiKey, extractBearerToken } from "@boilrjs/core";
 
 async function verifyJwtToken(token: string) {
   if (token === "valid-jwt") {

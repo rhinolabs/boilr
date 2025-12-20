@@ -21,8 +21,8 @@ export function registerDevCommand(program: Command): void {
 
       if (!fs.existsSync(serverPath)) {
         log.errorWithSuggestion("server.ts file not found in the current directory", [
-          "Make sure you are in a Boilr project directory",
-          `Create a new project with ${log.command("boilr new my-app")}`,
+          "Make sure you are in a BoilrJs project directory",
+          `Create a new project with ${log.command("boilrjs new my-app")}`,
           "Check if the file exists in current directory",
         ]);
         process.exit(1);

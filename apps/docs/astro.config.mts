@@ -10,11 +10,11 @@ export default defineConfig({
   adapter: cloudflare(),
   integrations: [
     starlight({
-      title: "Boilr",
+      title: "BoilrJs",
       logo: {
         src: "./src/assets/boilr_logo.svg",
         replacesTitle: true,
-        alt: "Boilr Logo",
+        alt: "BoilrJs Logo",
       },
       components: {
         ThemeSelect: "./src/components/theme-select.astro",

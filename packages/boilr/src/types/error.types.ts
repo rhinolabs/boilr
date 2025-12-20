@@ -66,7 +66,7 @@ export type ErrorFormatter<T = ErrorResponse> = (
 ) => T | Promise<T>;
 
 /**
- * Global configuration for exception handling in Boilr applications.
+ * Global configuration for exception handling in BoilrJs applications.
  */
 export interface ExceptionConfig {
   /** Custom error formatter function to control response structure */

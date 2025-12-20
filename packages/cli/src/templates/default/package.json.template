@@ -1,22 +1,22 @@
 {
   "name": "{{projectName}}",
   "version": "0.1.0",
-  "description": "A Boilr application with Todo CRUD API",
+  "description": "A BoilrJs application with Todo CRUD API",
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "boilr dev",
-    "build": "boilr build",
-    "start": "boilr start"
+    "dev": "boilrjs dev",
+    "build": "boilrjs build",
+    "start": "boilrjs start"
   },
   "dependencies": {
-    "@rhinolabs/boilr": "^0.1.0",
+    "@boilrjs/core": "^0.1.0",
     "fastify": "^5.3.3",
     "pino-pretty": "^13.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@rhinolabs/cli": "^0.1.0",
+    "@boilrjs/cli": "^0.1.0",
     "@types/node": "^20.15.0",
     "typescript": "^5.4.5",
     "tsx": "^4.19.0"

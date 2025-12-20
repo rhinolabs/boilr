@@ -155,7 +155,7 @@ export interface BoilrPluginsConfig {
 }
 
 /**
- * Middleware configuration for Boilr applications.
+ * Middleware configuration for BoilrJs applications.
  *
  * @example
  * ```typescript
@@ -198,8 +198,8 @@ export interface BoilrMiddlewareConfig {
 export type BoilrPluginOptions<T = {}> = T & { boilrConfig: BoilrConfig };
 
 /**
- * Main configuration interface for Boilr applications.
- * This interface defines all available configuration options for customizing your Boilr app.
+ * Main configuration interface for BoilrJs applications.
+ * This interface defines all available configuration options for customizing your BoilrJs app.
  *
  * @example
  * ```typescript
@@ -294,7 +294,7 @@ export interface BoilrConfig {
 }
 
 /**
- * Default configuration values for Boilr applications.
+ * Default configuration values for BoilrJs applications.
  * These defaults provide a good starting point for most applications.
  */
 export const defaultConfig: BoilrConfig = {

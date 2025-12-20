@@ -1,7 +1,7 @@
 import pc from "picocolors";
 
 /**
- * Enhanced logger for Boilr CLI with colors and emojis
+ * Enhanced logger for BoilrJs CLI with colors and emojis
  */
 export const log = {
   // Status messages

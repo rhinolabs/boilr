@@ -3,7 +3,7 @@ import { type ZodType, z } from "zod";
 import type { BoilrAuthContext } from "./auth.types.js";
 
 /**
- * Supported HTTP methods in Boilr routes
+ * Supported HTTP methods in BoilrJs routes
  *
  * @example
  * ```typescript

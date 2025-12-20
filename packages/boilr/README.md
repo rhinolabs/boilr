@@ -1,28 +1,12 @@
-# @rhinolabs/boilr
+# @boilrjs/core
 
-A convention-based Fastify framework with batteries included. Boilr brings Next.js-inspired simplicity and TypeScript type safety to Fastify API development.
+A convention-based Fastify framework with batteries included. BoilrJs brings Next.js-inspired simplicity and TypeScript type safety to Fastify API development.
 
 <p align="center">
-  <img src="https://img.shields.io/npm/v/@rhinolabs/boilr" alt="npm version">
-  <img src="https://img.shields.io/npm/l/@rhinolabs/boilr" alt="license">
+  <img src="https://img.shields.io/npm/v/@boilrjs/core" alt="npm version">
+  <img src="https://img.shields.io/npm/l/@boilrjs/core" alt="license">
   <img src="https://img.shields.io/github/stars/rhinolabs/boilr" alt="github stars">
 </p>
-
----
-
-> **⚠️Important**  
-> **_Namespace change notice_**  
-> We would like to inform you that, in our next immediate version, _`boiler`_ will become _`boilerjs`_:  
-> `@rhinolabs/boilr` → `@boilrjs/core`
->
-> Please update your dependencies:
->
-> ```bash
-> npm uninstall @rhinolabs/boilr
-> npm install @boilrjs/core
-> ```
-
----
 
 ## Features
 
@@ -38,21 +22,21 @@ A convention-based Fastify framework with batteries included. Boilr brings Next.
 
 ```bash
 # Create a new project using the CLI (recommended)
-npm install -g @rhinolabs/boilr-cli
-boilr new my-api
+npm install -g @boilrjs/cli
+boilrjs new my-api
 cd my-api
 npm install
 npm run dev
 
 # Or add to an existing project
-npm install @rhinolabs/boilr
+npm install @boilrjs/core
 ```
 
 ## Quick Start
 
 ```typescript
 // server.ts - Your entry point
-import { createApp } from "@rhinolabs/boilr";
+import { createApp } from "@boilrjs/core";
 
 // Create the application with configuration
 const app = createApp({
@@ -75,7 +59,7 @@ app.start();
 ```typescript
 // routes/hello.ts - A simple route
 import { z } from "zod";
-import { defineSchema, type GetHandler } from "@rhinolabs/boilr";
+import { defineSchema, type GetHandler } from "@boilrjs/core";
 
 export const schema = defineSchema({
   get: {
@@ -98,7 +82,7 @@ export const get: GetHandler<typeof schema> = async (request, reply) => {
 
 ## File-Based Routing
 
-Boilr automatically maps your directory structure to API routes following Next.js conventions:
+BoilrJs automatically maps your directory structure to API routes following Next.js conventions:
 
 ```
 routes/
@@ -119,7 +103,7 @@ Define your routes with full type safety using Zod schemas:
 ```typescript
 // routes/users/[id].ts
 import { z } from "zod";
-import { defineSchema, GetHandler, PutHandler } from "@rhinolabs/boilr";
+import { defineSchema, GetHandler, PutHandler } from "@boilrjs/core";
 
 export const schema = defineSchema({
   get: {
@@ -212,7 +196,7 @@ const app = createApp({
 
 ## Automatic Error Schema Generation
 
-Boilr automatically adds error response schemas to your Swagger documentation. By default, all routes include a 500 (Internal Server Error) response schema, but you can customize this behavior:
+BoilrJs automatically adds error response schemas to your Swagger documentation. By default, all routes include a 500 (Internal Server Error) response schema, but you can customize this behavior:
 
 ### Global Configuration
 
@@ -280,12 +264,12 @@ This ensures your API documentation always includes comprehensive error response
 
 ## Error Handling
 
-Boilr provides comprehensive error handling with built-in HTTP exception classes and automatic error formatting:
+BoilrJs provides comprehensive error handling with built-in HTTP exception classes and automatic error formatting:
 
 ### Exception Classes
 
 ```typescript
-import { NotFoundException } from "@rhinolabs/boilr";
+import { NotFoundException } from "@boilrjs/core";
 
 throw new NotFoundException("User not found");
 ```
@@ -332,7 +316,7 @@ throw new NotFoundException("User not found", {
 ### Validation Errors
 
 ```typescript
-import { ValidationException } from "@rhinolabs/boilr";
+import { ValidationException } from "@boilrjs/core";
 
 // Manual validation errors
 throw new ValidationException("Validation failed", [
@@ -362,7 +346,7 @@ All exceptions are automatically formatted into a consistent JSON response:
 Configure global error handling behavior:
 
 ```typescript
-import { createApp } from "@rhinolabs/boilr";
+import { createApp } from "@boilrjs/core";
 
 const app = createApp({
   exceptions: {
@@ -405,16 +389,16 @@ Log format includes:
 
 ## Authentication System
 
-Boilr includes a flexible authentication system that supports multiple authentication methods and can be applied selectively to routes. The system automatically extracts tokens/credentials and passes them to your validators.
+BoilrJs includes a flexible authentication system that supports multiple authentication methods and can be applied selectively to routes. The system automatically extracts tokens/credentials and passes them to your validators.
 
 ### Auth Context Type Declaration
 
-First, declare your authentication context interface globally:
+First, declare your authenticationBoilr  context interface globally:
 
 ```typescript
 // types/auth.ts or in your main file
 declare global {
-  namespace Boilr {
+  namespace BoilrJs {
     interface AuthContext {
       user: {
         id: string;
@@ -431,7 +415,7 @@ declare global {
 Configure authentication methods with type-specific validators:
 
 ```typescript
-import { createApp } from "@rhinolabs/boilr";
+import { createApp } from "@boilrjs/core";
 
 const app = createApp({
   auth: {
@@ -496,7 +480,7 @@ Apply authentication to routes using the `auth` field in your schema:
 ```typescript
 // routes/protected.ts
 import { z } from "zod";
-import { defineSchema, GetHandler } from "@rhinolabs/boilr";
+import { defineSchema, GetHandler } from "@boilrjs/core";
 
 export const schema = defineSchema({
   get: {

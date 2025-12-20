@@ -1,18 +1,6 @@
 // Import type extensions for Fastify (module augmentation)
 import "./types/fastify.types.js";
 
-console.warn(`
-╔════════════════════════════════════════════════════════════╗
-║  ⚠️  DEPRECATION WARNING                                   ║
-║                                                            ║
-║  @rhinolabs/boilr has been renamed to @boilrjs/core        ║
-║                                                            ║
-║  Please update your package.json                           ║
-║  npm uninstall @rhinolabs/boilr                            ║
-║  npm install @boilrjs/core                                 ║
-╚════════════════════════════════════════════════════════════╝
-`);
-
 // Export main implementation from boilr
 export { createApp } from "./boilr.js";
 
