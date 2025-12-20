@@ -66,7 +66,26 @@ importers:
         specifier: ^4.1.17
         version: 4.1.17
 
-  packages/boilr:
+  packages/cli:
+    dependencies:
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.15.20
+        version: 20.19.11
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.2
+
+  packages/core:
     dependencies:
       '@fastify/autoload':
         specifier: ^6.3.0
@@ -115,25 +134,6 @@ importers:
         specifier: ^5.4.5
         version: 5.9.2
 
-  packages/cli:
-    dependencies:
-      commander:
-        specifier: ^14.0.0
-        version: 14.0.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
-      picocolors:
-        specifier: ^1.1.1
-        version: 1.1.1
-    devDependencies:
-      '@types/node':
-        specifier: ^20.15.20
-        version: 20.19.11
-      typescript:
-        specifier: ^5.4.5
-        version: 5.9.2
-
   packages/typescript-example:
     dependencies:
       '@boilrjs/cli':
@@ -141,7 +141,7 @@ importers:
         version: link:../cli
       '@boilrjs/core':
         specifier: workspace:*
-        version: link:../boilr
+        version: link:../core
       fastify:
         specifier: ^5.0.0
         version: 5.5.0
@@ -5550,7 +5550,7 @@ snapshots:
 
   json-schema-resolver@3.0.0:
     dependencies:
-      debug: 4.4.1(supports-color@5.5.0)
+      debug: 4.4.3
       fast-uri: 3.0.6
       rfdc: 1.4.1
     transitivePeerDependencies:

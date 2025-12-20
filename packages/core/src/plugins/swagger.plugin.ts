@@ -24,7 +24,7 @@ export const swaggerPlugin = fp(
       openapi: {
         info: {
           title: "API Documentation",
-          description: "API documentation generated with boilr",
+          description: "API documentation generated with core",
           version: "1.0.0",
         },
         components: {

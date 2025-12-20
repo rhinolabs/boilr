@@ -216,7 +216,7 @@ The framework leverages modern TypeScript features and provides:
 ```bash
 # Clone the repository
 git clone https://github.com/rhinolabs/boilr.git
-cd boilr
+cd core
 
 # Install dependencies
 pnpm install

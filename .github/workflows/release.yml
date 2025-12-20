@@ -56,7 +56,7 @@ jobs:
           push_options: '--force'
 
   publish-core:
-    if: startsWith(github.event.release.tag_name, 'boilr@')
+    if: startsWith(github.event.release.tag_name, 'core@')
     runs-on: ubuntu-latest
     steps:
       - name: 🛠 Checkout code
@@ -76,10 +76,10 @@ jobs:
 
       - name: 🏷️ Get version from release
         id: get_version
-        run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/boilr@//')" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/core@//')" >> $GITHUB_OUTPUT
 
       - name: 🔄 Update package version
-        run: npx tsx scripts/version.ts boilr ${{ steps.get_version.outputs.VERSION }}
+        run: npx tsx scripts/version.ts core ${{ steps.get_version.outputs.VERSION }}
 
       - name: 📦 Install dependencies
         run: pnpm install
@@ -93,12 +93,12 @@ jobs:
         run: pnpm lint:fix
 
       - name: 📢 Publish Core package
-        run: cd packages/boilr && npm publish --access public
+        run: cd packages/core && npm publish --access public
 
       - name: 💾 Commit version changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Bump @boilrjs/core version to ${{ steps.get_version.outputs.VERSION }}"
-          file_pattern: 'packages/boilr/package.json pnpm-lock.yaml'
+          file_pattern: 'packages/core/package.json pnpm-lock.yaml'
           branch: main
           push_options: '--force'

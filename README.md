@@ -50,7 +50,7 @@ npm run dev
 
 For more detailed instructions, check the documentation for each package:
 
-- [`@boilrjs/core`](./packages/boilr/README.md) - Core framework with routing and validation
+- [`@boilrjs/core`](packages/core/README.md) - Core framework with routing and validation
 - [`@boilrjs/cli`](./packages/cli/README.md) - Command-line development tools
 - [Example Application](./packages/typescript-example/README.md) - Complete Todo API sample
 
@@ -215,7 +215,7 @@ The framework leverages modern TypeScript features and provides:
 ```bash
 # Clone the repository
 git clone https://github.com/rhinolabs/boilr.git
-cd boilr
+cd core
 
 # Install dependencies
 pnpm install
