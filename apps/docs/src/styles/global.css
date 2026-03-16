@@ -134,45 +134,45 @@
   nav.sidebar,
   .sidebar,
   .sidebar-pane {
-    background: var(--color-background) !important;
-    border-right: none !important;
-    border-inline-end: none !important;
+    background: var(--color-background);
+    border-right: none;
+    border-inline-end: none;
   }
 
   header.header,
   .header {
-    background: var(--color-background) !important;
-    border-bottom: none !important;
+    background: var(--color-background);
+    border-bottom: none;
   }
 
   .content-panel,
   .main-pane {
-    background: var(--color-background) !important;
+    background: var(--color-background);
   }
 
   .right-sidebar,
   starlight-toc {
-    background: var(--color-background) !important;
-    border-left: none !important;
+    background: var(--color-background);
+    border-left: none;
   }
 
   .main-frame,
   .content-panel {
-    border: none !important;
+    border: none;
   }
 
   .header ~ *,
   header ~ * {
-    border-top: none !important;
+    border-top: none;
   }
 
   starlight-menu-button + nav {
-    border: none !important;
+    border: none;
   }
 
   starlight-menu-button + nav,
   dialog {
-    background: var(--color-background) !important;
+    background: var(--color-background);
   }
 
   /* Social icons */
@@ -181,18 +181,18 @@
   a[href*="github.com"] svg,
   .social-icons a:hover,
   .social-icons a:hover svg {
-    color: #ffffff !important;
+    color: #ffffff;
   }
 
   .social-icons::after,
   .social-icons + *::before,
   header .right-group > *:not(:last-child)::after {
-    display: none !important;
-    border: none !important;
+    display: none;
+    border: none;
   }
 
   .right-group,
   .right-group > * {
-    border: none !important;
+    border: none;
   }
 }

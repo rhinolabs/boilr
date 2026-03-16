@@ -1,4 +1,4 @@
-import { type GetHandler, defineSchema } from "@boilrjs/core";
+import { defineSchema, type GetHandler } from "@boilrjs/core";
 import { z } from "zod";
 
 export const schema = defineSchema({
@@ -13,7 +13,7 @@ export const schema = defineSchema({
   },
 });
 
-export const get: GetHandler<typeof schema> = async (request, reply) => {
+export const get: GetHandler<typeof schema> = async (_request, _reply) => {
   return {
     message: "This is a public endpoint",
   };

@@ -1,6 +1,6 @@
 import { FileTsIcon, FolderSimpleIcon } from "@phosphor-icons/react";
-import { Pre, highlight } from "codehike/code";
 import type { AnnotationHandler, HighlightedCode } from "codehike/code";
+import { highlight, Pre } from "codehike/code";
 import { AnimatePresence } from "motion/react";
 import * as motion from "motion/react-client";
 import { type ReactNode, useEffect, useState } from "react";
@@ -21,7 +21,12 @@ const FileNav = ({
   methods,
   onClick,
   active,
-}: { children: ReactNode; methods?: string[]; onClick?: () => void; active?: boolean }) => {
+}: {
+  children: ReactNode;
+  methods?: string[];
+  onClick?: () => void;
+  active?: boolean;
+}) => {
   return (
     <button
       type="button"

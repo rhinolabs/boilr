@@ -1,10 +1,10 @@
 import type { FastifySchema, RouteOptions } from "fastify";
 import {
-  ZodTypeProvider,
   jsonSchemaTransform as baseJsonSchemaTransform,
   createJsonSchemaTransformObject,
   serializerCompiler,
   validatorCompiler,
+  ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import type { OpenAPIV3, OpenAPIV3_1 } from "openapi-types";
 import type { BoilrConfig } from "../core/config.js";
@@ -65,4 +65,4 @@ export const createJsonSchemaTransform = (config: BoilrConfig) => {
   };
 };
 
-export { ZodTypeProvider, validatorCompiler, serializerCompiler, createJsonSchemaTransformObject };
+export { createJsonSchemaTransformObject, serializerCompiler, validatorCompiler, ZodTypeProvider };

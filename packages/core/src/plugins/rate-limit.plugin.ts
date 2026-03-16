@@ -27,7 +27,7 @@ export const rateLimitPlugin = fp(
     const defaultOptions: RateLimitPluginOptions = {
       max: 100,
       timeWindow: "1 minute",
-      errorResponseBuilder: (req: FastifyRequest, context: RateLimitContext) => ({
+      errorResponseBuilder: (_req: FastifyRequest, context: RateLimitContext) => ({
         statusCode: 429,
         error: "Too Many Requests",
         message: `Rate limit exceeded, retry in ${context.after}`,

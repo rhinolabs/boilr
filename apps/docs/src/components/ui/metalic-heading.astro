@@ -4,8 +4,8 @@ export interface Props {
   class?: string;
 }
 
-const { tag = "h1", class: className = "" } = Astro.props;
-const Tag = tag;
+const { tag = "h1", class: _className = "" } = Astro.props;
+const _Tag = tag;
 ---
 
 <Tag class={`metalic-heading relative ${className}`}>

@@ -1,4 +1,4 @@
-import { UnauthorizedException, createApp, extractApiKey, extractBearerToken } from "@boilrjs/core";
+import { createApp, extractApiKey, extractBearerToken, UnauthorizedException } from "@boilrjs/core";
 
 async function verifyJwtToken(token: string) {
   if (token === "valid-jwt") {

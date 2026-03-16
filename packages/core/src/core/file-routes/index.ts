@@ -1,13 +1,13 @@
-export { fastifyFileRoutes } from "./file-routes.js";
 export type {
+  FastifyInstance,
+  FastifyPluginAsync,
   FileRoutesOptions,
+  HttpMethod,
+  RouteHandler,
   RouteInfo,
   RouteModule,
   RouteSchema,
-  HttpMethod,
-  RouteHandler,
-  FastifyInstance,
-  FastifyPluginAsync,
 } from "../../types/file-routes.types.js";
-export { scanDirectories, extractRouteInfo, transformPathToRoute, handleDynamicSegments } from "./scanner.js";
-export { loadRouteModule, extractMethodHandlers, registerRoutes } from "./route-loader.js";
+export { fastifyFileRoutes } from "./file-routes.js";
+export { extractMethodHandlers, loadRouteModule, registerRoutes } from "./route-loader.js";
+export { extractRouteInfo, handleDynamicSegments, scanDirectories, transformPathToRoute } from "./scanner.js";
