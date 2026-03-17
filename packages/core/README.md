@@ -1,6 +1,6 @@
 # @boilrjs/core
 
-A convention-based Fastify framework with batteries included. BoilrJs brings Next.js-inspired simplicity and TypeScript type safety to Fastify API development.
+A convention-based web framework with batteries included. BoilrJs brings Next.js-inspired simplicity and TypeScript type safety to API development.
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@boilrjs/core" alt="npm version">
@@ -15,7 +15,7 @@ A convention-based Fastify framework with batteries included. BoilrJs brings Nex
 - **🚨 Error handling** - Comprehensive HTTP exception classes with structured responses and automatic validation error conversion
 - **📚 Auto-generated API docs** - Swagger/OpenAPI documentation automatically generated from your Zod schemas with automatic error response schemas
 - **🔒 Security & Performance** - Pre-configured CORS, Helmet security headers, and rate limiting
-- **🧩 Plugin system** - Built on Fastify's powerful plugin architecture with easy extensibility
+- **🧩 Plugin system** - Built on a powerful plugin architecture with easy extensibility
 - **🛠️ Developer experience** - CLI tools, hot-reload development server, and comprehensive TypeScript support
 
 ## Installation
@@ -520,10 +520,10 @@ export const get: GetHandler<typeof schema> = async (request) => {
 
 Each authentication type provides a specific validator signature:
 
-- **`'bearer'`**: `(request: FastifyRequest, token: string | undefined) => AuthContext`
-- **`'apiKey'`**: `(request: FastifyRequest, apiKey: string | undefined) => AuthContext`
-- **`'cookie'`**: `(request: FastifyRequest, cookieValue: string | undefined) => AuthContext`
-- **`'basic'`**: `(request: FastifyRequest, username: string | undefined, password: string | undefined) => AuthContext`
+- **`'bearer'`**: `(request: Request, token: string | undefined) => AuthContext`
+- **`'apiKey'`**: `(request: Request, apiKey: string | undefined) => AuthContext`
+- **`'cookie'`**: `(request: Request, cookieValue: string | undefined) => AuthContext`
+- **`'basic'`**: `(request: Request, username: string | undefined, password: string | undefined) => AuthContext`
 
 The system automatically extracts tokens/credentials using the built-in extractors and passes them to your validators. You focus on validation logic, not extraction.
 

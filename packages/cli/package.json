@@ -21,7 +21,6 @@
     "cli",
     "boilrjs",
     "framework",
-    "fastify",
     "tool",
     "generator",
     "scaffolding",

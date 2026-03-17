@@ -5,14 +5,14 @@ description: a description
 
 # @boilrjs/core
 
-A convention-based web framework built on top of Fastify, designed to streamline API development through standardized patterns and built-in features. Developed by Rhinolabs Agency, it follows a "batteries included" philosophy while maintaining the performance benefits of the underlying Fastify engine.
+A convention-based web framework designed to streamline API development through standardized patterns and built-in features. Developed by Rhinolabs Agency, it follows a "batteries included" philosophy with a focus on performance and developer experience.
 
 ## Monorepo Structure
 
 This project is structured as a monorepo using pnpm workspaces:
 
 - **`packages/boilr`** - Core framework package (`@boilrjs/core`)  
-  The main BoilrJs framework that provides convention-based routing, configuration, and plugin management around Fastify.
+  The main BoilrJs framework that provides convention-based routing, configuration, and plugin management.
 
 - **`packages/cli`** - Command-line interface (`@boilrjs/cli`)  
   Tools for creating new projects, development server with hot-reload, building, and running BoilrJs applications.
@@ -22,7 +22,7 @@ This project is structured as a monorepo using pnpm workspaces:
 
 ## Overview
 
-BoilrJs simplifies building TypeScript APIs with Fastify by providing:
+BoilrJs simplifies building TypeScript APIs by providing:
 
 - **Convention-based file routing** with Next.js-style patterns
 - **Integrated schema validation** using Zod with automatic type inference
@@ -206,9 +206,9 @@ boilrjs start
 
 The framework leverages modern TypeScript features and provides:
 
-- **Modular plugin system** - Extend functionality through Fastify's plugin ecosystem
+- **Modular plugin system** - Extend functionality through a powerful plugin ecosystem
 - **Convention over configuration** - Sensible defaults with customization options
-- **Performance focused** - Built on Fastify's high-performance foundation
+- **Performance focused** - Built on a high-performance foundation
 - **Developer friendly** - Hot-reload, automatic documentation, type safety
 
 ## Development
