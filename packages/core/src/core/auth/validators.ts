@@ -2,7 +2,7 @@ import { UnauthorizedException } from "../../exceptions/index.js";
 import type { AuthMethod, BoilrAuthContext, BoilrRequest } from "../../types/auth.types.js";
 import { extractApiKey, extractBasicCredentials, extractBearerToken } from "./extractors.js";
 
-export async function validateAuthMethod(request: BoilrRequest, authMethod: AuthMethod): Promise<BoilrAuthContext> {
+export const validateAuthMethod = async (request: BoilrRequest, authMethod: AuthMethod): Promise<BoilrAuthContext> => {
   try {
     switch (authMethod.type) {
       case "bearer": {
@@ -33,13 +33,13 @@ export async function validateAuthMethod(request: BoilrRequest, authMethod: Auth
     const message = error instanceof Error ? error.message : "Authentication failed";
     throw new UnauthorizedException(message);
   }
-}
+};
 
-export async function validateAuthMethods(
+export const validateAuthMethods = async (
   request: BoilrRequest,
   authMethods: AuthMethod[],
   requiredAuthNames: string[],
-): Promise<BoilrAuthContext> {
+): Promise<BoilrAuthContext> => {
   const errors: string[] = [];
 
   for (const authName of requiredAuthNames) {
@@ -59,4 +59,4 @@ export async function validateAuthMethods(
   }
 
   throw new UnauthorizedException(`Authentication failed: ${errors.join(", ")}`);
-}
+};

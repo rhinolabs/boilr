@@ -7,7 +7,7 @@ import { applyGlobalMiddleware } from "./middleware/index.js";
 import { registerPlugins } from "./plugins/index.js";
 import type { BoilrEnv } from "./types/fastify.types.js";
 
-export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
+export const createApp = (userConfig: BoilrConfig = {}): BoilrInstance => {
   const config = mergeConfig(userConfig);
 
   const app = new OpenAPIHono<BoilrEnv>();
@@ -40,4 +40,4 @@ export function createApp(userConfig: BoilrConfig = {}): BoilrInstance {
   const routesReady = registerFileRoutes(app, config);
 
   return createServer(app, config, routesReady);
-}
+};

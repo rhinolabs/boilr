@@ -1,7 +1,7 @@
 import type { OpenAPIV3 } from "openapi-types";
 import type { AuthConfig, AuthMethod } from "../types/auth.types.js";
 
-export function generateSecuritySchemes(authConfig?: AuthConfig): OpenAPIV3.ComponentsObject["securitySchemes"] {
+export const generateSecuritySchemes = (authConfig?: AuthConfig): OpenAPIV3.ComponentsObject["securitySchemes"] => {
   if (!authConfig?.methods) {
     return {};
   }
@@ -18,9 +18,9 @@ export function generateSecuritySchemes(authConfig?: AuthConfig): OpenAPIV3.Comp
   }
 
   return securitySchemes;
-}
+};
 
-function mapAuthMethodToSecurityScheme(method: AuthMethod): OpenAPIV3.SecuritySchemeObject | undefined {
+const mapAuthMethodToSecurityScheme = (method: AuthMethod): OpenAPIV3.SecuritySchemeObject | undefined => {
   switch (method.type) {
     case "bearer":
       return {
@@ -58,9 +58,9 @@ function mapAuthMethodToSecurityScheme(method: AuthMethod): OpenAPIV3.SecuritySc
     default:
       return;
   }
-}
+};
 
-export function generateSecurityRequirement(authNames: string[]): OpenAPIV3.SecurityRequirementObject {
+export const generateSecurityRequirement = (authNames: string[]): OpenAPIV3.SecurityRequirementObject => {
   const security: OpenAPIV3.SecurityRequirementObject = {};
 
   for (const name of authNames) {
@@ -68,4 +68,4 @@ export function generateSecurityRequirement(authNames: string[]): OpenAPIV3.Secu
   }
 
   return security;
-}
+};

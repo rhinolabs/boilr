@@ -12,7 +12,10 @@ const DEFAULT_SCAN_OPTIONS: ScanOptions = {
   extensions: [".js", ".cjs", ".mjs", ".ts"],
 };
 
-export async function scanDirectories(rootDir: string, options: ScanOptions = DEFAULT_SCAN_OPTIONS): Promise<string[]> {
+export const scanDirectories = async (
+  rootDir: string,
+  options: ScanOptions = DEFAULT_SCAN_OPTIONS,
+): Promise<string[]> => {
   const absoluteRootDir = path.isAbsolute(rootDir) ? rootDir : path.join(process.cwd(), rootDir);
 
   try {
@@ -23,9 +26,9 @@ export async function scanDirectories(rootDir: string, options: ScanOptions = DE
 
   const allFiles = await scanRecursive(absoluteRootDir, "", options);
   return prioritizeJsFiles(allFiles);
-}
+};
 
-async function scanRecursive(currentDir: string, relativePath: string, options: ScanOptions): Promise<string[]> {
+const scanRecursive = async (currentDir: string, relativePath: string, options: ScanOptions): Promise<string[]> => {
   const entries = await fs.readdir(currentDir, { withFileTypes: true });
   const routeFiles: string[] = [];
 
@@ -50,18 +53,18 @@ async function scanRecursive(currentDir: string, relativePath: string, options: 
   }
 
   return routeFiles;
-}
+};
 
-function isRouteFile(filename: string, extensions: string[] = DEFAULT_SCAN_OPTIONS.extensions || []): boolean {
+const isRouteFile = (filename: string, extensions: string[] = DEFAULT_SCAN_OPTIONS.extensions || []): boolean => {
   const ext = path.extname(filename);
   return extensions.includes(ext);
-}
+};
 
-export function extractRouteInfo(
+export const extractRouteInfo = (
   filePaths: string[],
   rootDir: string,
   pathTransform?: (path: string, filename: string) => string,
-): RouteInfo[] {
+): RouteInfo[] => {
   const absoluteRootDir = path.isAbsolute(rootDir) ? rootDir : path.join(process.cwd(), rootDir);
 
   return filePaths.map((filePath) => {
@@ -77,9 +80,9 @@ export function extractRouteInfo(
       filename,
     };
   });
-}
+};
 
-export function transformPathToRoute(dirPath: string, filename: string): string {
+export const transformPathToRoute = (dirPath: string, filename: string): string => {
   let routeName = filename.replace(/\.(js|ts|cjs|mjs)$/, "");
 
   if (routeName === "index") {
@@ -105,9 +108,9 @@ export function transformPathToRoute(dirPath: string, filename: string): string 
 
   const routePath = `/${routeSegments.join("/")}`;
   return routePath === "//" ? "/" : routePath;
-}
+};
 
-export function handleDynamicSegments(segment: string): string {
+export const handleDynamicSegments = (segment: string): string => {
   if (/^\[\[\.\.\.([^\]]+)\]\]$/.test(segment)) {
     return segment.replace(/^\[\[\.\.\.([^\]]+)\]\]$/, ":$1?*");
   }
@@ -117,9 +120,9 @@ export function handleDynamicSegments(segment: string): string {
   }
 
   return segment.replace(/\[([^\]]+)\]/g, ":$1");
-}
+};
 
-function prioritizeJsFiles(files: string[]): string[] {
+const prioritizeJsFiles = (files: string[]): string[] => {
   const nonDeclarationFiles = files.filter((file) => !file.endsWith(".d.ts"));
 
   const fileMap = new Map<string, string[]>();
@@ -164,4 +167,4 @@ function prioritizeJsFiles(files: string[]): string[] {
   }
 
   return result;
-}
+};

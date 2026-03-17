@@ -24,7 +24,7 @@
  */
 
 // biome-ignore lint/suspicious/noExplicitAny: required for generic config merging
-export function mergeConfigRecursively<T extends Record<string, any>>(defaults: T, overrides: Partial<T>): T {
+export const mergeConfigRecursively = <T extends Record<string, any>>(defaults: T, overrides: Partial<T>): T => {
   const merged: T = { ...defaults };
 
   for (const key in overrides) {
@@ -46,9 +46,8 @@ export function mergeConfigRecursively<T extends Record<string, any>>(defaults: 
   }
 
   return merged;
-}
+};
 
 // biome-ignore lint/suspicious/noExplicitAny: required for generic config merging
-function isObject(value: unknown): value is Record<string, any> {
-  return Object.prototype.toString.call(value) === "[object Object]";
-}
+const isObject = (value: unknown): value is Record<string, any> =>
+  Object.prototype.toString.call(value) === "[object Object]";

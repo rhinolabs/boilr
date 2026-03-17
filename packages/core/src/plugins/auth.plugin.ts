@@ -9,30 +9,28 @@ import type { BoilrEnv } from "../types/fastify.types.js";
  */
 export const routeAuthConfig = new Map<string, string[] | false | undefined>();
 
-export function getRouteAuthKey(method: string, path: string): string {
-  return `${method.toUpperCase()}:${path}`;
-}
+export const getRouteAuthKey = (method: string, path: string): string => `${method.toUpperCase()}:${path}`;
 
 /**
  * Match an actual request path against a route pattern with :param segments.
  * e.g. matchPath("/api/todos/:id", "/api/todos/42") → true
  */
-function matchPath(pattern: string, requestPath: string): boolean {
+const matchPath = (pattern: string, requestPath: string): boolean => {
   const patternParts = pattern.split("/");
   const pathParts = requestPath.split("/");
   if (patternParts.length !== pathParts.length) return false;
   return patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i]);
-}
+};
 
 /**
  * Find the auth config for a given method + actual request path.
  * Global middleware receives routePath "/*", so we must match against
  * the real path and the registered route patterns.
  */
-function findRouteAuth(
+const findRouteAuth = (
   method: string,
   requestPath: string,
-): { found: true; value: string[] | false | undefined } | { found: false } {
+): { found: true; value: string[] | false | undefined } | { found: false } => {
   // Exact match (routes without params)
   const exactKey = getRouteAuthKey(method, requestPath);
   if (routeAuthConfig.has(exactKey)) {
@@ -50,9 +48,9 @@ function findRouteAuth(
   }
 
   return { found: false };
-}
+};
 
-export function createAuthMiddleware(config: BoilrConfig): MiddlewareHandler<BoilrEnv> {
+export const createAuthMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const authConfig = config.auth;
 
   return async (c, next) => {
@@ -122,4 +120,4 @@ export function createAuthMiddleware(config: BoilrConfig): MiddlewareHandler<Boi
 
     await next();
   };
-}
+};

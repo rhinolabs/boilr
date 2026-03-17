@@ -47,16 +47,16 @@ export const middlewares: Record<string, BoilrMiddlewareHandler> = {
   },
 };
 
-export function applyGlobalMiddleware(app: OpenAPIHono<BoilrEnv>, middlewareName: string): void {
+export const applyGlobalMiddleware = (app: OpenAPIHono<BoilrEnv>, middlewareName: string): void => {
   const middleware = middlewares[middlewareName];
   if (!middleware) {
     throw new Error(`Middleware "${middlewareName}" not found`);
   }
 
   app.use(middleware.handler);
-}
+};
 
-export function createRouteMiddleware(...middlewareNames: string[]): BoilrMiddlewareFunction[] {
+export const createRouteMiddleware = (...middlewareNames: string[]): BoilrMiddlewareFunction[] => {
   return middlewareNames.map((name) => {
     const middleware = middlewares[name];
     if (!middleware) {
@@ -64,8 +64,8 @@ export function createRouteMiddleware(...middlewareNames: string[]): BoilrMiddle
     }
     return middleware.handler;
   });
-}
+};
 
-export function registerMiddleware(name: string, handler: BoilrMiddlewareFunction): void {
+export const registerMiddleware = (name: string, handler: BoilrMiddlewareFunction): void => {
   middlewares[name] = { name, handler };
-}
+};

@@ -111,9 +111,9 @@ export type PatchHandler<S extends RouteSchema> = RouteHandler<S, "patch">;
 export type HeadHandler<S extends RouteSchema> = RouteHandler<S, "head">;
 export type OptionsHandler<S extends RouteSchema> = RouteHandler<S, "options">;
 
-export function defineSchema<T extends RouteSchema>(schema: T): T {
+export const defineSchema = <T extends RouteSchema>(schema: T): T => {
   return schema;
-}
+};
 
 export interface PathSegments {
   [key: string]: string | string[];
@@ -121,6 +121,6 @@ export interface PathSegments {
 
 export type CatchAllParam<T extends string = string> = T[] | T;
 
-export function catchAllSchema<T extends z.ZodTypeAny>(innerType: T) {
+export const catchAllSchema = <T extends z.ZodTypeAny>(innerType: T) => {
   return z.union([z.array(innerType), innerType]);
-}
+};

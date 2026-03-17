@@ -3,7 +3,7 @@ import { rateLimiter } from "hono-rate-limiter";
 import type { BoilrConfig, BoilrRateLimitConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/fastify.types.js";
 
-export function createRateLimitMiddleware(config: BoilrConfig): MiddlewareHandler<BoilrEnv> {
+export const createRateLimitMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrRateLimitConfig = {
     max: 100,
     windowMs: 60_000,
@@ -22,4 +22,4 @@ export function createRateLimitMiddleware(config: BoilrConfig): MiddlewareHandle
     limit: max,
     keyGenerator: (c) => c.req.header("x-forwarded-for") || c.req.header("cf-connecting-ip") || "unknown",
   });
-}
+};

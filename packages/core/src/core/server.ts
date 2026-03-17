@@ -18,11 +18,11 @@ export interface BoilrStartOptions {
   host?: string;
 }
 
-export function createServer(
+export const createServer = (
   app: OpenAPIHono<BoilrEnv>,
   config: BoilrConfig,
   routesReady: Promise<void>,
-): BoilrInstance {
+): BoilrInstance => {
   const boilrApp: BoilrInstance = {
     app,
     config,
@@ -63,4 +63,4 @@ export function createServer(
   };
 
   return boilrApp;
-}
+};

@@ -4,7 +4,7 @@ import type { BoilrConfig, BoilrSwaggerConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/fastify.types.js";
 import { generateSecuritySchemes } from "../utils/swagger.utils.js";
 
-export function registerSwagger(app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void {
+export const registerSwagger = (app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void => {
   let swaggerConfig: BoilrSwaggerConfig = {};
   if (typeof config.plugins?.swagger === "object") {
     swaggerConfig = config.plugins.swagger;
@@ -34,4 +34,4 @@ export function registerSwagger(app: OpenAPIHono<BoilrEnv>, config: BoilrConfig)
 
   // Register Swagger UI
   app.get("/docs", swaggerUI({ url: "/openapi.json" }));
-}
+};

@@ -3,11 +3,11 @@ import type { CatchAllParam, HttpMethod, PathSegments, RouteSchema } from "../ty
 /**
  * Validates and converts route parameters according to the schema.
  */
-export function getTypedParams<S extends RouteSchema, M extends HttpMethod>(
+export const getTypedParams = <S extends RouteSchema, M extends HttpMethod>(
   request: { params: unknown },
   schema: S,
   method: M,
-) {
+) => {
   const paramsSchema = schema[method]?.params || schema.params;
 
   if (!paramsSchema) {
@@ -20,9 +20,12 @@ export function getTypedParams<S extends RouteSchema, M extends HttpMethod>(
   }
 
   return result.data;
-}
+};
 
-export function getCatchAllParam<T extends string = string>(params: PathSegments, paramName: string): CatchAllParam<T> {
+export const getCatchAllParam = <T extends string = string>(
+  params: PathSegments,
+  paramName: string,
+): CatchAllParam<T> => {
   const value = params[paramName];
 
   if (Array.isArray(value)) {
@@ -30,13 +33,13 @@ export function getCatchAllParam<T extends string = string>(params: PathSegments
   }
 
   return value as T;
-}
+};
 
-export function getTypedQuery<S extends RouteSchema, M extends HttpMethod>(
+export const getTypedQuery = <S extends RouteSchema, M extends HttpMethod>(
   request: { query: unknown },
   schema: S,
   method: M,
-) {
+) => {
   const querySchema = schema[method]?.querystring || schema.querystring;
 
   if (!querySchema) {
@@ -49,13 +52,13 @@ export function getTypedQuery<S extends RouteSchema, M extends HttpMethod>(
   }
 
   return result.data;
-}
+};
 
-export function getTypedBody<S extends RouteSchema, M extends HttpMethod>(
+export const getTypedBody = <S extends RouteSchema, M extends HttpMethod>(
   request: { body: unknown },
   schema: S,
   method: M,
-) {
+) => {
   const bodySchema = schema[method]?.body;
 
   if (!bodySchema) {
@@ -68,4 +71,4 @@ export function getTypedBody<S extends RouteSchema, M extends HttpMethod>(
   }
 
   return result.data;
-}
+};

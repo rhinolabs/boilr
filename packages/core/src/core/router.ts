@@ -9,7 +9,7 @@ import { honoFileRoutes } from "./file-routes/index.js";
  * Starts file-route registration and returns the promise.
  * Callers must await this before the server is ready to serve.
  */
-export function registerFileRoutes(app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): Promise<void> {
+export const registerFileRoutes = (app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): Promise<void> => {
   const routesDir = path.isAbsolute(config.routes?.dir || "")
     ? config.routes?.dir || ""
     : path.join(process.cwd(), config.routes?.dir || "./routes");
@@ -24,4 +24,4 @@ export function registerFileRoutes(app: OpenAPIHono<BoilrEnv>, config: BoilrConf
       extensions: config.routes?.options?.extensions,
     },
   });
-}
+};

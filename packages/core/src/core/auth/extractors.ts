@@ -1,6 +1,6 @@
 import type { AuthLocation, BasicCredentials, BoilrRequest } from "../../types/auth.types.js";
 
-export function extractBearerToken(request: BoilrRequest, scheme = "Bearer"): string | undefined {
+export const extractBearerToken = (request: BoilrRequest, scheme = "Bearer"): string | undefined => {
   const authorization = request.headers.authorization;
 
   if (!authorization || typeof authorization !== "string") {
@@ -14,9 +14,9 @@ export function extractBearerToken(request: BoilrRequest, scheme = "Bearer"): st
   }
 
   return authorization.slice(prefix.length);
-}
+};
 
-export function extractApiKey(request: BoilrRequest, location: AuthLocation, key: string): string | undefined {
+export const extractApiKey = (request: BoilrRequest, location: AuthLocation, key: string): string | undefined => {
   switch (location) {
     case "header":
       return (request.headers[key.toLowerCase()] as string) || undefined;
@@ -27,9 +27,9 @@ export function extractApiKey(request: BoilrRequest, location: AuthLocation, key
     default:
       return;
   }
-}
+};
 
-export function extractBasicCredentials(request: BoilrRequest): BasicCredentials | undefined {
+export const extractBasicCredentials = (request: BoilrRequest): BasicCredentials | undefined => {
   const authorization = request.headers.authorization;
 
   if (!authorization || typeof authorization !== "string" || !authorization.startsWith("Basic ")) {
@@ -49,4 +49,4 @@ export function extractBasicCredentials(request: BoilrRequest): BasicCredentials
   } catch {
     return;
   }
-}
+};

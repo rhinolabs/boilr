@@ -12,7 +12,7 @@ export interface HonoFileRoutesOptions extends FileRoutesOptions {
   authConfig?: AuthConfig;
 }
 
-export async function honoFileRoutes(app: OpenAPIHono<BoilrEnv>, options: HonoFileRoutesOptions): Promise<void> {
+export const honoFileRoutes = async (app: OpenAPIHono<BoilrEnv>, options: HonoFileRoutesOptions): Promise<void> => {
   if (!options.routesDir) {
     throw new Error("routesDir option is required");
   }
@@ -38,4 +38,4 @@ export async function honoFileRoutes(app: OpenAPIHono<BoilrEnv>, options: HonoFi
   await registerRoutes(app, routes, options.exceptionsConfig, options.authConfig);
 
   console.log(`Registered ${routes.length} routes from ${routesDir}`);
-}
+};

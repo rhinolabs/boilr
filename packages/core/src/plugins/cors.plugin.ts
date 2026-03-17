@@ -3,7 +3,7 @@ import { cors } from "hono/cors";
 import type { BoilrConfig, BoilrCorsConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/fastify.types.js";
 
-export function createCorsMiddleware(config: BoilrConfig): MiddlewareHandler<BoilrEnv> {
+export const createCorsMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrCorsConfig = {
     origin: "*",
     allowMethods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
@@ -23,4 +23,4 @@ export function createCorsMiddleware(config: BoilrConfig): MiddlewareHandler<Boi
     credentials: corsConfig.credentials ?? defaultOptions.credentials,
     exposeHeaders: corsConfig.exposeHeaders,
   });
-}
+};

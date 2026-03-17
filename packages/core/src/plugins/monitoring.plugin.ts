@@ -2,7 +2,7 @@ import type { MiddlewareHandler } from "hono";
 import type { BoilrConfig, BoilrMonitorConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/fastify.types.js";
 
-export function createMonitorMiddleware(config: BoilrConfig): MiddlewareHandler<BoilrEnv> {
+export const createMonitorMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrMonitorConfig = {
     slowThreshold: 1000,
     verySlowThreshold: 3000,
@@ -43,4 +43,4 @@ export function createMonitorMiddleware(config: BoilrConfig): MiddlewareHandler<
       console.warn(`[SLOW] ${c.req.method} ${url} took ${duration}ms`);
     }
   };
-}
+};

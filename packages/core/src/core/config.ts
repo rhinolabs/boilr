@@ -488,6 +488,6 @@ export const defaultConfig: BoilrConfig = {
  * // Result: All defaults + port: 8080 + cors: false
  * ```
  */
-export function mergeConfig(userConfig: BoilrConfig = {}): BoilrConfig {
+export const mergeConfig = (userConfig: BoilrConfig = {}): BoilrConfig => {
   return mergeConfigRecursively(defaultConfig, userConfig);
-}
+};

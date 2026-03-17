@@ -8,7 +8,7 @@ import { createMonitorMiddleware } from "./monitoring.plugin.js";
 import { createRateLimitMiddleware } from "./rate-limit.plugin.js";
 import { registerSwagger } from "./swagger.plugin.js";
 
-export function registerPlugins(app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void {
+export const registerPlugins = (app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void => {
   if (config.plugins?.helmet !== false) {
     app.use(createHelmetMiddleware(config));
   }
@@ -33,4 +33,4 @@ export function registerPlugins(app: OpenAPIHono<BoilrEnv>, config: BoilrConfig)
   if (config.auth) {
     app.use(createAuthMiddleware(config));
   }
-}
+};
