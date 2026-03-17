@@ -24,8 +24,8 @@ import type { HttpException } from "./exceptions.js";
  */
 export const defaultFormatter: ErrorFormatter = (
   exception: HttpException,
-  request: FastifyRequest,
-  reply: FastifyReply,
+  _request: FastifyRequest,
+  _reply: FastifyReply,
 ): ErrorResponse => ({
   statusCode: exception.statusCode,
   message: exception.message,

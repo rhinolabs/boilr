@@ -12,7 +12,7 @@ async function authPluginFunction(fastify: FastifyInstance, options: BoilrPlugin
 
   const { methods } = authConfig;
 
-  fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.addHook("preHandler", async (request: FastifyRequest, _reply: FastifyReply) => {
     const url = request.url;
 
     // Skip authentication for Swagger/documentation routes
@@ -25,7 +25,7 @@ async function authPluginFunction(fastify: FastifyInstance, options: BoilrPlugin
       return;
     }
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route schema access
     const routeOptions = request.routeOptions as any;
     const schema = routeOptions?.schema;
 

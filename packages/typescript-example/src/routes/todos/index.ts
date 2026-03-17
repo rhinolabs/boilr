@@ -1,4 +1,4 @@
-import { type GetHandler, type PostHandler, defineSchema } from "@boilrjs/core";
+import { defineSchema, type GetHandler, type PostHandler } from "@boilrjs/core";
 import { z } from "zod";
 
 // Define schema for endpoints
@@ -59,7 +59,7 @@ export const todos = [
 ];
 
 // GET /api/todos
-export const get: GetHandler<typeof schema> = async (request, reply) => {
+export const get: GetHandler<typeof schema> = async (_request, _reply) => {
   return todos;
 };
 

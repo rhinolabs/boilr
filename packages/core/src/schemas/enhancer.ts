@@ -1,7 +1,7 @@
 import type { ZodType } from "zod";
 import type { ExceptionConfig } from "../types/error.types.js";
 import type { MethodSchema } from "../types/routes.types.js";
-import { DEFAULT_ERROR_CODES, createMultipleErrorSchemas } from "./error.schema.js";
+import { createMultipleErrorSchemas, DEFAULT_ERROR_CODES } from "./error.schema.js";
 
 /**
  * Validates if status codes should be processed or skipped

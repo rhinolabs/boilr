@@ -1,8 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -15,12 +13,27 @@
     "indentWidth": 2,
     "lineWidth": 120
   },
+  "css": {
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
+    }
+  },
   "javascript": {
     "formatter": {
       "semicolons": "always"
     }
   },
   "files": {
-    "ignore": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.next/**", "**/*.min.js", "**/.astro"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/build",
+      "!**/.next",
+      "!**/*.min.js",
+      "!**/.astro",
+      "!**/.wrangler"
+    ]
   }
 }

@@ -3,6 +3,7 @@ interface Props {
   class?: string;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: used in Astro template
 const { class: className = "" } = Astro.props;
 ---
 

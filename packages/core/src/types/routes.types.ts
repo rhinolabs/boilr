@@ -48,7 +48,7 @@ export interface RouteSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   params?: ZodType<any>;
 
   /**
@@ -63,7 +63,7 @@ export interface RouteSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   querystring?: ZodType<any>;
 
   /**
@@ -77,7 +77,7 @@ export interface RouteSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   headers?: ZodType<any>;
 
   /** GET method configuration */
@@ -173,7 +173,7 @@ export interface MethodSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   params?: ZodType<any>;
 
   /**
@@ -189,7 +189,7 @@ export interface MethodSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   querystring?: ZodType<any>;
 
   /**
@@ -204,7 +204,7 @@ export interface MethodSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   headers?: ZodType<any>;
 
   /**
@@ -220,7 +220,7 @@ export interface MethodSchema {
    * })
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   body?: ZodType<any>;
 
   /**
@@ -238,36 +238,39 @@ export interface MethodSchema {
    * }
    * ```
    */
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   response?: Record<number, ZodType<any>>;
 }
 
 // Extract parameter types with inference
-type ExtractParams<S extends RouteSchema, M extends HttpMethod> = S["params"] extends ZodType<infer P>
-  ? S[M] extends { params: ZodType<infer MP> }
-    ? P & MP
-    : P
-  : S[M] extends { params: ZodType<infer MP> }
-    ? MP
-    : unknown;
+type ExtractParams<S extends RouteSchema, M extends HttpMethod> =
+  S["params"] extends ZodType<infer P>
+    ? S[M] extends { params: ZodType<infer MP> }
+      ? P & MP
+      : P
+    : S[M] extends { params: ZodType<infer MP> }
+      ? MP
+      : unknown;
 
 // Extract query types with inference
-type ExtractQuery<S extends RouteSchema, M extends HttpMethod> = S["querystring"] extends ZodType<infer Q>
-  ? S[M] extends { querystring: ZodType<infer MQ> }
-    ? Q & MQ
-    : Q
-  : S[M] extends { querystring: ZodType<infer MQ> }
-    ? MQ
-    : unknown;
+type ExtractQuery<S extends RouteSchema, M extends HttpMethod> =
+  S["querystring"] extends ZodType<infer Q>
+    ? S[M] extends { querystring: ZodType<infer MQ> }
+      ? Q & MQ
+      : Q
+    : S[M] extends { querystring: ZodType<infer MQ> }
+      ? MQ
+      : unknown;
 
 // Extract header types with inference
-type ExtractHeaders<S extends RouteSchema, M extends HttpMethod> = S["headers"] extends ZodType<infer H>
-  ? S[M] extends { headers: ZodType<infer MH> }
-    ? H & MH
-    : H
-  : S[M] extends { headers: ZodType<infer MH> }
-    ? MH
-    : unknown;
+type ExtractHeaders<S extends RouteSchema, M extends HttpMethod> =
+  S["headers"] extends ZodType<infer H>
+    ? S[M] extends { headers: ZodType<infer MH> }
+      ? H & MH
+      : H
+    : S[M] extends { headers: ZodType<infer MH> }
+      ? MH
+      : unknown;
 
 // Extract body types with inference
 type ExtractBody<S extends RouteSchema, M extends HttpMethod> = S[M] extends { body: ZodType<infer B> } ? B : unknown;

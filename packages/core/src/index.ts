@@ -3,104 +3,96 @@ import "./types/fastify.types.js";
 
 // Export main implementation from core
 export { createApp } from "./boilr.js";
-
-// Export from other modules
-export { BoilrConfig } from "./core/config.js";
-export {
-  registerMiddleware,
-  createRouteMiddleware,
-} from "./middleware/index.js";
-export { BoilrInstance } from "./core/server.js";
-export {
-  ZodTypeProvider,
-  validatorCompiler,
-  serializerCompiler,
-  createJsonSchemaTransform,
-  createJsonSchemaTransformObject,
-} from "./validation/index.js";
-
-// Export exception handling system
-export {
-  HttpException,
-  BadRequestException,
-  UnauthorizedException,
-  ForbiddenException,
-  NotFoundException,
-  MethodNotAllowedException,
-  NotAcceptableException,
-  RequestTimeoutException,
-  ConflictException,
-  GoneException,
-  PreconditionFailedException,
-  PayloadTooLargeException,
-  UnsupportedMediaTypeException,
-  ImATeapotException,
-  UnprocessableEntityException,
-  InternalServerErrorException,
-  NotImplementedException,
-  BadGatewayException,
-  ServiceUnavailableException,
-  GatewayTimeoutException,
-  HttpVersionNotSupportedException,
-  ValidationException,
-  defaultFormatter,
-  createGlobalExceptionHandler,
-  HttpStatusCode,
-} from "./exceptions/index.js";
-
-export type {
-  ErrorResponse,
-  ErrorFormatter,
-  ExceptionOptions,
-  ExceptionConfig,
-  ValidationError,
-} from "./types/error.types.js";
-
-// Export route types and utils
-export {
-  RouteSchema,
-  HttpMethod,
-  MethodSchema,
-  TypedRequest,
-  RouteHandler,
-  GetHandler,
-  PostHandler,
-  PutHandler,
-  DeleteHandler,
-  PatchHandler,
-  HeadHandler,
-  OptionsHandler,
-  defineSchema,
-  PathSegments,
-  CatchAllParam,
-  catchAllSchema,
-} from "./types/routes.types.js";
-
-export {
-  getTypedParams,
-  getTypedQuery,
-  getTypedBody,
-  getCatchAllParam,
-} from "./utils/routes.utils.js";
-
-export { DefaultErrorSchema } from "./schemas/error.schema.js";
-
 // Export authentication system
 export {
-  extractBearerToken,
   extractApiKey,
   extractBasicCredentials,
+  extractBearerToken,
   validateAuthMethod,
   validateAuthMethods,
 } from "./core/auth/index.js";
-
+// Export from other modules
+export { BoilrConfig } from "./core/config.js";
+export { BoilrInstance } from "./core/server.js";
+// Export exception handling system
+export {
+  BadGatewayException,
+  BadRequestException,
+  ConflictException,
+  createGlobalExceptionHandler,
+  defaultFormatter,
+  ForbiddenException,
+  GatewayTimeoutException,
+  GoneException,
+  HttpException,
+  HttpStatusCode,
+  HttpVersionNotSupportedException,
+  ImATeapotException,
+  InternalServerErrorException,
+  MethodNotAllowedException,
+  NotAcceptableException,
+  NotFoundException,
+  NotImplementedException,
+  PayloadTooLargeException,
+  PreconditionFailedException,
+  RequestTimeoutException,
+  ServiceUnavailableException,
+  UnauthorizedException,
+  UnprocessableEntityException,
+  UnsupportedMediaTypeException,
+  ValidationException,
+} from "./exceptions/index.js";
+export {
+  createRouteMiddleware,
+  registerMiddleware,
+} from "./middleware/index.js";
+export { DefaultErrorSchema } from "./schemas/error.schema.js";
 export type {
-  AuthType,
-  AuthLocation,
-  AuthMethodOptions,
-  AuthMethod,
-  AuthValidator,
   AuthConfig,
+  AuthLocation,
+  AuthMethod,
+  AuthMethodOptions,
+  AuthType,
+  AuthValidator,
   BasicCredentials,
   BoilrAuthContext,
 } from "./types/auth.types.js";
+export type {
+  ErrorFormatter,
+  ErrorResponse,
+  ExceptionConfig,
+  ExceptionOptions,
+  ValidationError,
+} from "./types/error.types.js";
+// Export route types and utils
+export {
+  CatchAllParam,
+  catchAllSchema,
+  DeleteHandler,
+  defineSchema,
+  GetHandler,
+  HeadHandler,
+  HttpMethod,
+  MethodSchema,
+  OptionsHandler,
+  PatchHandler,
+  PathSegments,
+  PostHandler,
+  PutHandler,
+  RouteHandler,
+  RouteSchema,
+  TypedRequest,
+} from "./types/routes.types.js";
+export {
+  getCatchAllParam,
+  getTypedBody,
+  getTypedParams,
+  getTypedQuery,
+} from "./utils/routes.utils.js";
+export {
+  createJsonSchemaTransform,
+  createJsonSchemaTransformObject,
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from "./validation/index.js";

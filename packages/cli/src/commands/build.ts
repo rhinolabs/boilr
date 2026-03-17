@@ -71,7 +71,7 @@ export function registerBuildCommand(program: Command): void {
             const tsconfigContent = fs.readFileSync(tsconfigPath, "utf-8");
             const tsconfig = JSON.parse(tsconfigContent);
             hasPathWithAliases = tsconfig?.compilerOptions?.paths !== undefined;
-          } catch (error) {
+          } catch (_error) {
             hasPathWithAliases = false;
           }
 

@@ -1,4 +1,4 @@
-import { type AnnotationHandler, InnerLine, InnerPre, getPreRef } from "codehike/code";
+import { type AnnotationHandler, getPreRef, InnerLine, InnerPre } from "codehike/code";
 import { useLayoutEffect, useRef } from "react";
 
 export const PreWithFocus: AnnotationHandler["PreWithRef"] = (props) => {
@@ -18,7 +18,7 @@ function useScrollToFocus(ref: React.RefObject<HTMLPreElement>) {
       const containerRect = ref.current.getBoundingClientRect();
       let top = Number.POSITIVE_INFINITY;
       let bottom = Number.NEGATIVE_INFINITY;
-      // biome-ignore lint/complexity/noForEach: <explanation>
+
       focusedElements.forEach((el) => {
         const rect = el.getBoundingClientRect();
         top = Math.min(top, rect.top - containerRect.top);

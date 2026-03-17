@@ -6,10 +6,10 @@ import { createGlobalExceptionHandler } from "./exceptions/handler.js";
 import { applyGlobalMiddleware } from "./middleware/index.js";
 import { plugins } from "./plugins/index.js";
 import {
-  type ZodTypeProvider,
   createJsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
+  type ZodTypeProvider,
 } from "./validation/index.js";
 
 /**

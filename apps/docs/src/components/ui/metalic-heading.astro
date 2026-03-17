@@ -4,7 +4,9 @@ export interface Props {
   class?: string;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: used in Astro template
 const { tag = "h1", class: className = "" } = Astro.props;
+// biome-ignore lint/correctness/noUnusedVariables: used in Astro template
 const Tag = tag;
 ---
 

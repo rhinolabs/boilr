@@ -1,12 +1,7 @@
 {
   "name": "boilrjs",
-  "main": "apps/docs/dist/server/entry.mjs",
   "compatibility_date": "2025-12-02",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "./apps/docs/dist/client"
-  },
   "observability": {
     "enabled": true
   }

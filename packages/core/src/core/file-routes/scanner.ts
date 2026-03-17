@@ -17,7 +17,7 @@ export async function scanDirectories(rootDir: string, options: ScanOptions = DE
 
   try {
     await fs.access(absoluteRootDir);
-  } catch (error) {
+  } catch (_error) {
     throw new Error(`Directory ${absoluteRootDir} does not exist or is not accessible`);
   }
 

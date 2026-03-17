@@ -6,7 +6,7 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  output: "server",
+  output: "static",
   adapter: cloudflare(),
   integrations: [
     starlight({
@@ -24,7 +24,6 @@ export default defineConfig({
         {
           label: "Guides",
           items: [
-            // Each item here is one entry in the navigation menu.
             { label: "Getting Started", slug: "guides/get-started" },
             { label: "Example Guide", slug: "guides/example" },
           ],
