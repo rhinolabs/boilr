@@ -2,6 +2,24 @@ import type { CatchAllParam, HttpMethod, PathSegments, RouteSchema } from "../ty
 
 /**
  * Validates and converts route parameters according to the schema.
+ * Provides type-safe access to route parameters with automatic validation.
+ *
+ * @template S - The route schema type
+ * @template M - The HTTP method type
+ * @param request - The request object containing params
+ * @param schema - The route schema definition
+ * @param method - The HTTP method being handled
+ * @returns Validated and typed route parameters
+ *
+ * @throws {Error} When parameters don't match the schema
+ *
+ * @example
+ * ```typescript
+ * export const get: GetHandler<typeof schema> = async (request, reply) => {
+ *   const params = getTypedParams(request, schema, "get");
+ *   const { id } = params; // Fully typed
+ * };
+ * ```
  */
 export const getTypedParams = <S extends RouteSchema, M extends HttpMethod>(
   request: { params: unknown },
@@ -22,6 +40,29 @@ export const getTypedParams = <S extends RouteSchema, M extends HttpMethod>(
   return result.data;
 };
 
+/**
+ * Special handler for catch-all route parameters.
+ * Helps extract and type catch-all route segments like `/files/[...path]`.
+ *
+ * @template T - The type of individual path segments
+ * @param params - The route parameters object
+ * @param paramName - The name of the catch-all parameter
+ * @returns Either an array of path segments or a single segment
+ *
+ * @example
+ * ```typescript
+ * // For a route like /files/[...path]
+ * export const get: GetHandler<typeof schema> = async (request, reply) => {
+ *   const filePath = getCatchAllParam(request.params, "path");
+ *
+ *   if (Array.isArray(filePath)) {
+ *     const fullPath = filePath.join("/");
+ *   } else {
+ *     const fullPath = filePath;
+ *   }
+ * };
+ * ```
+ */
 export const getCatchAllParam = <T extends string = string>(
   params: PathSegments,
   paramName: string,
@@ -35,6 +76,27 @@ export const getCatchAllParam = <T extends string = string>(
   return value as T;
 };
 
+/**
+ * Validates and converts query parameters according to the schema.
+ * Provides type-safe access to query string parameters with automatic validation.
+ *
+ * @template S - The route schema type
+ * @template M - The HTTP method type
+ * @param request - The request object containing query
+ * @param schema - The route schema definition
+ * @param method - The HTTP method being handled
+ * @returns Validated and typed query parameters
+ *
+ * @throws {Error} When query parameters don't match the schema
+ *
+ * @example
+ * ```typescript
+ * export const get: GetHandler<typeof schema> = async (request, reply) => {
+ *   const query = getTypedQuery(request, schema, "get");
+ *   const { page, limit } = query; // Fully typed
+ * };
+ * ```
+ */
 export const getTypedQuery = <S extends RouteSchema, M extends HttpMethod>(
   request: { query: unknown },
   schema: S,
@@ -54,6 +116,27 @@ export const getTypedQuery = <S extends RouteSchema, M extends HttpMethod>(
   return result.data;
 };
 
+/**
+ * Validates and converts the request body according to the schema.
+ * Provides type-safe access to request body data with automatic validation.
+ *
+ * @template S - The route schema type
+ * @template M - The HTTP method type
+ * @param request - The request object containing body
+ * @param schema - The route schema definition
+ * @param method - The HTTP method being handled
+ * @returns Validated and typed request body
+ *
+ * @throws {Error} When the request body doesn't match the schema
+ *
+ * @example
+ * ```typescript
+ * export const post: PostHandler<typeof schema> = async (request, reply) => {
+ *   const body = getTypedBody(request, schema, "post");
+ *   const { name, email } = body; // Fully typed
+ * };
+ * ```
+ */
 export const getTypedBody = <S extends RouteSchema, M extends HttpMethod>(
   request: { body: unknown },
   schema: S,

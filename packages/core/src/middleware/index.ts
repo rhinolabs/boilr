@@ -2,8 +2,10 @@ import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { MiddlewareHandler } from "hono";
 import type { BoilrEnv } from "../types/env.types.js";
 
+/** Middleware function type that processes requests and responses. */
 export type BoilrMiddlewareFunction = MiddlewareHandler<BoilrEnv>;
 
+/** Named middleware handler that associates a middleware function with an identifier. */
 export type BoilrMiddlewareHandler = {
   name: string;
   handler: BoilrMiddlewareFunction;
@@ -47,6 +49,13 @@ export const middlewares: Record<string, BoilrMiddlewareHandler> = {
   },
 };
 
+/**
+ * Applies a named middleware globally to all routes on the application instance.
+ *
+ * @param app - The application instance
+ * @param middlewareName - Name of a registered middleware to apply
+ * @throws {Error} When the middleware name is not found in the registry
+ */
 export const applyGlobalMiddleware = (app: OpenAPIHono<BoilrEnv>, middlewareName: string): void => {
   const middleware = middlewares[middlewareName];
   if (!middleware) {
@@ -56,6 +65,13 @@ export const applyGlobalMiddleware = (app: OpenAPIHono<BoilrEnv>, middlewareName
   app.use(middleware.handler);
 };
 
+/**
+ * Creates an array of middleware handlers for use on specific routes.
+ *
+ * @param middlewareNames - Names of registered middlewares to compose
+ * @returns Array of middleware handler functions
+ * @throws {Error} When any middleware name is not found in the registry
+ */
 export const createRouteMiddleware = (...middlewareNames: string[]): BoilrMiddlewareFunction[] => {
   return middlewareNames.map((name) => {
     const middleware = middlewares[name];
@@ -66,6 +82,13 @@ export const createRouteMiddleware = (...middlewareNames: string[]): BoilrMiddle
   });
 };
 
+/**
+ * Registers a custom middleware function under the given name.
+ * Once registered, the middleware can be applied globally or to specific routes by name.
+ *
+ * @param name - Unique identifier for the middleware
+ * @param handler - The middleware function to register
+ */
 export const registerMiddleware = (name: string, handler: BoilrMiddlewareFunction): void => {
   middlewares[name] = { name, handler };
 };

@@ -4,6 +4,10 @@ import type { BoilrConfig, BoilrSwaggerConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/env.types.js";
 import { generateSecuritySchemes } from "../utils/swagger.utils.js";
 
+/**
+ * Swagger documentation plugin that automatically generates OpenAPI specs and provides
+ * an interactive documentation interface at the /docs endpoint.
+ */
 export const registerSwagger = (app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void => {
   let swaggerConfig: BoilrSwaggerConfig = {};
   if (typeof config.plugins?.swagger === "object") {

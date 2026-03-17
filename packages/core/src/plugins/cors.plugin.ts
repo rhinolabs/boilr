@@ -3,6 +3,10 @@ import { cors } from "hono/cors";
 import type { BoilrConfig, BoilrCorsConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/env.types.js";
 
+/**
+ * CORS (Cross-Origin Resource Sharing) middleware that configures cross-origin request
+ * handling with sensible defaults for API development.
+ */
 export const createCorsMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrCorsConfig = {
     origin: "*",

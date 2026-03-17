@@ -3,6 +3,10 @@ import type { MiddlewareHandler } from "hono";
 import type { BoilrEnv } from "../types/env.types.js";
 import type { BoilrConfig } from "./config.js";
 
+/**
+ * The main BoilrJs application instance.
+ * Provides methods to start the server and register middleware.
+ */
 export interface BoilrInstance {
   app: OpenAPIHono<BoilrEnv>;
   config: BoilrConfig;
@@ -13,11 +17,23 @@ export interface BoilrInstance {
   ) => BoilrInstance;
 }
 
+/**
+ * Options for starting the BoilrJs server.
+ */
 export interface BoilrStartOptions {
   port?: number;
   host?: string;
 }
 
+/**
+ * Creates a BoilrJs server instance that wraps the underlying application
+ * with start, use, and configuration capabilities.
+ *
+ * @param app - The underlying application instance
+ * @param config - The merged BoilrJs configuration
+ * @param routesReady - Promise that resolves when file routes are registered
+ * @returns A configured BoilrInstance ready to be started
+ */
 export const createServer = (
   app: OpenAPIHono<BoilrEnv>,
   config: BoilrConfig,

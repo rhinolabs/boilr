@@ -60,7 +60,20 @@ const logError = (exception: HttpException, url: string, method: string, origina
 };
 
 /**
- * Creates the global error handler for BoilrJs applications.
+ * Creates a global exception handler for BoilrJs applications.
+ * This handler catches and formats all HTTP exceptions and validation errors.
+ *
+ * @param config - Optional configuration for exception handling
+ * @returns Error handler function compatible with the application instance
+ *
+ * @example
+ * ```typescript
+ * const handler = createGlobalExceptionHandler({
+ *   logErrors: true,
+ *   formatter: customFormatter
+ * });
+ * app.onError(handler);
+ * ```
  */
 export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
   const { logErrors = true } = config || {};

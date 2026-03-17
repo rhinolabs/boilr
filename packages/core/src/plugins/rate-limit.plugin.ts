@@ -3,6 +3,10 @@ import { rateLimiter } from "hono-rate-limiter";
 import type { BoilrConfig, BoilrRateLimitConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/env.types.js";
 
+/**
+ * Rate limiting middleware that prevents abuse by limiting the number of requests
+ * per client within a specified time window. Includes helpful error messages.
+ */
 export const createRateLimitMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrRateLimitConfig = {
     max: 100,

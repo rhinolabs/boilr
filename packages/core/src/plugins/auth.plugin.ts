@@ -50,6 +50,11 @@ const findRouteAuth = (
   return { found: false };
 };
 
+/**
+ * Authentication middleware that validates credentials on incoming requests.
+ * Supports multiple auth methods (bearer, API key, basic, cookie) and allows
+ * per-route auth configuration via route schemas.
+ */
 export const createAuthMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const authConfig = config.auth;
 

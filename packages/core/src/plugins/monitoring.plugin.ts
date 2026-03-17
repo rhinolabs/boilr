@@ -2,6 +2,10 @@ import type { MiddlewareHandler } from "hono";
 import type { BoilrConfig, BoilrMonitorConfig } from "../core/config.js";
 import type { BoilrEnv } from "../types/env.types.js";
 
+/**
+ * Development performance monitoring middleware that automatically tracks request timing
+ * and identifies slow endpoints.
+ */
 export const createMonitorMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrMonitorConfig = {
     slowThreshold: 1000,
