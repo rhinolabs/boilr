@@ -286,7 +286,7 @@ export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = {
   headers: ExtractHeaders<S, M>;
   env: Record<string, unknown>;
   raw: Request;
-} & (S[M] extends { auth: false } ? {} : { ctx: BoilrAuthContext });
+} & (S[M] extends { auth: false } ? Record<string, never> : { ctx: BoilrAuthContext });
 
 /**
  * Framework-agnostic reply object provided by the adapter layer.

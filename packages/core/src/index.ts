@@ -55,6 +55,8 @@ export type {
   BoilrAuthContext,
   BoilrRequest,
 } from "./types/auth.types.js";
+// Export environment type
+export { BoilrEnv } from "./types/env.types.js";
 export type {
   ErrorFormatter,
   ErrorResponse,
@@ -62,8 +64,6 @@ export type {
   ExceptionOptions,
   ValidationError,
 } from "./types/error.types.js";
-// Export environment type
-export { BoilrEnv } from "./types/env.types.js";
 // Export route types and utils
 export {
   CatchAllParam,

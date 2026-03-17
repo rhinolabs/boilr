@@ -1,6 +1,5 @@
 import path from "node:path";
 import type { OpenAPIHono } from "@hono/zod-openapi";
-import type { ExceptionConfig } from "../types/error.types.js";
 import type { BoilrEnv } from "../types/env.types.js";
 import type { BoilrConfig } from "./config.js";
 import { loadFileRoutes } from "./file-routes/index.js";
