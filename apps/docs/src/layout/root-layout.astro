@@ -4,7 +4,8 @@ interface Props {
   title?: string;
 }
 
-const { title: _title } = Astro.props;
+// biome-ignore lint/correctness/noUnusedVariables: used in Astro template
+const { title } = Astro.props;
 ---
 
 <!doctype html>

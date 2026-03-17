@@ -4,8 +4,10 @@ export interface Props {
   class?: string;
 }
 
-const { tag = "h1", class: _className = "" } = Astro.props;
-const _Tag = tag;
+// biome-ignore lint/correctness/noUnusedVariables: used in Astro template
+const { tag = "h1", class: className = "" } = Astro.props;
+// biome-ignore lint/correctness/noUnusedVariables: used in Astro template
+const Tag = tag;
 ---
 
 <Tag class={`metalic-heading relative ${className}`}>

@@ -1,0 +1,9 @@
+{
+  "name": "boilrjs",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2025-12-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  }
+}
