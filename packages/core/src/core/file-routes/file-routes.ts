@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { AuthConfig } from "../../types/auth.types.js";
 import type { ExceptionConfig } from "../../types/error.types.js";
 import type { BoilrEnv } from "../../types/fastify.types.js";
 import type { FileRoutesOptions } from "../../types/file-routes.types.js";
@@ -8,6 +9,7 @@ import { extractRouteInfo, scanDirectories } from "./scanner.js";
 
 export interface HonoFileRoutesOptions extends FileRoutesOptions {
   exceptionsConfig?: ExceptionConfig;
+  authConfig?: AuthConfig;
 }
 
 export async function honoFileRoutes(app: OpenAPIHono<BoilrEnv>, options: HonoFileRoutesOptions): Promise<void> {
@@ -33,7 +35,7 @@ export async function honoFileRoutes(app: OpenAPIHono<BoilrEnv>, options: HonoFi
     }
   }
 
-  await registerRoutes(app, routes, options.exceptionsConfig);
+  await registerRoutes(app, routes, options.exceptionsConfig, options.authConfig);
 
   console.log(`Registered ${routes.length} routes from ${routesDir}`);
 }

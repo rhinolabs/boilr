@@ -18,6 +18,7 @@ export function registerFileRoutes(app: OpenAPIHono<BoilrEnv>, config: BoilrConf
     routesDir,
     prefix: config.routes?.prefix || "",
     exceptionsConfig: config.exceptions,
+    authConfig: config.auth,
     options: {
       ignore: config.routes?.options?.ignore,
       extensions: config.routes?.options?.extensions,

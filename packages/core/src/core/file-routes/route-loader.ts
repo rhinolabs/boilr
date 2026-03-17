@@ -5,10 +5,12 @@ import { createRoute } from "@hono/zod-openapi";
 import type { Context } from "hono";
 import { getRouteAuthKey, routeAuthConfig } from "../../plugins/auth.plugin.js";
 import { enhanceSchemaWithDefaultError } from "../../schemas/enhancer.js";
+import type { AuthConfig } from "../../types/auth.types.js";
 import type { ExceptionConfig } from "../../types/error.types.js";
 import type { BoilrEnv } from "../../types/fastify.types.js";
 import type { HttpMethod, RouteHandler, RouteInfo, RouteModule } from "../../types/file-routes.types.js";
 import type { MethodSchema, TypedReply } from "../../types/routes.types.js";
+import { generateSecurityRequirement } from "../../utils/swagger.utils.js";
 
 export async function loadRouteModule(filePath: string): Promise<RouteModule | undefined> {
   try {
@@ -194,6 +196,7 @@ export async function registerRoutes(
   app: OpenAPIHono<BoilrEnv>,
   routes: RouteInfo[],
   exceptionsConfig?: ExceptionConfig,
+  authConfig?: AuthConfig,
 ): Promise<void> {
   for (const route of routes) {
     try {
@@ -230,7 +233,13 @@ export async function registerRoutes(
         // Build OpenAPI route definition if we have schema
         if (methodSchema && hasOpenAPISchema(methodSchema)) {
           try {
-            const openApiRoute = buildOpenAPIRoute(honoMethod, route.routePath, methodSchema, module.schema);
+            const openApiRoute = buildOpenAPIRoute(
+              honoMethod,
+              route.routePath,
+              methodSchema,
+              module.schema,
+              authConfig,
+            );
             app.openapi(openApiRoute, createOpenAPIHandlerAdapter(handler, methodSchema));
           } catch (err) {
             // Fallback to plain route if OpenAPI registration fails
@@ -269,6 +278,7 @@ function buildOpenAPIRoute(
   methodSchema: Record<string, unknown>,
   // biome-ignore lint/suspicious/noExplicitAny: dynamic schema access
   fullSchema?: any,
+  authConfig?: AuthConfig,
 ) {
   // Convert path from :param to {param} for OpenAPI
   const openApiPath = path.replace(/:(\w+)/g, "{$1}").replace(/\*/g, "{_splat}");
@@ -284,6 +294,25 @@ function buildOpenAPIRoute(
   // Add tags
   if (methodSchema.tags) {
     routeDef.tags = methodSchema.tags;
+  }
+
+  // Add security requirements based on auth config
+  if (authConfig?.methods) {
+    const routeAuth = methodSchema.auth;
+
+    if (routeAuth === false || (Array.isArray(routeAuth) && routeAuth.length === 0)) {
+      // Public route — explicitly no security
+      routeDef.security = [];
+    } else if (Array.isArray(routeAuth)) {
+      // Specific auth methods required
+      routeDef.security = [generateSecurityRequirement(routeAuth as string[])];
+    } else {
+      // Default: use all auth methods with default !== false
+      const defaultMethodNames = authConfig.methods.filter((m) => m.default !== false).map((m) => m.name);
+      if (defaultMethodNames.length > 0) {
+        routeDef.security = [generateSecurityRequirement(defaultMethodNames)];
+      }
+    }
   }
 
   // Add params schema (merge common + method-specific)
