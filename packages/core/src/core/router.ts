@@ -3,7 +3,7 @@ import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { ExceptionConfig } from "../types/error.types.js";
 import type { BoilrEnv } from "../types/fastify.types.js";
 import type { BoilrConfig } from "./config.js";
-import { honoFileRoutes } from "./file-routes/index.js";
+import { loadFileRoutes } from "./file-routes/index.js";
 
 /**
  * Starts file-route registration and returns the promise.
@@ -14,7 +14,7 @@ export const registerFileRoutes = (app: OpenAPIHono<BoilrEnv>, config: BoilrConf
     ? config.routes?.dir || ""
     : path.join(process.cwd(), config.routes?.dir || "./routes");
 
-  return honoFileRoutes(app, {
+  return loadFileRoutes(app, {
     routesDir,
     prefix: config.routes?.prefix || "",
     exceptionsConfig: config.exceptions,

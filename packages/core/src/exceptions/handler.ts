@@ -60,7 +60,7 @@ const logError = (exception: HttpException, url: string, method: string, origina
 };
 
 /**
- * Creates Hono's onError handler for BoilrJs applications.
+ * Creates the global error handler for BoilrJs applications.
  */
 export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
   const { logErrors = true } = config || {};

@@ -74,7 +74,7 @@ type ExtractResponse<S extends RouteSchema, M extends HttpMethod, Status extends
 
 /**
  * Framework-agnostic typed request.
- * The adapter layer in the route-loader populates these fields from Hono's Context.
+ * The adapter layer in the route-loader populates these fields from the server context.
  */
 export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = {
   params: ExtractParams<S, M>;

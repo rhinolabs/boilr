@@ -62,7 +62,7 @@ export type {
   ExceptionOptions,
   ValidationError,
 } from "./types/error.types.js";
-// Export Hono environment type
+// Export environment type
 export { BoilrEnv } from "./types/fastify.types.js";
 // Export route types and utils
 export {

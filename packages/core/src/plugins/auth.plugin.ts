@@ -97,7 +97,7 @@ export const createAuthMiddleware = (config: BoilrConfig): MiddlewareHandler<Boi
       return;
     }
 
-    // Build a BoilrRequest from Hono context for the auth extractors
+    // Build a BoilrRequest from the request context for the auth extractors
     const boilrRequest = {
       headers: Object.fromEntries([...c.req.raw.headers.entries()].map(([k, v]) => [k, v])),
       query: c.req.query() as Record<string, string>,

@@ -188,7 +188,7 @@ const invokeHandler = async (
   return c.json(null, statusCode as 200);
 };
 
-const toHonoMethod = (method: HttpMethod): string => {
+const toHttpMethod = (method: HttpMethod): string => {
   return method === "del" ? "delete" : method;
 };
 
@@ -210,7 +210,7 @@ export const registerRoutes = async (
       const methodHandlers = extractMethodHandlers(module, route.filePath);
 
       for (const [method, handler] of methodHandlers.entries()) {
-        const honoMethod = toHonoMethod(method);
+        const httpMethod = toHttpMethod(method);
         const schemaKey = method === "del" ? "delete" : method;
 
         // Get method-specific schema
@@ -226,7 +226,7 @@ export const registerRoutes = async (
 
         // Store auth config for this route
         if (methodSchema) {
-          const authKey = getRouteAuthKey(honoMethod.toUpperCase(), route.routePath);
+          const authKey = getRouteAuthKey(httpMethod.toUpperCase(), route.routePath);
           routeAuthConfig.set(authKey, methodSchema.auth as string[] | false | undefined);
         }
 
@@ -234,7 +234,7 @@ export const registerRoutes = async (
         if (methodSchema && hasOpenAPISchema(methodSchema)) {
           try {
             const openApiRoute = buildOpenAPIRoute(
-              honoMethod,
+              httpMethod,
               route.routePath,
               methodSchema,
               module.schema,
@@ -244,13 +244,13 @@ export const registerRoutes = async (
           } catch (err) {
             // Fallback to plain route if OpenAPI registration fails
             console.warn(
-              `OpenAPI registration failed for ${honoMethod.toUpperCase()} ${route.routePath}, using plain route:`,
+              `OpenAPI registration failed for ${httpMethod.toUpperCase()} ${route.routePath}, using plain route:`,
               err,
             );
-            registerPlainRoute(app, honoMethod, route.routePath, handler);
+            registerPlainRoute(app, httpMethod, route.routePath, handler);
           }
         } else {
-          registerPlainRoute(app, honoMethod, route.routePath, handler);
+          registerPlainRoute(app, httpMethod, route.routePath, handler);
         }
       }
     } catch (error) {
@@ -270,7 +270,7 @@ const registerPlainRoute = (app: OpenAPIHono<BoilrEnv>, method: string, path: st
 };
 
 /**
- * Bridges BoilrJS defineSchema() to @hono/zod-openapi createRoute().
+ * Bridges BoilrJS defineSchema() to an OpenAPI route definition.
  */
 const buildOpenAPIRoute = (
   method: string,

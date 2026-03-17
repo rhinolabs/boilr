@@ -233,7 +233,7 @@ export interface BoilrHelmetConfig {
 export interface BoilrPluginsConfig {
   /**
    * Cookie support.
-   * In Hono, cookies are handled via built-in helpers (`getCookie`, `setCookie`).
+   * Cookies are handled via built-in helpers (`getCookie`, `setCookie`).
    * Set to `false` to skip cookie-related setup.
    * @default true
    */

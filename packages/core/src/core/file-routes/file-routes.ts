@@ -7,12 +7,12 @@ import type { FileRoutesOptions } from "../../types/file-routes.types.js";
 import { registerRoutes } from "./route-loader.js";
 import { extractRouteInfo, scanDirectories } from "./scanner.js";
 
-export interface HonoFileRoutesOptions extends FileRoutesOptions {
+export interface FileRoutesConfig extends FileRoutesOptions {
   exceptionsConfig?: ExceptionConfig;
   authConfig?: AuthConfig;
 }
 
-export const honoFileRoutes = async (app: OpenAPIHono<BoilrEnv>, options: HonoFileRoutesOptions): Promise<void> => {
+export const loadFileRoutes = async (app: OpenAPIHono<BoilrEnv>, options: FileRoutesConfig): Promise<void> => {
   if (!options.routesDir) {
     throw new Error("routesDir option is required");
   }

@@ -19,7 +19,7 @@ export const createApp = (userConfig: BoilrConfig = {}): BoilrInstance => {
     await next();
   });
 
-  // Register all plugins as Hono middleware
+  // Register all plugins as middleware
   registerPlugins(app, config);
 
   // Register middleware

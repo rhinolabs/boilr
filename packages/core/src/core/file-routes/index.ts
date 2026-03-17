@@ -6,7 +6,7 @@ export type {
   RouteModule,
   RouteSchema,
 } from "../../types/file-routes.types.js";
-export type { HonoFileRoutesOptions } from "./file-routes.js";
-export { honoFileRoutes } from "./file-routes.js";
+export type { FileRoutesConfig } from "./file-routes.js";
+export { loadFileRoutes } from "./file-routes.js";
 export { extractMethodHandlers, loadRouteModule, registerRoutes } from "./route-loader.js";
 export { extractRouteInfo, handleDynamicSegments, scanDirectories, transformPathToRoute } from "./scanner.js";
