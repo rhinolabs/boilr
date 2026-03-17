@@ -63,7 +63,7 @@ export type {
   ValidationError,
 } from "./types/error.types.js";
 // Export environment type
-export { BoilrEnv } from "./types/fastify.types.js";
+export { BoilrEnv } from "./types/env.types.js";
 // Export route types and utils
 export {
   CatchAllParam,

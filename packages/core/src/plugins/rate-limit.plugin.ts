@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from "hono";
 import { rateLimiter } from "hono-rate-limiter";
 import type { BoilrConfig, BoilrRateLimitConfig } from "../core/config.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 
 export const createRateLimitMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrRateLimitConfig = {

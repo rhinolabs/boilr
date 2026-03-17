@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from "hono";
 import { validateAuthMethods } from "../core/auth/index.js";
 import type { BoilrConfig } from "../core/config.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 
 /**
  * Auth middleware metadata store.

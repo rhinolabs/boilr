@@ -7,7 +7,7 @@ import { getRouteAuthKey, routeAuthConfig } from "../../plugins/auth.plugin.js";
 import { enhanceSchemaWithDefaultError } from "../../schemas/enhancer.js";
 import type { AuthConfig } from "../../types/auth.types.js";
 import type { ExceptionConfig } from "../../types/error.types.js";
-import type { BoilrEnv } from "../../types/fastify.types.js";
+import type { BoilrEnv } from "../../types/env.types.js";
 import type { HttpMethod, RouteHandler, RouteInfo, RouteModule } from "../../types/file-routes.types.js";
 import type { MethodSchema, TypedReply } from "../../types/routes.types.js";
 import { generateSecurityRequirement } from "../../utils/swagger.utils.js";

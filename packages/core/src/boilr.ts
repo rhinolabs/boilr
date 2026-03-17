@@ -5,7 +5,7 @@ import { type BoilrInstance, createServer } from "./core/server.js";
 import { createGlobalExceptionHandler } from "./exceptions/handler.js";
 import { applyGlobalMiddleware } from "./middleware/index.js";
 import { registerPlugins } from "./plugins/index.js";
-import type { BoilrEnv } from "./types/fastify.types.js";
+import type { BoilrEnv } from "./types/env.types.js";
 
 export const createApp = (userConfig: BoilrConfig = {}): BoilrInstance => {
   const config = mergeConfig(userConfig);

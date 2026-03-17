@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import type { BoilrConfig, BoilrCorsConfig } from "../core/config.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 
 export const createCorsMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   const defaultOptions: BoilrCorsConfig = {

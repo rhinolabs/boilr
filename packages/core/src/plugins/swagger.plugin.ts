@@ -1,7 +1,7 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { BoilrConfig, BoilrSwaggerConfig } from "../core/config.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 import { generateSecuritySchemes } from "../utils/swagger.utils.js";
 
 export const registerSwagger = (app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void => {

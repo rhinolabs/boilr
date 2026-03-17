@@ -1,6 +1,6 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { MiddlewareHandler } from "hono";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 
 export type BoilrMiddlewareFunction = MiddlewareHandler<BoilrEnv>;
 

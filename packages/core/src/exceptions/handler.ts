@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 import type { ExceptionConfig, ValidationErrorBase, ZodError } from "../types/error.types.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 import { HttpException, InternalServerErrorException, ValidationException } from "./exceptions.js";
 import { defaultFormatter } from "./formatter.js";
 

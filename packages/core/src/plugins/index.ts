@@ -1,6 +1,6 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { BoilrConfig } from "../core/config.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 import { createAuthMiddleware } from "./auth.plugin.js";
 import { createCorsMiddleware } from "./cors.plugin.js";
 import { createHelmetMiddleware } from "./helmet.plugin.js";

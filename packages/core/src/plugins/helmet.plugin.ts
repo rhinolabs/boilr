@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import type { BoilrConfig } from "../core/config.js";
-import type { BoilrEnv } from "../types/fastify.types.js";
+import type { BoilrEnv } from "../types/env.types.js";
 
 export const createHelmetMiddleware = (config: BoilrConfig): MiddlewareHandler<BoilrEnv> => {
   if (typeof config.plugins?.helmet === "object") {
