@@ -1,6 +1,8 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { MiddlewareHandler } from "hono";
+import type { BoilrEnv } from "../types/fastify.types.js";
 
-export type BoilrMiddlewareFunction = (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void;
+export type BoilrMiddlewareFunction = MiddlewareHandler<BoilrEnv>;
 
 export type BoilrMiddlewareHandler = {
   name: string;
@@ -10,62 +12,58 @@ export type BoilrMiddlewareHandler = {
 export const middlewares: Record<string, BoilrMiddlewareHandler> = {
   logger: {
     name: "logger",
-    handler: async (request, reply) => {
-      request.log.info(
-        {
-          url: request.url,
-          method: request.method,
-          ip: request.ip,
-          userAgent: request.headers["user-agent"],
-        },
-        "Request received",
+    handler: async (c, next) => {
+      const start = Date.now();
+      console.log(
+        JSON.stringify({
+          url: c.req.url,
+          method: c.req.method,
+          ip: c.req.header("x-forwarded-for") || c.req.header("cf-connecting-ip") || "unknown",
+          userAgent: c.req.header("user-agent"),
+          message: "Request received",
+        }),
       );
 
-      const start = Date.now();
-      reply.raw.on("finish", () => {
-        const responseTime = Date.now() - start;
-        request.log.info(
-          {
-            url: request.url,
-            method: request.method,
-            statusCode: reply.statusCode,
-            responseTime,
-          },
-          "Request completed",
-        );
-      });
+      await next();
+
+      const responseTime = Date.now() - start;
+      console.log(
+        JSON.stringify({
+          url: c.req.url,
+          method: c.req.method,
+          statusCode: c.res.status,
+          responseTime,
+          message: "Request completed",
+        }),
+      );
     },
   },
   commonHeaders: {
     name: "commonHeaders",
-    handler: async (request, reply) => {
-      reply.header("X-Request-ID", request.id);
+    handler: async (c, next) => {
+      c.header("X-Request-ID", c.get("requestId") || crypto.randomUUID());
+      await next();
     },
   },
 };
 
-export function applyGlobalMiddleware(app: FastifyInstance, middlewareName: string): FastifyInstance {
+export function applyGlobalMiddleware(app: OpenAPIHono<BoilrEnv>, middlewareName: string): void {
   const middleware = middlewares[middlewareName];
   if (!middleware) {
     throw new Error(`Middleware "${middlewareName}" not found`);
   }
 
-  app.addHook("onRequest", middleware.handler);
-  return app;
+  app.use(middleware.handler);
 }
 
-export function createRouteMiddleware(...middlewareNames: string[]): Record<string, BoilrMiddlewareFunction[]> {
-  const handlers = middlewareNames.map((name) => {
+export function createRouteMiddleware(...middlewareNames: string[]): BoilrMiddlewareFunction[] {
+  return middlewareNames.map((name) => {
     const middleware = middlewares[name];
     if (!middleware) {
       throw new Error(`Middleware "${name}" not found`);
     }
     return middleware.handler;
   });
-
-  return {
-    onRequest: handlers,
-  };
 }
 
 export function registerMiddleware(name: string, handler: BoilrMiddlewareFunction): void {

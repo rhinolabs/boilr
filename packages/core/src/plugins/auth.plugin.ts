@@ -1,59 +1,125 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import fp from "fastify-plugin";
+import type { MiddlewareHandler } from "hono";
 import { validateAuthMethods } from "../core/auth/index.js";
-import type { BoilrPluginOptions } from "../core/config.js";
+import type { BoilrConfig } from "../core/config.js";
+import type { BoilrEnv } from "../types/fastify.types.js";
 
-async function authPluginFunction(fastify: FastifyInstance, options: BoilrPluginOptions) {
-  const authConfig = options.boilrConfig?.auth;
+/**
+ * Auth middleware metadata store.
+ * Route-loader sets auth config per route path+method.
+ */
+export const routeAuthConfig = new Map<string, string[] | false | undefined>();
 
-  if (!authConfig?.methods) {
-    return;
+export function getRouteAuthKey(method: string, path: string): string {
+  return `${method.toUpperCase()}:${path}`;
+}
+
+/**
+ * Match an actual request path against a route pattern with :param segments.
+ * e.g. matchPath("/api/todos/:id", "/api/todos/42") → true
+ */
+function matchPath(pattern: string, requestPath: string): boolean {
+  const patternParts = pattern.split("/");
+  const pathParts = requestPath.split("/");
+  if (patternParts.length !== pathParts.length) return false;
+  return patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i]);
+}
+
+/**
+ * Find the auth config for a given method + actual request path.
+ * Global middleware receives routePath "/*", so we must match against
+ * the real path and the registered route patterns.
+ */
+function findRouteAuth(
+  method: string,
+  requestPath: string,
+): { found: true; value: string[] | false | undefined } | { found: false } {
+  // Exact match (routes without params)
+  const exactKey = getRouteAuthKey(method, requestPath);
+  if (routeAuthConfig.has(exactKey)) {
+    return { found: true, value: routeAuthConfig.get(exactKey) };
   }
 
-  const { methods } = authConfig;
+  // Pattern matching for parameterised routes like /api/todos/:id
+  for (const [key, value] of routeAuthConfig.entries()) {
+    const colonIdx = key.indexOf(":");
+    const keyMethod = key.substring(0, colonIdx);
+    const keyPath = key.substring(colonIdx + 1);
 
-  fastify.addHook("preHandler", async (request: FastifyRequest, _reply: FastifyReply) => {
-    const url = request.url;
+    if (keyMethod !== method) continue;
+    if (matchPath(keyPath, requestPath)) return { found: true, value };
+  }
 
-    // Skip authentication for Swagger/documentation routes
+  return { found: false };
+}
+
+export function createAuthMiddleware(config: BoilrConfig): MiddlewareHandler<BoilrEnv> {
+  const authConfig = config.auth;
+
+  return async (c, next) => {
+    if (!authConfig?.methods) {
+      await next();
+      return;
+    }
+
+    const url = c.req.path;
+
+    // Skip authentication for docs routes
     if (
       url.startsWith("/docs") ||
       url.startsWith("/documentation") ||
       url.includes("/swagger") ||
       url.includes("/openapi")
     ) {
+      await next();
       return;
     }
 
-    // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route schema access
-    const routeOptions = request.routeOptions as any;
-    const schema = routeOptions?.schema;
+    // Look up route-specific auth config using actual request path
+    // (c.req.routePath returns "/*" in global middleware, so we can't use it)
+    const result = findRouteAuth(c.req.method, c.req.path);
+    const routeAuth = result.found ? result.value : undefined;
 
-    let authConfig: string[] | false | undefined;
-
-    if (schema && schema.auth !== undefined) {
-      authConfig = schema.auth;
-    }
-
-    if (authConfig === false || (Array.isArray(authConfig) && authConfig.length === 0)) {
+    if (routeAuth === false || (Array.isArray(routeAuth) && routeAuth.length === 0)) {
+      await next();
       return;
     }
 
+    const { methods } = authConfig;
     let requiredAuthNames: string[] = [];
 
-    if (Array.isArray(authConfig)) {
-      requiredAuthNames = authConfig;
-    } else if (authConfig === undefined) {
+    if (Array.isArray(routeAuth)) {
+      requiredAuthNames = routeAuth;
+    } else {
+      // Default: use all methods with default !== false
       requiredAuthNames = methods.filter((method) => method.default !== false).map((method) => method.name);
     }
 
     if (requiredAuthNames.length === 0) {
+      await next();
       return;
     }
-    request.ctx = await validateAuthMethods(request, methods, requiredAuthNames);
-  });
-}
 
-export const authPlugin = fp(authPluginFunction, {
-  name: "boilr-auth",
-});
+    // Build a BoilrRequest from Hono context for the auth extractors
+    const boilrRequest = {
+      headers: Object.fromEntries([...c.req.raw.headers.entries()].map(([k, v]) => [k, v])),
+      query: c.req.query() as Record<string, string>,
+      cookies: undefined as Record<string, string> | undefined,
+    };
+
+    // Parse cookies from cookie header
+    const cookieHeader = c.req.header("cookie");
+    if (cookieHeader) {
+      boilrRequest.cookies = Object.fromEntries(
+        cookieHeader.split(";").map((c) => {
+          const [key, ...rest] = c.trim().split("=");
+          return [key, rest.join("=")];
+        }),
+      );
+    }
+
+    const ctx = await validateAuthMethods(boilrRequest, methods, requiredAuthNames);
+    c.set("ctx", ctx);
+
+    await next();
+  };
+}

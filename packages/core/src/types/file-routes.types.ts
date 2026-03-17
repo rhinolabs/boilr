@@ -1,28 +1,16 @@
-import type {
-  FastifyInstance as BaseFastifyInstance,
-  FastifyPluginAsync as BasePluginAsync,
-  FastifyPluginOptions,
-  FastifyReply,
-  FastifyRequest,
-  FastifyTypeProviderDefault,
-  RawServerDefault,
-  RouteOptions,
-} from "fastify";
-
-export interface FileRoutesOptions extends FastifyPluginOptions {
+export interface FileRoutesOptions {
   routesDir: string;
   prefix?: string;
   options?: {
     ignore?: RegExp[];
     pathTransform?: (path: string, filename: string) => string;
-    globalHooks?: Partial<RouteOptions>;
     extensions?: string[];
   };
 }
 
 export type HttpMethod = "get" | "post" | "put" | "del" | "patch" | "head" | "options";
 
-export type RouteHandler = (request: FastifyRequest, reply: FastifyReply) => Promise<unknown> | unknown;
+export type RouteHandler = (request: unknown, reply: unknown) => Promise<unknown> | unknown;
 
 export interface RouteSchema {
   [method: string]: {
@@ -37,7 +25,6 @@ export interface RouteSchema {
 
 export interface RouteModule {
   schema?: RouteSchema;
-  hooks?: Partial<RouteOptions>;
   get?: RouteHandler;
   post?: RouteHandler;
   put?: RouteHandler;
@@ -53,11 +40,3 @@ export interface RouteInfo {
   routePath: string;
   filename: string;
 }
-
-export type FastifyInstance = BaseFastifyInstance;
-
-export type FastifyPluginAsync<Options extends FastifyPluginOptions = FastifyPluginOptions> = BasePluginAsync<
-  Options,
-  RawServerDefault,
-  FastifyTypeProviderDefault
->;

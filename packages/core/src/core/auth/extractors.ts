@@ -1,10 +1,9 @@
-import type { FastifyRequest } from "fastify";
-import type { AuthLocation, BasicCredentials } from "../../types/auth.types.js";
+import type { AuthLocation, BasicCredentials, BoilrRequest } from "../../types/auth.types.js";
 
-export function extractBearerToken(request: FastifyRequest, scheme = "Bearer"): string | undefined {
+export function extractBearerToken(request: BoilrRequest, scheme = "Bearer"): string | undefined {
   const authorization = request.headers.authorization;
 
-  if (!authorization) {
+  if (!authorization || typeof authorization !== "string") {
     return;
   }
 
@@ -17,12 +16,12 @@ export function extractBearerToken(request: FastifyRequest, scheme = "Bearer"): 
   return authorization.slice(prefix.length);
 }
 
-export function extractApiKey(request: FastifyRequest, location: AuthLocation, key: string): string | undefined {
+export function extractApiKey(request: BoilrRequest, location: AuthLocation, key: string): string | undefined {
   switch (location) {
     case "header":
-      return (request.headers[key] as string) || undefined;
+      return (request.headers[key.toLowerCase()] as string) || undefined;
     case "query":
-      return (request.query as Record<string, string>)?.[key] || undefined;
+      return request.query?.[key] || undefined;
     case "cookie":
       return request.cookies?.[key] || undefined;
     default:
@@ -30,16 +29,16 @@ export function extractApiKey(request: FastifyRequest, location: AuthLocation, k
   }
 }
 
-export function extractBasicCredentials(request: FastifyRequest): BasicCredentials | undefined {
+export function extractBasicCredentials(request: BoilrRequest): BasicCredentials | undefined {
   const authorization = request.headers.authorization;
 
-  if (!authorization || !authorization.startsWith("Basic ")) {
+  if (!authorization || typeof authorization !== "string" || !authorization.startsWith("Basic ")) {
     return;
   }
 
   try {
     const encoded = authorization.slice("Basic ".length);
-    const decoded = Buffer.from(encoded, "base64").toString("utf-8");
+    const decoded = atob(encoded);
     const [username, password] = decoded.split(":", 2);
 
     if (!username || password === undefined) {

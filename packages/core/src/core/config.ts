@@ -1,302 +1,91 @@
-import type { FastifyCookieOptions } from "@fastify/cookie";
-import type { FastifyCorsOptions } from "@fastify/cors";
-import type { FastifyHelmetOptions } from "@fastify/helmet";
-import type { CreateRateLimitOptions } from "@fastify/rate-limit";
-import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
-import type { PerformanceMonitorOptions } from "@rhinolabs/fastify-monitor";
-import type { FastifyServerOptions } from "fastify";
 import type { AuthConfig } from "../types/auth.types.js";
 import type { ExceptionConfig } from "../types/error.types.js";
 import { mergeConfigRecursively } from "../utils/config.utils.js";
 
 export interface BoilrServerConfig {
-  /**
-   * Port on which the server will listen.
-   * @default 3000
-   */
   port?: number;
-  /**
-   * Hostname for the server.
-   */
   host?: string;
-  /**
-   * Logging configuration.
-   */
   logger?: boolean | object;
 }
 
 export interface BoilrRoutesConfig {
-  /**
-   * Directory to scan for route files.
-   */
   dir?: string;
-  /**
-   * Prefix to add to all routes.
-   */
   prefix?: string;
-  /**
-   * Options for the Next.js style router
-   */
   options?: {
-    /**
-     * Patterns of files to ignore
-     */
     ignore?: RegExp[];
-    /**
-     * File extensions to include
-     */
     extensions?: string[];
   };
 }
 
-export interface BoilrPluginsConfig {
-  /**
-   * Cookie plugin configuration for parsing and setting cookies.
-   * Set to `false` to disable, `true` for defaults, or an object for custom config.
-   * @default true
-   *
-   * For available options, see: https://www.npmjs.com/package/@fastify/cookie
-   *
-   * @example
-   * ```typescript
-   * cookie: {
-   *   secret: "my-secret-key",
-   *   parseOptions: {
-   *     httpOnly: true
-   *   }
-   * }
-   * ```
-   */
-  cookie?: boolean | FastifyCookieOptions;
-
-  /**
-   * Helmet plugin configuration for security headers.
-   * Set to `false` to disable, `true` for defaults, or an object for custom config.
-   * @default true
-   *
-   * For available options, see: https://www.npmjs.com/package/@fastify/helmet
-   *
-   * @example
-   * ```typescript
-   * helmet: {
-   *   contentSecurityPolicy: false,
-   *   crossOriginEmbedderPolicy: false
-   * }
-   * ```
-   */
-  helmet?: boolean | FastifyHelmetOptions;
-
-  /**
-   * Rate limiting plugin configuration.
-   * Set to `false` to disable, `true` for defaults, or an object for custom config.
-   * @default true
-   *
-   * For available options, see: https://www.npmjs.com/package/@fastify/rate-limit
-   *
-   * @example
-   * ```typescript
-   * rateLimit: {
-   *   max: 100,
-   *   timeWindow: '1 minute'
-   * }
-   * ```
-   */
-  rateLimit?: boolean | CreateRateLimitOptions;
-
-  /**
-   * CORS (Cross-Origin Resource Sharing) plugin configuration.
-   * Set to `false` to disable, `true` for defaults, or an object for custom config.
-   * @default true
-   *
-   * For available options, see: https://www.npmjs.com/package/@fastify/cors
-   *
-   * @example
-   * ```typescript
-   * cors: {
-   *   origin: ["http://localhost:3000", "https://myapp.com"],
-   *   credentials: true
-   * }
-   * ```
-   */
-  cors?: boolean | FastifyCorsOptions;
-
-  /**
-   * Swagger documentation plugin configuration.
-   * Set to `false` to disable, `true` for defaults, or an object for custom config.
-   * @default true
-   *
-   * For available options, see: https://www.npmjs.com/package/@fastify/swagger
-   *
-   * @example
-   * ```typescript
-   * swagger: {
-   *   info: {
-   *     title: "My API",
-   *     description: "API documentation",
-   *     version: "1.0.0"
-   *   },
-   *   servers: [
-   *     { url: "http://localhost:3000", description: "Development" }
-   *   ]
-   * }
-   * ```
-   */
-  swagger?: boolean | FastifyDynamicSwaggerOptions;
-
-  /**
-   * Development performance monitoring plugin configuration.
-   * Only active in development mode (NODE_ENV=development).
-   * Set to `false` to disable, `true` for defaults, or an object for custom config.
-   * @default true
-   *
-   * For available options, see: https://www.npmjs.com/package/@rhinolabs/fastify-monitor
-   */
-  monitor?: boolean | PerformanceMonitorOptions;
+export interface BoilrRateLimitConfig {
+  max?: number;
+  windowMs?: number;
 }
 
-/**
- * Middleware configuration for BoilrJs applications.
- *
- * @example
- * ```typescript
- * const middlewareConfig: BoilrMiddlewareConfig = {
- *   global: ["logger", "auth", "cors"]
- * };
- * ```
- */
+export interface BoilrSwaggerConfig {
+  openapi?: {
+    info?: {
+      title?: string;
+      description?: string;
+      version?: string;
+    };
+    servers?: Array<{ url: string; description?: string }>;
+  };
+}
+
+export interface BoilrMonitorConfig {
+  slowThreshold?: number;
+  verySlowThreshold?: number;
+  exclude?: (string | RegExp)[];
+}
+
+export interface BoilrCorsConfig {
+  origin?: string | string[];
+  allowMethods?: string[];
+  allowHeaders?: string[];
+  maxAge?: number;
+  credentials?: boolean;
+  exposeHeaders?: string[];
+}
+
+export interface BoilrHelmetConfig {
+  contentSecurityPolicy?: Record<string, unknown>;
+  crossOriginEmbedderPolicy?: boolean | string;
+  crossOriginResourcePolicy?: boolean | string;
+  crossOriginOpenerPolicy?: boolean | string;
+  referrerPolicy?: boolean | string;
+  strictTransportSecurity?: boolean | string;
+  xContentTypeOptions?: boolean | string;
+  xFrameOptions?: boolean | string;
+  removePoweredBy?: boolean;
+}
+
+export interface BoilrPluginsConfig {
+  cookie?: boolean;
+  helmet?: boolean | BoilrHelmetConfig;
+  rateLimit?: boolean | BoilrRateLimitConfig;
+  cors?: boolean | BoilrCorsConfig;
+  swagger?: boolean | BoilrSwaggerConfig;
+  monitor?: boolean | BoilrMonitorConfig;
+}
+
 export interface BoilrMiddlewareConfig {
-  /**
-   * Array of global middleware names to apply to all routes.
-   * Middleware are applied in the order specified.
-   * @default ["logger", "commonHeaders"]
-   *
-   * @example
-   * ```typescript
-   * global: ["logger", "auth", "validation"]
-   * ```
-   */
   global?: string[];
 }
-
-/**
- * Generic type for plugin options that includes boilrConfig.
- * Use this type for all plugin option interfaces to ensure consistent access to boilrConfig.
- *
- * @example
- * ```typescript
- * export const myPlugin = fp(async (
- *   fastify: FastifyInstance,
- *   options: BoilrPluginOptions<MyPluginOptions> = {}
- * ) => {
- *   const { boilrConfig, ...pluginOptions } = options;
- *   // ...
- * });
- * ```
- */
 
 // biome-ignore lint/complexity/noBannedTypes: boilrConfig wrapper
 export type BoilrPluginOptions<T = {}> = T & { boilrConfig: BoilrConfig };
 
-/**
- * Main configuration interface for BoilrJs applications.
- * This interface defines all available configuration options for customizing your BoilrJs app.
- *
- * @example
- * ```typescript
- * const config: BoilrConfig = {
- *   server: {
- *     port: 3000,
- *     host: "localhost"
- *   },
- *   routes: {
- *     dir: "./src/routes",
- *     prefix: "/api"
- *   },
- *   plugins: {
- *     swagger: {
- *       info: {
- *         title: "My API",
- *         version: "1.0.0"
- *       }
- *     }
- *   },
- *   exceptions: {
- *     formatter: (error, statusCode, request) => ({
- *       success: false,
- *       message: error.message,
- *       code: statusCode
- *     })
- *    };
- * ```
- */
 export interface BoilrConfig {
-  /**
-   * Server configuration options.
-   */
   server?: BoilrServerConfig;
-
-  /**
-   * Routes discovery and registration configuration.
-   */
   routes?: BoilrRoutesConfig;
-
-  /**
-   * Plugin configuration options.
-   */
   plugins?: BoilrPluginsConfig;
-
-  /**
-   * Middleware configuration options.
-   */
   middleware?: BoilrMiddlewareConfig;
-
-  /**
-   * Authentication configuration.
-   * Define auth methods that can be applied to routes.
-   *
-   * @example
-   * ```typescript
-   * auth: {
-   *   methods: [
-   *     {
-   *       name: "bearer",
-   *       type: "bearer",
-   *       validator: async (request) => {
-   *         const token = extractBearerToken(request);
-   *         return await verifyJwtToken(token);
-   *       }
-   *     }
-   *   ]
-   * }
-   * ```
-   */
   auth?: AuthConfig;
-
-  /**
-   * Enable or disable request/response validation using Zod schemas.
-   * @default true
-   */
   validation?: boolean;
-
-  /**
-   * Exception handling configuration for HTTP errors and validation.
-   * Configure custom error formatters, logging, and validation behavior.
-   */
   exceptions?: ExceptionConfig;
-
-  /**
-   * Raw Fastify server options.
-   * These options are passed directly to the underlying Fastify instance.
-   *
-   * @see https://fastify.dev/docs/latest/Reference/Server/
-   */
-  fastify?: FastifyServerOptions;
 }
 
-/**
- * Default configuration values for BoilrJs applications.
- * These defaults provide a good starting point for most applications.
- */
 export const defaultConfig: BoilrConfig = {
   server: {
     port: 3000,
@@ -325,23 +114,6 @@ export const defaultConfig: BoilrConfig = {
   },
 };
 
-/**
- * Merges user configuration with default configuration values.
- * This function performs a deep merge, allowing users to override specific
- * configuration properties while keeping defaults for unspecified options.
- *
- * @param userConfig - User-provided configuration options
- * @returns Merged configuration with defaults applied
- *
- * @example
- * ```typescript
- * const config = mergeConfig({
- *   server: { port: 8080 }, // Only override port
- *   plugins: { cors: false } // Disable CORS
- * });
- * // Result: All defaults + port: 8080 + cors: false
- * ```
- */
 export function mergeConfig(userConfig: BoilrConfig = {}): BoilrConfig {
   return mergeConfigRecursively(defaultConfig, userConfig);
 }

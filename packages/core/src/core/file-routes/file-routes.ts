@@ -1,14 +1,16 @@
 import path from "node:path";
-import type { FastifyPluginAsync } from "fastify";
-import fp from "fastify-plugin";
-import type { FastifyInstance, FileRoutesOptions } from "../../types/file-routes.types.js";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { ExceptionConfig } from "../../types/error.types.js";
+import type { BoilrEnv } from "../../types/fastify.types.js";
+import type { FileRoutesOptions } from "../../types/file-routes.types.js";
 import { registerRoutes } from "./route-loader.js";
 import { extractRouteInfo, scanDirectories } from "./scanner.js";
 
-const pluginImpl: FastifyPluginAsync<FileRoutesOptions> = async (
-  fastify: FastifyInstance,
-  options: FileRoutesOptions,
-): Promise<void> => {
+export interface HonoFileRoutesOptions extends FileRoutesOptions {
+  exceptionsConfig?: ExceptionConfig;
+}
+
+export async function honoFileRoutes(app: OpenAPIHono<BoilrEnv>, options: HonoFileRoutesOptions): Promise<void> {
   if (!options.routesDir) {
     throw new Error("routesDir option is required");
   }
@@ -31,12 +33,7 @@ const pluginImpl: FastifyPluginAsync<FileRoutesOptions> = async (
     }
   }
 
-  await registerRoutes(fastify, routes, options.options?.globalHooks);
+  await registerRoutes(app, routes, options.exceptionsConfig);
 
-  fastify.log.info(`Registered ${routes.length} routes from ${routesDir}`);
-};
-
-export const fastifyFileRoutes = fp(pluginImpl, {
-  fastify: "5.x",
-  name: "boilr-file-routes",
-});
+  console.log(`Registered ${routes.length} routes from ${routesDir}`);
+}

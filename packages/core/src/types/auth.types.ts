@@ -1,5 +1,3 @@
-import type { FastifyRequest } from "fastify";
-
 export type AuthType = "bearer" | "apiKey" | "basic" | "cookie";
 
 export type AuthLocation = "header" | "query" | "cookie";
@@ -7,6 +5,16 @@ export type AuthLocation = "header" | "query" | "cookie";
 export interface AuthMethodOptions {
   key?: string;
   location?: AuthLocation;
+}
+
+/**
+ * Framework-agnostic request interface used by auth validators.
+ * Provides the minimal surface needed to extract auth credentials.
+ */
+export interface BoilrRequest {
+  headers: Record<string, string | string[] | undefined>;
+  query: Record<string, string>;
+  cookies?: Record<string, string>;
 }
 
 export interface BearerAuthMethod {
@@ -44,19 +52,19 @@ export interface BasicAuthMethod {
 export type AuthMethod = BearerAuthMethod | ApiKeyAuthMethod | CookieAuthMethod | BasicAuthMethod;
 
 export type BearerAuthValidator = (
-  request: FastifyRequest,
+  request: BoilrRequest,
   token: string | undefined,
 ) => Promise<BoilrAuthContext> | BoilrAuthContext;
 export type ApiKeyAuthValidator = (
-  request: FastifyRequest,
+  request: BoilrRequest,
   token: string | undefined,
 ) => Promise<BoilrAuthContext> | BoilrAuthContext;
 export type CookieAuthValidator = (
-  request: FastifyRequest,
+  request: BoilrRequest,
   token: string | undefined,
 ) => Promise<BoilrAuthContext> | BoilrAuthContext;
 export type BasicAuthValidator = (
-  request: FastifyRequest,
+  request: BoilrRequest,
   username: string | undefined,
   password: string | undefined,
 ) => Promise<BoilrAuthContext> | BoilrAuthContext;

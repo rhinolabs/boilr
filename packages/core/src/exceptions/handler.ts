@@ -1,5 +1,6 @@
-import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
+import type { Context } from "hono";
 import type { ExceptionConfig, ValidationErrorBase, ZodError } from "../types/error.types.js";
+import type { BoilrEnv } from "../types/fastify.types.js";
 import { HttpException, InternalServerErrorException, ValidationException } from "./exceptions.js";
 import { defaultFormatter } from "./formatter.js";
 
@@ -36,14 +37,14 @@ const createValidationException = (error: ValidationErrorBase) => {
   });
 };
 
-const logError = (exception: HttpException, request: FastifyRequest, originalError?: Error) => {
+const logError = (exception: HttpException, url: string, method: string, originalError?: Error) => {
   const logData: Record<string, unknown> = {
     timestamp: new Date().toISOString(),
     level: exception.statusCode >= 500 ? "error" : "warn",
     message: exception.message,
     statusCode: exception.statusCode,
-    path: request.url,
-    method: request.method,
+    path: url,
+    method,
     details: exception.details,
   };
 
@@ -59,25 +60,12 @@ const logError = (exception: HttpException, request: FastifyRequest, originalErr
 };
 
 /**
- * Creates a global exception handler for Fastify applications.
- * This handler catches and formats all HTTP exceptions and validation errors.
- *
- * @param config - Optional configuration for exception handling
- * @returns Fastify error handler function
- *
- * @example
- * ```typescript
- * const handler = createGlobalExceptionHandler({
- *   logErrors: true,
- *   formatter: customFormatter
- * });
- * app.setErrorHandler(handler);
- * ```
+ * Creates Hono's onError handler for BoilrJs applications.
  */
 export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
   const { logErrors = true } = config || {};
 
-  return async (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
+  return async (error: Error, c: Context<BoilrEnv>): Promise<Response> => {
     let exception: HttpException;
 
     if (error instanceof HttpException) {
@@ -85,18 +73,18 @@ export const createGlobalExceptionHandler = (config?: ExceptionConfig) => {
     } else if (isValidationError(error)) {
       exception = createValidationException(error);
     } else {
-      exception = new InternalServerErrorException((error as Error).message || "Internal server error", {
+      exception = new InternalServerErrorException(error.message || "Internal server error", {
         name: "InternalServerError",
       });
     }
 
     if (logErrors) {
-      logError(exception, request, error);
+      logError(exception, c.req.url, c.req.method, error);
     }
 
     const formatter = config?.formatter || defaultFormatter;
-    const response = await formatter(exception, request, reply);
+    const response = await formatter(exception, { url: c.req.url, method: c.req.method });
 
-    return reply.code(exception.statusCode).send(response);
+    return c.json(response, exception.statusCode as 200);
   };
 };

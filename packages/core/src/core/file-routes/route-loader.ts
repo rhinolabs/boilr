@@ -1,13 +1,14 @@
 import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import type { RouteOptions } from "fastify";
-import type {
-  FastifyInstance,
-  HttpMethod,
-  RouteHandler,
-  RouteInfo,
-  RouteModule,
-} from "../../types/file-routes.types.js";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import type { Context } from "hono";
+import { getRouteAuthKey, routeAuthConfig } from "../../plugins/auth.plugin.js";
+import { enhanceSchemaWithDefaultError } from "../../schemas/enhancer.js";
+import type { ExceptionConfig } from "../../types/error.types.js";
+import type { BoilrEnv } from "../../types/fastify.types.js";
+import type { HttpMethod, RouteHandler, RouteInfo, RouteModule } from "../../types/file-routes.types.js";
+import type { MethodSchema, TypedReply } from "../../types/routes.types.js";
 
 export async function loadRouteModule(filePath: string): Promise<RouteModule | undefined> {
   try {
@@ -17,7 +18,6 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
     }
 
     if (filePath.endsWith(".d.ts")) {
-      console.warn(`Skipping TypeScript declaration file: ${filePath}`);
       return;
     }
 
@@ -26,7 +26,6 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
       const jsFilePath = filePath.replace(/\.ts$/, ".js");
       if (existsSync(jsFilePath)) {
         actualFilePath = jsFilePath;
-        console.log(`Using compiled JS file instead of TS: ${jsFilePath}`);
       }
     }
 
@@ -35,18 +34,16 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
       const imported = await import(fileUrl);
       return imported as RouteModule;
     } catch (error) {
-      console.error(`Error importing ESM module: ${actualFilePath}`, error);
+      console.error(`Error importing module: ${actualFilePath}`, error);
 
       if (actualFilePath.endsWith(".ts")) {
         const jsFilePath = actualFilePath.replace(/\.ts$/, ".js");
         if (existsSync(jsFilePath) && jsFilePath !== actualFilePath) {
-          console.log(`Attempting to load JS version as fallback: ${jsFilePath}`);
           try {
             const fileUrl = pathToFileURL(jsFilePath).href;
             const imported = await import(fileUrl);
             return imported as RouteModule;
-          } catch (fallbackError) {
-            console.error(`Fallback JS import also failed for: ${jsFilePath}`, fallbackError);
+          } catch {
             return;
           }
         }
@@ -92,10 +89,111 @@ export function extractMethodHandlers(module: RouteModule, filePath: string): Ma
   return methods;
 }
 
+/**
+ * Creates the adapter for OpenAPI-registered routes.
+ * Uses c.req.valid() to get Zod-validated/transformed data.
+ */
+function createOpenAPIHandlerAdapter(userHandler: RouteHandler, methodSchema: Record<string, unknown>) {
+  const hasParams = !!methodSchema.params;
+  const hasQuery = !!methodSchema.querystring;
+  const hasBody = !!methodSchema.body;
+  const hasHeaders = !!methodSchema.headers;
+
+  return async (c: Context<BoilrEnv>): Promise<Response> => {
+    const request: Record<string, unknown> = {
+      params: hasParams ? c.req.valid("param" as never) : c.req.param(),
+      query: hasQuery ? c.req.valid("query" as never) : c.req.query(),
+      headers: hasHeaders ? c.req.valid("header" as never) : Object.fromEntries([...c.req.raw.headers.entries()]),
+      env: c.env,
+      raw: c.req.raw,
+      ctx: c.get("ctx"),
+    };
+
+    if (hasBody) {
+      request.body = c.req.valid("json" as never);
+    } else if (["POST", "PUT", "PATCH"].includes(c.req.method)) {
+      try {
+        request.body = await c.req.json();
+      } catch {
+        request.body = undefined;
+      }
+    }
+
+    return invokeHandler(userHandler, request, c);
+  };
+}
+
+/**
+ * Creates the adapter for plain (non-OpenAPI) routes.
+ * No Zod validation available — reads raw data.
+ */
+function createPlainHandlerAdapter(userHandler: RouteHandler) {
+  return async (c: Context<BoilrEnv>): Promise<Response> => {
+    const request: Record<string, unknown> = {
+      params: c.req.param(),
+      query: c.req.query(),
+      headers: Object.fromEntries([...c.req.raw.headers.entries()]),
+      env: c.env,
+      raw: c.req.raw,
+      ctx: c.get("ctx"),
+    };
+
+    if (["POST", "PUT", "PATCH"].includes(c.req.method)) {
+      try {
+        request.body = await c.req.json();
+      } catch {
+        request.body = undefined;
+      }
+    }
+
+    return invokeHandler(userHandler, request, c);
+  };
+}
+
+/**
+ * Shared handler invocation: builds reply, calls user handler, wraps result.
+ */
+async function invokeHandler(
+  userHandler: RouteHandler,
+  request: Record<string, unknown>,
+  c: Context<BoilrEnv>,
+): Promise<Response> {
+  let statusCode = 200;
+  const reply: TypedReply = {
+    code: (s: number) => {
+      statusCode = s;
+      return reply;
+    },
+    header: (name: string, value: string) => {
+      c.header(name, value);
+      return reply;
+    },
+    send: (data: unknown) => {
+      return c.json(data, statusCode as 200);
+    },
+  };
+
+  const result = await userHandler(request, reply);
+
+  if (result instanceof Response) {
+    return result;
+  }
+
+  if (result !== undefined && result !== null) {
+    return c.json(result, statusCode as 200);
+  }
+
+  return c.json(null, statusCode as 200);
+}
+
+function toHonoMethod(method: HttpMethod): string {
+  return method === "del" ? "delete" : method;
+}
+
 export async function registerRoutes(
-  fastify: FastifyInstance,
+  app: OpenAPIHono<BoilrEnv>,
   routes: RouteInfo[],
-  globalHooks: Partial<RouteOptions> = {},
+  exceptionsConfig?: ExceptionConfig,
 ): Promise<void> {
   for (const route of routes) {
     try {
@@ -109,64 +207,136 @@ export async function registerRoutes(
       const methodHandlers = extractMethodHandlers(module, route.filePath);
 
       for (const [method, handler] of methodHandlers.entries()) {
-        const routeOptions: RouteOptions = {
-          method: method === "del" ? "DELETE" : method.toUpperCase(),
-          url: route.routePath,
-          handler,
-          ...globalHooks,
-        };
+        const honoMethod = toHonoMethod(method);
+        const schemaKey = method === "del" ? "delete" : method;
 
-        if (module.hooks) {
-          Object.assign(routeOptions, module.hooks);
+        // Get method-specific schema
+        let methodSchema = module.schema?.[schemaKey] as Record<string, unknown> | undefined;
+
+        // Enhance schema with default error responses
+        if (methodSchema) {
+          methodSchema = enhanceSchemaWithDefaultError(methodSchema as MethodSchema, exceptionsConfig) as Record<
+            string,
+            unknown
+          >;
         }
 
-        if (module.schema?.[method === "del" ? "delete" : method]) {
-          // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route options
-          const methodSchema = module.schema[method === "del" ? "delete" : method] as any;
-
-          let processedSchema = { ...methodSchema };
-          // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route options
-          let authConfig: any;
-
-          if (methodSchema && typeof methodSchema === "object") {
-            if ("tags" in methodSchema) {
-              const tags = methodSchema.tags;
-              if (Array.isArray(tags) && tags.length > 0) {
-                const { tags: _, ...schemaWithoutTags } = methodSchema;
-                processedSchema = schemaWithoutTags;
-
-                if (!routeOptions.schema) {
-                  routeOptions.schema = {};
-                }
-                routeOptions.schema.tags = tags;
-              }
-            }
-
-            if ("auth" in methodSchema) {
-              authConfig = methodSchema.auth;
-              const { auth: _, ...schemaWithoutAuth } = processedSchema;
-              processedSchema = schemaWithoutAuth;
-            }
-          }
-
-          routeOptions.schema = {
-            ...routeOptions.schema,
-            ...processedSchema,
-          };
-
-          if (authConfig !== undefined) {
-            if (!routeOptions.schema) {
-              routeOptions.schema = {};
-            }
-            // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route options
-            (routeOptions.schema as any).auth = authConfig;
-          }
+        // Store auth config for this route
+        if (methodSchema) {
+          const authKey = getRouteAuthKey(honoMethod.toUpperCase(), route.routePath);
+          routeAuthConfig.set(authKey, methodSchema.auth as string[] | false | undefined);
         }
 
-        fastify.route(routeOptions);
+        // Build OpenAPI route definition if we have schema
+        if (methodSchema && hasOpenAPISchema(methodSchema)) {
+          try {
+            const openApiRoute = buildOpenAPIRoute(honoMethod, route.routePath, methodSchema, module.schema);
+            app.openapi(openApiRoute, createOpenAPIHandlerAdapter(handler, methodSchema));
+          } catch (err) {
+            // Fallback to plain route if OpenAPI registration fails
+            console.warn(
+              `OpenAPI registration failed for ${honoMethod.toUpperCase()} ${route.routePath}, using plain route:`,
+              err,
+            );
+            registerPlainRoute(app, honoMethod, route.routePath, handler);
+          }
+        } else {
+          registerPlainRoute(app, honoMethod, route.routePath, handler);
+        }
       }
     } catch (error) {
-      console.error({ error, filePath: route.filePath }, `Failed to register route from file: ${route.filePath}`);
+      console.error(`Failed to register route from file: ${route.filePath}`, error);
     }
   }
+}
+
+function hasOpenAPISchema(schema: Record<string, unknown>): boolean {
+  return !!(schema.params || schema.querystring || schema.body || schema.response);
+}
+
+function registerPlainRoute(app: OpenAPIHono<BoilrEnv>, method: string, path: string, handler: RouteHandler): void {
+  const adapter = createPlainHandlerAdapter(handler);
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic method routing
+  (app as any)[method](path, adapter);
+}
+
+/**
+ * Bridges BoilrJS defineSchema() to @hono/zod-openapi createRoute().
+ */
+function buildOpenAPIRoute(
+  method: string,
+  path: string,
+  methodSchema: Record<string, unknown>,
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic schema access
+  fullSchema?: any,
+) {
+  // Convert path from :param to {param} for OpenAPI
+  const openApiPath = path.replace(/:(\w+)/g, "{$1}").replace(/\*/g, "{_splat}");
+
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic route building
+  const routeDef: Record<string, any> = {
+    method: method as "get" | "post" | "put" | "delete" | "patch" | "head" | "options",
+    path: openApiPath,
+    request: {},
+    responses: {},
+  };
+
+  // Add tags
+  if (methodSchema.tags) {
+    routeDef.tags = methodSchema.tags;
+  }
+
+  // Add params schema (merge common + method-specific)
+  const paramsSchema = methodSchema.params || fullSchema?.params;
+  if (paramsSchema) {
+    routeDef.request.params = paramsSchema;
+  }
+
+  // Add query schema
+  const querySchema = methodSchema.querystring || fullSchema?.querystring;
+  if (querySchema) {
+    routeDef.request.query = querySchema;
+  }
+
+  // Add headers schema
+  const headersSchema = methodSchema.headers || fullSchema?.headers;
+  if (headersSchema) {
+    routeDef.request.headers = headersSchema;
+  }
+
+  // Add body schema
+  if (methodSchema.body) {
+    routeDef.request.body = {
+      content: {
+        "application/json": {
+          schema: methodSchema.body,
+        },
+      },
+    };
+  }
+
+  // Add response schemas
+  const responseSchemas = methodSchema.response as Record<number, unknown> | undefined;
+  if (responseSchemas) {
+    for (const [statusCode, schema] of Object.entries(responseSchemas)) {
+      routeDef.responses[statusCode] = {
+        description: `Response ${statusCode}`,
+        content: {
+          "application/json": {
+            schema,
+          },
+        },
+      };
+    }
+  }
+
+  // Ensure at least one response exists
+  if (Object.keys(routeDef.responses).length === 0) {
+    routeDef.responses["200"] = {
+      description: "Success",
+    };
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic route config construction
+  return createRoute(routeDef as any);
 }

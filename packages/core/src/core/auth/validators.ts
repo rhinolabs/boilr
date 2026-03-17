@@ -1,9 +1,8 @@
-import type { FastifyRequest } from "fastify";
 import { UnauthorizedException } from "../../exceptions/index.js";
-import type { AuthMethod, BoilrAuthContext } from "../../types/auth.types.js";
+import type { AuthMethod, BoilrAuthContext, BoilrRequest } from "../../types/auth.types.js";
 import { extractApiKey, extractBasicCredentials, extractBearerToken } from "./extractors.js";
 
-export async function validateAuthMethod(request: FastifyRequest, authMethod: AuthMethod): Promise<BoilrAuthContext> {
+export async function validateAuthMethod(request: BoilrRequest, authMethod: AuthMethod): Promise<BoilrAuthContext> {
   try {
     switch (authMethod.type) {
       case "bearer": {
@@ -37,7 +36,7 @@ export async function validateAuthMethod(request: FastifyRequest, authMethod: Au
 }
 
 export async function validateAuthMethods(
-  request: FastifyRequest,
+  request: BoilrRequest,
   authMethods: AuthMethod[],
   requiredAuthNames: string[],
 ): Promise<BoilrAuthContext> {

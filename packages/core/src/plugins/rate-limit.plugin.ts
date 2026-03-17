@@ -1,50 +1,25 @@
-import rateLimit, { type RateLimitPluginOptions } from "@fastify/rate-limit";
-import type { FastifyInstance, FastifyRequest } from "fastify";
-import fp from "fastify-plugin";
-import type { BoilrPluginOptions } from "../core/config.js";
-import { mergeConfigRecursively } from "../utils/config.utils.js";
+import type { MiddlewareHandler } from "hono";
+import { rateLimiter } from "hono-rate-limiter";
+import type { BoilrConfig, BoilrRateLimitConfig } from "../core/config.js";
+import type { BoilrEnv } from "../types/fastify.types.js";
 
-/**
- * Context information provided to rate limit error response builder.
- */
-interface RateLimitContext {
-  /** Time string indicating when the client can retry */
-  after: string;
-  /** Maximum number of requests allowed in the time window */
-  max: number;
+export function createRateLimitMiddleware(config: BoilrConfig): MiddlewareHandler<BoilrEnv> {
+  const defaultOptions: BoilrRateLimitConfig = {
+    max: 100,
+    windowMs: 60_000,
+  };
+
+  let rateLimitConfig: BoilrRateLimitConfig = {};
+  if (typeof config.plugins?.rateLimit === "object") {
+    rateLimitConfig = config.plugins.rateLimit;
+  }
+
+  const max = rateLimitConfig.max ?? defaultOptions.max ?? 100;
+  const windowMs = rateLimitConfig.windowMs ?? defaultOptions.windowMs ?? 60_000;
+
+  return rateLimiter({
+    windowMs,
+    limit: max,
+    keyGenerator: (c) => c.req.header("x-forwarded-for") || c.req.header("cf-connecting-ip") || "unknown",
+  });
 }
-
-/**
- * Rate limiting plugin that prevents abuse by limiting the number of requests
- * per client within a specified time window. Includes helpful error messages.
- *
- * For configuration options, see: https://www.npmjs.com/package/@fastify/rate-limit
- */
-export const rateLimitPlugin = fp(
-  async (fastify: FastifyInstance, options: BoilrPluginOptions<RateLimitPluginOptions>) => {
-    const { boilrConfig } = options;
-
-    const defaultOptions: RateLimitPluginOptions = {
-      max: 100,
-      timeWindow: "1 minute",
-      errorResponseBuilder: (_req: FastifyRequest, context: RateLimitContext) => ({
-        statusCode: 429,
-        error: "Too Many Requests",
-        message: `Rate limit exceeded, retry in ${context.after}`,
-      }),
-    };
-
-    if (boilrConfig?.plugins?.rateLimit === false) {
-      return;
-    }
-
-    let rateLimitConfig = {};
-    if (typeof boilrConfig?.plugins?.rateLimit === "object") {
-      rateLimitConfig = boilrConfig.plugins.rateLimit;
-    }
-
-    const mergedOptions = mergeConfigRecursively(defaultOptions, rateLimitConfig);
-
-    await fastify.register(rateLimit, mergedOptions);
-  },
-);

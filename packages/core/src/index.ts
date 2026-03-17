@@ -1,6 +1,3 @@
-// Import type extensions for Fastify (module augmentation)
-import "./types/fastify.types.js";
-
 // Export main implementation from core
 export { createApp } from "./boilr.js";
 // Export authentication system
@@ -11,7 +8,7 @@ export {
   validateAuthMethod,
   validateAuthMethods,
 } from "./core/auth/index.js";
-// Export from other modules
+// Export config and server types
 export { BoilrConfig } from "./core/config.js";
 export { BoilrInstance } from "./core/server.js";
 // Export exception handling system
@@ -56,6 +53,7 @@ export type {
   AuthValidator,
   BasicCredentials,
   BoilrAuthContext,
+  BoilrRequest,
 } from "./types/auth.types.js";
 export type {
   ErrorFormatter,
@@ -64,6 +62,8 @@ export type {
   ExceptionOptions,
   ValidationError,
 } from "./types/error.types.js";
+// Export Hono environment type
+export { BoilrEnv } from "./types/fastify.types.js";
 // Export route types and utils
 export {
   CatchAllParam,
@@ -81,6 +81,7 @@ export {
   PutHandler,
   RouteHandler,
   RouteSchema,
+  TypedReply,
   TypedRequest,
 } from "./types/routes.types.js";
 export {
@@ -89,10 +90,3 @@ export {
   getTypedParams,
   getTypedQuery,
 } from "./utils/routes.utils.js";
-export {
-  createJsonSchemaTransform,
-  createJsonSchemaTransformObject,
-  serializerCompiler,
-  validatorCompiler,
-  ZodTypeProvider,
-} from "./validation/index.js";

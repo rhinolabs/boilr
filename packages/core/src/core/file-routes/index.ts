@@ -1,6 +1,4 @@
 export type {
-  FastifyInstance,
-  FastifyPluginAsync,
   FileRoutesOptions,
   HttpMethod,
   RouteHandler,
@@ -8,6 +6,7 @@ export type {
   RouteModule,
   RouteSchema,
 } from "../../types/file-routes.types.js";
-export { fastifyFileRoutes } from "./file-routes.js";
+export type { HonoFileRoutesOptions } from "./file-routes.js";
+export { honoFileRoutes } from "./file-routes.js";
 export { extractMethodHandlers, loadRouteModule, registerRoutes } from "./route-loader.js";
 export { extractRouteInfo, handleDynamicSegments, scanDirectories, transformPathToRoute } from "./scanner.js";
