@@ -7,7 +7,7 @@ import { defineConfig } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
   output: "static",
-  adapter: cloudflare(),
+  adapter: cloudflare({ configPath: "../../wrangler.jsonc" }),
   integrations: [
     starlight({
       title: "BoilrJs",
