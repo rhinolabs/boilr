@@ -68,8 +68,8 @@ export type {
 export {
   CatchAllParam,
   catchAllSchema,
-  defineSchema,
   DeleteHandler,
+  defineSchema,
   GetHandler,
   HeadHandler,
   HttpMethod,
@@ -81,12 +81,12 @@ export {
   PutHandler,
   RouteSchema,
 } from "./types/routes.types.js";
+export type { LegacyReply, LegacyRequest } from "./utils/context.utils.js";
+// Export migration helpers
+export { fromContext } from "./utils/context.utils.js";
 export {
   getCatchAllParam,
   getTypedBody,
   getTypedParams,
   getTypedQuery,
 } from "./utils/routes.utils.js";
-// Export migration helpers
-export { fromContext } from "./utils/context.utils.js";
-export type { LegacyReply, LegacyRequest } from "./utils/context.utils.js";
