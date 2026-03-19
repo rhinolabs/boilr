@@ -10,7 +10,8 @@ export interface FileRoutesOptions {
 
 export type HttpMethod = "get" | "post" | "put" | "del" | "patch" | "head" | "options";
 
-export type RouteHandler = (request: unknown, reply: unknown) => Promise<unknown> | unknown;
+/** Handler function exported by a route module. */
+export type RouteHandler = (c: unknown) => Promise<unknown> | unknown;
 
 export interface RouteSchema {
   [method: string]: {

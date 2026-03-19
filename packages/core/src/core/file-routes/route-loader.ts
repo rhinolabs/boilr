@@ -2,14 +2,13 @@ import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute } from "@hono/zod-openapi";
-import type { Context } from "hono";
 import { getRouteAuthKey, routeAuthConfig } from "../../plugins/auth.plugin.js";
 import { enhanceSchemaWithDefaultError } from "../../schemas/enhancer.js";
 import type { AuthConfig } from "../../types/auth.types.js";
 import type { BoilrEnv } from "../../types/env.types.js";
 import type { ExceptionConfig } from "../../types/error.types.js";
 import type { HttpMethod, RouteHandler, RouteInfo, RouteModule } from "../../types/file-routes.types.js";
-import type { MethodSchema, TypedReply } from "../../types/routes.types.js";
+import type { MethodSchema } from "../../types/routes.types.js";
 import { generateSecurityRequirement } from "../../utils/swagger.utils.js";
 
 export const loadRouteModule = async (filePath: string): Promise<RouteModule | undefined> => {
@@ -91,103 +90,6 @@ export const extractMethodHandlers = (module: RouteModule, filePath: string): Ma
   return methods;
 };
 
-/**
- * Creates the adapter for OpenAPI-registered routes.
- * Uses c.req.valid() to get Zod-validated/transformed data.
- */
-const createOpenAPIHandlerAdapter = (userHandler: RouteHandler, methodSchema: Record<string, unknown>) => {
-  const hasParams = !!methodSchema.params;
-  const hasQuery = !!methodSchema.querystring;
-  const hasBody = !!methodSchema.body;
-  const hasHeaders = !!methodSchema.headers;
-
-  return async (c: Context<BoilrEnv>): Promise<Response> => {
-    const request: Record<string, unknown> = {
-      params: hasParams ? c.req.valid("param" as never) : c.req.param(),
-      query: hasQuery ? c.req.valid("query" as never) : c.req.query(),
-      headers: hasHeaders ? c.req.valid("header" as never) : Object.fromEntries([...c.req.raw.headers.entries()]),
-      env: c.env,
-      raw: c.req.raw,
-      ctx: c.get("ctx"),
-    };
-
-    if (hasBody) {
-      request.body = c.req.valid("json" as never);
-    } else if (["POST", "PUT", "PATCH"].includes(c.req.method)) {
-      try {
-        request.body = await c.req.json();
-      } catch {
-        request.body = undefined;
-      }
-    }
-
-    return invokeHandler(userHandler, request, c);
-  };
-};
-
-/**
- * Creates the adapter for plain (non-OpenAPI) routes.
- * No Zod validation available — reads raw data.
- */
-const createPlainHandlerAdapter = (userHandler: RouteHandler) => {
-  return async (c: Context<BoilrEnv>): Promise<Response> => {
-    const request: Record<string, unknown> = {
-      params: c.req.param(),
-      query: c.req.query(),
-      headers: Object.fromEntries([...c.req.raw.headers.entries()]),
-      env: c.env,
-      raw: c.req.raw,
-      ctx: c.get("ctx"),
-    };
-
-    if (["POST", "PUT", "PATCH"].includes(c.req.method)) {
-      try {
-        request.body = await c.req.json();
-      } catch {
-        request.body = undefined;
-      }
-    }
-
-    return invokeHandler(userHandler, request, c);
-  };
-};
-
-/**
- * Shared handler invocation: builds reply, calls user handler, wraps result.
- */
-const invokeHandler = async (
-  userHandler: RouteHandler,
-  request: Record<string, unknown>,
-  c: Context<BoilrEnv>,
-): Promise<Response> => {
-  let statusCode = 200;
-  const reply: TypedReply = {
-    code: (s: number) => {
-      statusCode = s;
-      return reply;
-    },
-    header: (name: string, value: string) => {
-      c.header(name, value);
-      return reply;
-    },
-    send: (data: unknown) => {
-      return c.json(data, statusCode as 200);
-    },
-  };
-
-  const result = await userHandler(request, reply);
-
-  if (result instanceof Response) {
-    return result;
-  }
-
-  if (result !== undefined && result !== null) {
-    return c.json(result, statusCode as 200);
-  }
-
-  return c.json(null, statusCode as 200);
-};
-
 const toHttpMethod = (method: HttpMethod): string => {
   return method === "del" ? "delete" : method;
 };
@@ -240,7 +142,8 @@ export const registerRoutes = async (
               module.schema,
               authConfig,
             );
-            app.openapi(openApiRoute, createOpenAPIHandlerAdapter(handler, methodSchema));
+            // biome-ignore lint/suspicious/noExplicitAny: dynamic handler registration
+            app.openapi(openApiRoute, handler as any);
           } catch (err) {
             // Fallback to plain route if OpenAPI registration fails
             console.warn(
@@ -264,9 +167,8 @@ const hasOpenAPISchema = (schema: Record<string, unknown>): boolean => {
 };
 
 const registerPlainRoute = (app: OpenAPIHono<BoilrEnv>, method: string, path: string, handler: RouteHandler): void => {
-  const adapter = createPlainHandlerAdapter(handler);
   // biome-ignore lint/suspicious/noExplicitAny: dynamic method routing
-  (app as any)[method](path, adapter);
+  (app as any)[method](path, handler);
 };
 
 /**

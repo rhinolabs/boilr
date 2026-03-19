@@ -52,8 +52,8 @@ export const schema = defineSchema({
 });
 
 // GET /api/todos/:id
-export const get: GetHandler<typeof schema> = async (request) => {
-  const { id } = request.params;
+export const get: GetHandler<typeof schema> = async (c) => {
+  const { id } = c.req.valid("param");
 
   const todo = todos.find((t: { id: number }) => t.id === id);
 
@@ -61,13 +61,13 @@ export const get: GetHandler<typeof schema> = async (request) => {
     throw new NotFoundException(`Todo with id ${id} not found`);
   }
 
-  return todo;
+  return c.json(todo, 200);
 };
 
 // PUT /api/todos/:id
-export const put: PutHandler<typeof schema> = async (request) => {
-  const { id } = request.params;
-  const updates = request.body;
+export const put: PutHandler<typeof schema> = async (c) => {
+  const { id } = c.req.valid("param");
+  const updates = c.req.valid("json");
 
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
@@ -83,12 +83,12 @@ export const put: PutHandler<typeof schema> = async (request) => {
 
   todos[todoIndex] = updatedTodo;
 
-  return updatedTodo;
+  return c.json(updatedTodo, 200);
 };
 
 // DELETE /api/todos/:id
-export const del: DeleteHandler<typeof schema> = async (request, reply) => {
-  const { id } = request.params;
+export const del: DeleteHandler<typeof schema> = async (c) => {
+  const { id } = c.req.valid("param");
 
   const todoIndex = todos.findIndex((t: { id: number }) => t.id === id);
 
@@ -99,5 +99,5 @@ export const del: DeleteHandler<typeof schema> = async (request, reply) => {
   // Remove the todo from the array
   todos.splice(todoIndex, 1);
 
-  return reply.code(204).send(null);
+  return c.body(null, 204);
 };
