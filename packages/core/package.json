@@ -1,7 +1,7 @@
 {
   "name": "@boilrjs/core",
   "version": "0.5.2",
-  "description": "Convention-based Fastify framework with batteries included",
+  "description": "Convention-based Hono framework with batteries included",
   "author": {
     "name": "Rhinolabs Agency",
     "email": "hello@rhinolabs.agency",
@@ -14,7 +14,9 @@
     "dist/**/*"
   ],
   "keywords": [
-    "fastify",
+    "hono",
+    "cloudflare",
+    "workers",
     "framework",
     "api",
     "rest",
@@ -32,17 +34,11 @@
     "lint:fix": "biome check --apply ."
   },
   "dependencies": {
-    "@fastify/autoload": "^6.3.1",
-    "@fastify/cookie": "^11.0.2",
-    "@fastify/cors": "^11.2.0",
-    "@fastify/helmet": "^13.0.2",
-    "@fastify/rate-limit": "^10.3.0",
-    "@fastify/swagger": "^9.7.0",
-    "@fastify/swagger-ui": "^5.2.5",
-    "@rhinolabs/fastify-monitor": "^0.2.0",
-    "fastify": "^5.8.2",
-    "fastify-plugin": "^5.1.0",
-    "fastify-type-provider-zod": "^6.1.0"
+    "@hono/node-server": "^1.19.11",
+    "@hono/swagger-ui": "^0.6.1",
+    "@hono/zod-openapi": "^1.2.2",
+    "hono": "^4.12.8",
+    "hono-rate-limiter": "^0.5.3"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

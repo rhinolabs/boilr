@@ -13,8 +13,6 @@ export const schema = defineSchema({
   },
 });
 
-export const get: GetHandler<typeof schema> = async (_request, _reply) => {
-  return {
-    message: "This is a public endpoint",
-  };
+export const get: GetHandler<typeof schema> = async (c) => {
+  return c.json({ message: "This is a public endpoint" }, 200);
 };

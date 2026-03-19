@@ -1,7 +1,11 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { MiddlewareHandler } from "hono";
+import type { BoilrEnv } from "../types/env.types.js";
 
-export type BoilrMiddlewareFunction = (request: FastifyRequest, reply: FastifyReply) => Promise<void> | void;
+/** Middleware function type that processes requests and responses. */
+export type BoilrMiddlewareFunction = MiddlewareHandler<BoilrEnv>;
 
+/** Named middleware handler that associates a middleware function with an identifier. */
 export type BoilrMiddlewareHandler = {
   name: string;
   handler: BoilrMiddlewareFunction;
@@ -10,64 +14,81 @@ export type BoilrMiddlewareHandler = {
 export const middlewares: Record<string, BoilrMiddlewareHandler> = {
   logger: {
     name: "logger",
-    handler: async (request, reply) => {
-      request.log.info(
-        {
-          url: request.url,
-          method: request.method,
-          ip: request.ip,
-          userAgent: request.headers["user-agent"],
-        },
-        "Request received",
+    handler: async (c, next) => {
+      const start = Date.now();
+      console.log(
+        JSON.stringify({
+          url: c.req.url,
+          method: c.req.method,
+          ip: c.req.header("x-forwarded-for") || c.req.header("cf-connecting-ip") || "unknown",
+          userAgent: c.req.header("user-agent"),
+          message: "Request received",
+        }),
       );
 
-      const start = Date.now();
-      reply.raw.on("finish", () => {
-        const responseTime = Date.now() - start;
-        request.log.info(
-          {
-            url: request.url,
-            method: request.method,
-            statusCode: reply.statusCode,
-            responseTime,
-          },
-          "Request completed",
-        );
-      });
+      await next();
+
+      const responseTime = Date.now() - start;
+      console.log(
+        JSON.stringify({
+          url: c.req.url,
+          method: c.req.method,
+          statusCode: c.res.status,
+          responseTime,
+          message: "Request completed",
+        }),
+      );
     },
   },
   commonHeaders: {
     name: "commonHeaders",
-    handler: async (request, reply) => {
-      reply.header("X-Request-ID", request.id);
+    handler: async (c, next) => {
+      c.header("X-Request-ID", c.get("requestId") || crypto.randomUUID());
+      await next();
     },
   },
 };
 
-export function applyGlobalMiddleware(app: FastifyInstance, middlewareName: string): FastifyInstance {
+/**
+ * Applies a named middleware globally to all routes on the application instance.
+ *
+ * @param app - The application instance
+ * @param middlewareName - Name of a registered middleware to apply
+ * @throws {Error} When the middleware name is not found in the registry
+ */
+export const applyGlobalMiddleware = (app: OpenAPIHono<BoilrEnv>, middlewareName: string): void => {
   const middleware = middlewares[middlewareName];
   if (!middleware) {
     throw new Error(`Middleware "${middlewareName}" not found`);
   }
 
-  app.addHook("onRequest", middleware.handler);
-  return app;
-}
+  app.use(middleware.handler);
+};
 
-export function createRouteMiddleware(...middlewareNames: string[]): Record<string, BoilrMiddlewareFunction[]> {
-  const handlers = middlewareNames.map((name) => {
+/**
+ * Creates an array of middleware handlers for use on specific routes.
+ *
+ * @param middlewareNames - Names of registered middlewares to compose
+ * @returns Array of middleware handler functions
+ * @throws {Error} When any middleware name is not found in the registry
+ */
+export const createRouteMiddleware = (...middlewareNames: string[]): BoilrMiddlewareFunction[] => {
+  return middlewareNames.map((name) => {
     const middleware = middlewares[name];
     if (!middleware) {
       throw new Error(`Middleware "${name}" not found`);
     }
     return middleware.handler;
   });
+};
 
-  return {
-    onRequest: handlers,
-  };
-}
-
-export function registerMiddleware(name: string, handler: BoilrMiddlewareFunction): void {
+/**
+ * Registers a custom middleware function under the given name.
+ * Once registered, the middleware can be applied globally or to specific routes by name.
+ *
+ * @param name - Unique identifier for the middleware
+ * @param handler - The middleware function to register
+ */
+export const registerMiddleware = (name: string, handler: BoilrMiddlewareFunction): void => {
   middlewares[name] = { name, handler };
-}
+};

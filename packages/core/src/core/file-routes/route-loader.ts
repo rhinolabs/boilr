@@ -1,15 +1,17 @@
 import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import type { RouteOptions } from "fastify";
-import type {
-  FastifyInstance,
-  HttpMethod,
-  RouteHandler,
-  RouteInfo,
-  RouteModule,
-} from "../../types/file-routes.types.js";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { getRouteAuthKey, routeAuthConfig } from "../../plugins/auth.plugin.js";
+import { enhanceSchemaWithDefaultError } from "../../schemas/enhancer.js";
+import type { AuthConfig } from "../../types/auth.types.js";
+import type { BoilrEnv } from "../../types/env.types.js";
+import type { ExceptionConfig } from "../../types/error.types.js";
+import type { HttpMethod, RouteHandler, RouteInfo, RouteModule } from "../../types/file-routes.types.js";
+import type { MethodSchema } from "../../types/routes.types.js";
+import { generateSecurityRequirement } from "../../utils/swagger.utils.js";
 
-export async function loadRouteModule(filePath: string): Promise<RouteModule | undefined> {
+export const loadRouteModule = async (filePath: string): Promise<RouteModule | undefined> => {
   try {
     if (!existsSync(filePath)) {
       console.error(`File does not exist: ${filePath}`);
@@ -17,7 +19,6 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
     }
 
     if (filePath.endsWith(".d.ts")) {
-      console.warn(`Skipping TypeScript declaration file: ${filePath}`);
       return;
     }
 
@@ -26,7 +27,6 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
       const jsFilePath = filePath.replace(/\.ts$/, ".js");
       if (existsSync(jsFilePath)) {
         actualFilePath = jsFilePath;
-        console.log(`Using compiled JS file instead of TS: ${jsFilePath}`);
       }
     }
 
@@ -35,18 +35,16 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
       const imported = await import(fileUrl);
       return imported as RouteModule;
     } catch (error) {
-      console.error(`Error importing ESM module: ${actualFilePath}`, error);
+      console.error(`Error importing module: ${actualFilePath}`, error);
 
       if (actualFilePath.endsWith(".ts")) {
         const jsFilePath = actualFilePath.replace(/\.ts$/, ".js");
         if (existsSync(jsFilePath) && jsFilePath !== actualFilePath) {
-          console.log(`Attempting to load JS version as fallback: ${jsFilePath}`);
           try {
             const fileUrl = pathToFileURL(jsFilePath).href;
             const imported = await import(fileUrl);
             return imported as RouteModule;
-          } catch (fallbackError) {
-            console.error(`Fallback JS import also failed for: ${jsFilePath}`, fallbackError);
+          } catch {
             return;
           }
         }
@@ -58,9 +56,9 @@ export async function loadRouteModule(filePath: string): Promise<RouteModule | u
     console.error(`Unexpected error loading route module: ${filePath}`, error);
     return;
   }
-}
+};
 
-export function extractMethodHandlers(module: RouteModule, filePath: string): Map<HttpMethod, RouteHandler> {
+export const extractMethodHandlers = (module: RouteModule, filePath: string): Map<HttpMethod, RouteHandler> => {
   const methods = new Map<HttpMethod, RouteHandler>();
   const httpMethods: HttpMethod[] = ["get", "post", "put", "del", "patch", "head", "options"];
 
@@ -90,13 +88,18 @@ export function extractMethodHandlers(module: RouteModule, filePath: string): Ma
   }
 
   return methods;
-}
+};
 
-export async function registerRoutes(
-  fastify: FastifyInstance,
+const toHttpMethod = (method: HttpMethod): string => {
+  return method === "del" ? "delete" : method;
+};
+
+export const registerRoutes = async (
+  app: OpenAPIHono<BoilrEnv>,
   routes: RouteInfo[],
-  globalHooks: Partial<RouteOptions> = {},
-): Promise<void> {
+  exceptionsConfig?: ExceptionConfig,
+  authConfig?: AuthConfig,
+): Promise<void> => {
   for (const route of routes) {
     try {
       const module = await loadRouteModule(route.filePath);
@@ -109,64 +112,162 @@ export async function registerRoutes(
       const methodHandlers = extractMethodHandlers(module, route.filePath);
 
       for (const [method, handler] of methodHandlers.entries()) {
-        const routeOptions: RouteOptions = {
-          method: method === "del" ? "DELETE" : method.toUpperCase(),
-          url: route.routePath,
-          handler,
-          ...globalHooks,
-        };
+        const httpMethod = toHttpMethod(method);
+        const schemaKey = method === "del" ? "delete" : method;
 
-        if (module.hooks) {
-          Object.assign(routeOptions, module.hooks);
+        // Get method-specific schema
+        let methodSchema = module.schema?.[schemaKey] as Record<string, unknown> | undefined;
+
+        // Enhance schema with default error responses
+        if (methodSchema) {
+          methodSchema = enhanceSchemaWithDefaultError(methodSchema as MethodSchema, exceptionsConfig) as Record<
+            string,
+            unknown
+          >;
         }
 
-        if (module.schema?.[method === "del" ? "delete" : method]) {
-          // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route options
-          const methodSchema = module.schema[method === "del" ? "delete" : method] as any;
-
-          let processedSchema = { ...methodSchema };
-          // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route options
-          let authConfig: any;
-
-          if (methodSchema && typeof methodSchema === "object") {
-            if ("tags" in methodSchema) {
-              const tags = methodSchema.tags;
-              if (Array.isArray(tags) && tags.length > 0) {
-                const { tags: _, ...schemaWithoutTags } = methodSchema;
-                processedSchema = schemaWithoutTags;
-
-                if (!routeOptions.schema) {
-                  routeOptions.schema = {};
-                }
-                routeOptions.schema.tags = tags;
-              }
-            }
-
-            if ("auth" in methodSchema) {
-              authConfig = methodSchema.auth;
-              const { auth: _, ...schemaWithoutAuth } = processedSchema;
-              processedSchema = schemaWithoutAuth;
-            }
-          }
-
-          routeOptions.schema = {
-            ...routeOptions.schema,
-            ...processedSchema,
-          };
-
-          if (authConfig !== undefined) {
-            if (!routeOptions.schema) {
-              routeOptions.schema = {};
-            }
-            // biome-ignore lint/suspicious/noExplicitAny: required for dynamic route options
-            (routeOptions.schema as any).auth = authConfig;
-          }
+        // Store auth config for this route
+        if (methodSchema) {
+          const authKey = getRouteAuthKey(httpMethod.toUpperCase(), route.routePath);
+          routeAuthConfig.set(authKey, methodSchema.auth as string[] | false | undefined);
         }
 
-        fastify.route(routeOptions);
+        // Build OpenAPI route definition if we have schema
+        if (methodSchema && hasOpenAPISchema(methodSchema)) {
+          try {
+            const openApiRoute = buildOpenAPIRoute(
+              httpMethod,
+              route.routePath,
+              methodSchema,
+              module.schema,
+              authConfig,
+            );
+            // biome-ignore lint/suspicious/noExplicitAny: dynamic handler registration
+            app.openapi(openApiRoute, handler as any);
+          } catch (err) {
+            // Fallback to plain route if OpenAPI registration fails
+            console.warn(
+              `OpenAPI registration failed for ${httpMethod.toUpperCase()} ${route.routePath}, using plain route:`,
+              err,
+            );
+            registerPlainRoute(app, httpMethod, route.routePath, handler);
+          }
+        } else {
+          registerPlainRoute(app, httpMethod, route.routePath, handler);
+        }
       }
     } catch (error) {
-      console.error({ error, filePath: route.filePath }, `Failed to register route from file: ${route.filePath}`);
+      console.error(`Failed to register route from file: ${route.filePath}`, error);
     }
   }
-}
+};
+
+const hasOpenAPISchema = (schema: Record<string, unknown>): boolean => {
+  return !!(schema.params || schema.querystring || schema.body || schema.response);
+};
+
+const registerPlainRoute = (app: OpenAPIHono<BoilrEnv>, method: string, path: string, handler: RouteHandler): void => {
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic method routing
+  (app as any)[method](path, handler);
+};
+
+/**
+ * Bridges BoilrJS defineSchema() to an OpenAPI route definition.
+ */
+const buildOpenAPIRoute = (
+  method: string,
+  path: string,
+  methodSchema: Record<string, unknown>,
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic schema access
+  fullSchema?: any,
+  authConfig?: AuthConfig,
+) => {
+  // Convert path from :param to {param} for OpenAPI
+  const openApiPath = path.replace(/:(\w+)/g, "{$1}").replace(/\*/g, "{_splat}");
+
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic route building
+  const routeDef: Record<string, any> = {
+    method: method as "get" | "post" | "put" | "delete" | "patch" | "head" | "options",
+    path: openApiPath,
+    request: {},
+    responses: {},
+  };
+
+  // Add tags
+  if (methodSchema.tags) {
+    routeDef.tags = methodSchema.tags;
+  }
+
+  // Add security requirements based on auth config
+  if (authConfig?.methods) {
+    const routeAuth = methodSchema.auth;
+
+    if (routeAuth === false || (Array.isArray(routeAuth) && routeAuth.length === 0)) {
+      // Public route — explicitly no security
+      routeDef.security = [];
+    } else if (Array.isArray(routeAuth)) {
+      // Specific auth methods required
+      routeDef.security = [generateSecurityRequirement(routeAuth as string[])];
+    } else {
+      // Default: use all auth methods with default !== false
+      const defaultMethodNames = authConfig.methods.filter((m) => m.default !== false).map((m) => m.name);
+      if (defaultMethodNames.length > 0) {
+        routeDef.security = [generateSecurityRequirement(defaultMethodNames)];
+      }
+    }
+  }
+
+  // Add params schema (merge common + method-specific)
+  const paramsSchema = methodSchema.params || fullSchema?.params;
+  if (paramsSchema) {
+    routeDef.request.params = paramsSchema;
+  }
+
+  // Add query schema
+  const querySchema = methodSchema.querystring || fullSchema?.querystring;
+  if (querySchema) {
+    routeDef.request.query = querySchema;
+  }
+
+  // Add headers schema
+  const headersSchema = methodSchema.headers || fullSchema?.headers;
+  if (headersSchema) {
+    routeDef.request.headers = headersSchema;
+  }
+
+  // Add body schema
+  if (methodSchema.body) {
+    routeDef.request.body = {
+      content: {
+        "application/json": {
+          schema: methodSchema.body,
+        },
+      },
+    };
+  }
+
+  // Add response schemas
+  const responseSchemas = methodSchema.response as Record<number, unknown> | undefined;
+  if (responseSchemas) {
+    for (const [statusCode, schema] of Object.entries(responseSchemas)) {
+      routeDef.responses[statusCode] = {
+        description: `Response ${statusCode}`,
+        content: {
+          "application/json": {
+            schema,
+          },
+        },
+      };
+    }
+  }
+
+  // Ensure at least one response exists
+  if (Object.keys(routeDef.responses).length === 0) {
+    routeDef.responses["200"] = {
+      description: "Success",
+    };
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic route config construction
+  return createRoute(routeDef as any);
+};

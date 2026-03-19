@@ -134,7 +134,6 @@ For more information about BoilrJs and related technologies:
 
 - [BoilrJs Framework Documentation](https://github.com/rhinolabs/boilr)
 - [Zod Documentation](https://github.com/colinhacks/zod)
-- [Fastify Documentation](https://www.fastify.io/docs/latest/)
 
 ## License
 

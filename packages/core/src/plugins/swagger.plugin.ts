@@ -1,61 +1,41 @@
-import swagger, { type FastifyDynamicSwaggerOptions } from "@fastify/swagger";
-import swaggerUI from "@fastify/swagger-ui";
-import type { FastifyInstance } from "fastify";
-import fp from "fastify-plugin";
-import type { BoilrPluginOptions } from "../core/config.js";
-import { mergeConfigRecursively } from "../utils/config.utils.js";
+import { swaggerUI } from "@hono/swagger-ui";
+import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { BoilrConfig, BoilrSwaggerConfig } from "../core/config.js";
+import type { BoilrEnv } from "../types/env.types.js";
 import { generateSecuritySchemes } from "../utils/swagger.utils.js";
 
 /**
  * Swagger documentation plugin that automatically generates OpenAPI specs and provides
- * an interactive documentation interface at /docs endpoint.
- *
- * For configuration options, see: https://www.npmjs.com/package/@fastify/swagger
+ * an interactive documentation interface at the /docs endpoint.
  */
-export const swaggerPlugin = fp(
-  async (fastify: FastifyInstance, options: BoilrPluginOptions<FastifyDynamicSwaggerOptions>) => {
-    const { boilrConfig, ...swaggerOptions } = options;
+export const registerSwagger = (app: OpenAPIHono<BoilrEnv>, config: BoilrConfig): void => {
+  let swaggerConfig: BoilrSwaggerConfig = {};
+  if (typeof config.plugins?.swagger === "object") {
+    swaggerConfig = config.plugins.swagger;
+  }
 
-    // Generate security schemes from auth configuration
-    const securitySchemes = generateSecuritySchemes(boilrConfig?.auth);
+  const securitySchemes = generateSecuritySchemes(config.auth);
+  const hasSchemes = securitySchemes && Object.keys(securitySchemes).length > 0;
 
-    // Enhance the default options for better documentation
-    const defaultOptions: FastifyDynamicSwaggerOptions = {
-      openapi: {
-        info: {
-          title: "API Documentation",
-          description: "API documentation generated with core",
-          version: "1.0.0",
-        },
-        components: {
-          securitySchemes,
-        },
-      },
-      // Enable Swagger on all routes by default
-      mode: "dynamic",
-      hideUntagged: false,
-    };
+  // Register the OpenAPI JSON endpoint
+  app.doc("/openapi.json", {
+    openapi: "3.1.0",
+    info: {
+      title: swaggerConfig.openapi?.info?.title || "API Documentation",
+      description: swaggerConfig.openapi?.info?.description || "API documentation generated with BoilrJs",
+      version: swaggerConfig.openapi?.info?.version || "1.0.0",
+    },
+    ...(swaggerConfig.openapi?.servers ? { servers: swaggerConfig.openapi.servers } : {}),
+    ...(hasSchemes
+      ? {
+          components: {
+            // biome-ignore lint/suspicious/noExplicitAny: OpenAPI security schemes typing
+            securitySchemes: securitySchemes as any,
+          },
+        }
+      : {}),
+  });
 
-    const mergedOptions = mergeConfigRecursively(defaultOptions, swaggerOptions);
-
-    // Register swagger schema generator
-    await fastify.register(swagger, mergedOptions);
-
-    // Configure Swagger UI with improved settings
-    await fastify.register(swaggerUI, {
-      routePrefix: "/docs",
-      uiConfig: {
-        docExpansion: "list",
-        deepLinking: true,
-        defaultModelExpandDepth: 3,
-        defaultModelsExpandDepth: 3,
-        displayRequestDuration: true,
-        showExtensions: true,
-        showCommonExtensions: true,
-        tryItOutEnabled: true,
-      },
-      staticCSP: true,
-      transformStaticCSP: (header) => header,
-    });
-  },
-);
+  // Register Swagger UI
+  app.get("/docs", swaggerUI({ url: "/openapi.json" }));
+};

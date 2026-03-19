@@ -1,4 +1,3 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ZodType } from "zod";
 import type { HttpException } from "../exceptions/index.js";
 
@@ -45,13 +44,12 @@ export interface ValidationError {
  * Function type for customizing error response formatting.
  *
  * @param exception - The HTTP exception that was thrown
- * @param request - The Fastify request object
- * @param reply - The Fastify reply object
+ * @param request - The request metadata object
  * @returns The formatted error response object
  *
  * @example
  * ```typescript
- * const customFormatter: ErrorFormatter = (exception, request, reply) => ({
+ * const customFormatter: ErrorFormatter = (exception, request) => ({
  *   statusCode: exception.statusCode,
  *   message: exception.message,
  *   error: exception.name.replace("Exception", ""),
@@ -61,8 +59,7 @@ export interface ValidationError {
  */
 export type ErrorFormatter<T = ErrorResponse> = (
   exception: HttpException,
-  request: FastifyRequest,
-  reply: FastifyReply,
+  request: { url: string; method: string },
 ) => T | Promise<T>;
 
 /**
@@ -82,9 +79,7 @@ export interface ExceptionConfig {
    * @example
    * ```typescript
    * defaultErrorStatusCodes: [400, 401, 403, 404, 500] // Include multiple error schemas
-   * defaultErrorStatusCodes: [] // Disable all default error schemas
    * defaultErrorStatusCodes: false // Disable all default error schemas
-   * defaultErrorStatusCodes: [500] // Only server errors (default)
    * ```
    */
   defaultErrorStatusCodes?: number[] | false;

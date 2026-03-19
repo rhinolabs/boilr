@@ -1,4 +1,3 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ErrorFormatter, ErrorResponse } from "../types/error.types.js";
 import type { HttpException } from "./exceptions.js";
 
@@ -7,8 +6,7 @@ import type { HttpException } from "./exceptions.js";
  * Formats exceptions into a consistent JSON response structure.
  *
  * @param exception - The HTTP exception to format
- * @param request - The Fastify request object
- * @param reply - The Fastify reply object
+ * @param request - The request metadata object
  * @returns Formatted error response object
  *
  * @example
@@ -24,8 +22,7 @@ import type { HttpException } from "./exceptions.js";
  */
 export const defaultFormatter: ErrorFormatter = (
   exception: HttpException,
-  _request: FastifyRequest,
-  _reply: FastifyReply,
+  _request: { url: string; method: string },
 ): ErrorResponse => ({
   statusCode: exception.statusCode,
   message: exception.message,

@@ -21,12 +21,6 @@ const app = createApp({
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 3000,
     host: process.env.HOST || "localhost",
-    logger: {
-      level: "info",
-      transport: {
-        target: "pino-pretty",
-      },
-    },
   },
   routes: {
     dir: "./src/routes",
@@ -72,8 +66,8 @@ const app = createApp({
 app
   .start()
   .then(({ address }) => {
-    console.log(`✨ Server running at ${address}`);
-    console.log(`📚 API docs available at ${address}/docs`);
+    console.log(`Server running at ${address}`);
+    console.log(`API docs available at ${address}/docs`);
   })
   .catch((err) => {
     console.error("Error starting server:", err);

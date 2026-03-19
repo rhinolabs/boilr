@@ -59,14 +59,13 @@ export const todos = [
 ];
 
 // GET /api/todos
-export const get: GetHandler<typeof schema> = async (_request, _reply) => {
-  return todos;
+export const get: GetHandler<typeof schema> = async (c) => {
+  return c.json(todos, 200);
 };
 
 // POST /api/todos
-export const post: PostHandler<typeof schema> = async (request, reply) => {
-  // Body is properly typed with TypeScript inference
-  const { title, completed = false } = request.body;
+export const post: PostHandler<typeof schema> = async (c) => {
+  const { title, completed = false } = c.req.valid("json");
 
   const newTodo = {
     id: todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1,
@@ -77,6 +76,5 @@ export const post: PostHandler<typeof schema> = async (request, reply) => {
 
   todos.push(newTodo);
 
-  reply.code(201);
-  return newTodo;
+  return c.json(newTodo, 201);
 };

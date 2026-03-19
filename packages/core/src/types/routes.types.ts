@@ -1,9 +1,9 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
+import type { Handler } from "hono";
 import { type ZodType, z } from "zod";
-import type { BoilrAuthContext } from "./auth.types.js";
+import type { BoilrEnv } from "./env.types.js";
 
 /**
- * Supported HTTP methods in BoilrJs routes
+ * Supported HTTP methods in BoilrJs routes.
  *
  * @example
  * ```typescript
@@ -50,7 +50,6 @@ export interface RouteSchema {
    */
   // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   params?: ZodType<any>;
-
   /**
    * Common query string validation schema applied to all HTTP methods.
    * Use this for query parameters that are shared across methods.
@@ -65,7 +64,6 @@ export interface RouteSchema {
    */
   // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   querystring?: ZodType<any>;
-
   /**
    * Common header validation schema applied to all HTTP methods.
    * Use this for headers that are shared across methods.
@@ -98,7 +96,7 @@ export interface RouteSchema {
 
 /**
  * Schema configuration for a specific HTTP method.
- * This interface defines validation schemas and Swagger tags for individual HTTP methods.
+ * Defines validation schemas and documentation tags for individual HTTP methods.
  *
  * @example
  * ```typescript
@@ -133,37 +131,30 @@ export interface MethodSchema {
    * ```
    */
   auth?: string[] | false;
-
   /**
    * Swagger tags for grouping and organizing API endpoints in documentation.
-   * Tags help categorize your endpoints in the Swagger UI for better organization.
    *
    * @example
    * ```typescript
    * tags: ["Users"] // Single tag
    * tags: ["Users", "Admin"] // Multiple tags
-   * tags: ["Authentication", "Public"] // Different categories
    * ```
    */
   tags?: string[];
-
   /**
    * HTTP status codes for which to include default error response schemas for this method.
    * Overrides global configuration when specified. Use false or empty array to disable completely.
    *
    * @example
    * ```typescript
-   * defaultErrorStatusCodes: [] // Disable all default error schemas for this method
-   * defaultErrorStatusCodes: false // Disable all default error schemas for this method
    * defaultErrorStatusCodes: [401, 500] // Only include 401 and 500 schemas
-   * defaultErrorStatusCodes: [400, 401, 403, 404, 500] // Include common error schemas
+   * defaultErrorStatusCodes: false // Disable all default error schemas for this method
    * ```
    */
   defaultErrorStatusCodes?: number[] | false;
-
   /**
    * Route parameter validation schema specific to this method.
-   * This overrides or extends the common params schema defined at the route level.
+   * Overrides or extends the common params schema defined at the route level.
    *
    * @example
    * ```typescript
@@ -175,10 +166,9 @@ export interface MethodSchema {
    */
   // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   params?: ZodType<any>;
-
   /**
    * Query string parameter validation schema specific to this method.
-   * This overrides or extends the common querystring schema defined at the route level.
+   * Overrides or extends the common querystring schema defined at the route level.
    *
    * @example
    * ```typescript
@@ -191,10 +181,9 @@ export interface MethodSchema {
    */
   // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   querystring?: ZodType<any>;
-
   /**
    * Request header validation schema specific to this method.
-   * This overrides or extends the common headers schema defined at the route level.
+   * Overrides or extends the common headers schema defined at the route level.
    *
    * @example
    * ```typescript
@@ -206,7 +195,6 @@ export interface MethodSchema {
    */
   // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   headers?: ZodType<any>;
-
   /**
    * Request body validation schema for this method.
    * Only applicable to methods that accept a request body (POST, PUT, PATCH).
@@ -222,10 +210,8 @@ export interface MethodSchema {
    */
   // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
   body?: ZodType<any>;
-
   /**
    * Response validation schemas mapped by HTTP status codes.
-   * This defines the structure of responses for different status codes.
    *
    * @example
    * ```typescript
@@ -233,8 +219,7 @@ export interface MethodSchema {
    *   200: UserSchema,
    *   201: UserSchema,
    *   400: z.object({ error: z.string() }),
-   *   404: z.object({ error: z.string(), message: z.string() }),
-   *   500: z.object({ error: z.string() })
+   *   404: z.object({ error: z.string(), message: z.string() })
    * }
    * ```
    */
@@ -242,208 +227,134 @@ export interface MethodSchema {
   response?: Record<number, ZodType<any>>;
 }
 
-// Extract parameter types with inference
-type ExtractParams<S extends RouteSchema, M extends HttpMethod> =
-  S["params"] extends ZodType<infer P>
-    ? S[M] extends { params: ZodType<infer MP> }
-      ? P & MP
-      : P
-    : S[M] extends { params: ZodType<infer MP> }
-      ? MP
-      : unknown;
-
-// Extract query types with inference
-type ExtractQuery<S extends RouteSchema, M extends HttpMethod> =
-  S["querystring"] extends ZodType<infer Q>
-    ? S[M] extends { querystring: ZodType<infer MQ> }
-      ? Q & MQ
-      : Q
-    : S[M] extends { querystring: ZodType<infer MQ> }
-      ? MQ
-      : unknown;
-
-// Extract header types with inference
-type ExtractHeaders<S extends RouteSchema, M extends HttpMethod> =
-  S["headers"] extends ZodType<infer H>
-    ? S[M] extends { headers: ZodType<infer MH> }
-      ? H & MH
-      : H
-    : S[M] extends { headers: ZodType<infer MH> }
-      ? MH
-      : unknown;
-
-// Extract body types with inference
-type ExtractBody<S extends RouteSchema, M extends HttpMethod> = S[M] extends { body: ZodType<infer B> } ? B : unknown;
-
-// Extract response types with status code inference
-type ExtractResponse<S extends RouteSchema, M extends HttpMethod, Status extends number = 200> = S[M] extends {
-  response: Record<Status, ZodType<infer R>>;
-}
-  ? R
-  : unknown;
-
-// A base request type to avoid repetition and for use with Omit.
-type BaseRequest<S extends RouteSchema, M extends HttpMethod> = FastifyRequest<{
-  Params: ExtractParams<S, M>;
-  Querystring: ExtractQuery<S, M>;
-  Headers: ExtractHeaders<S, M>;
-  Body: ExtractBody<S, M>;
-}>;
+// ─── Bridge Types ─────────────────────────────────────────────────────────────
+// These internal types compute Hono's Input shape directly from the route schema,
+// enabling typed c.req.valid() for params, query, body, and headers.
 
 /**
- * Typed request object that provides type-safe access to route parameters, query strings, headers, and body.
- * The types are automatically inferred from your route schema definition.
+ * Resolves a schema field: method-level first, route-level fallback.
+ * @internal
+ */
+type ResolveField<S extends RouteSchema, M extends HttpMethod, F extends string> =
+  S[M] extends Record<F, infer V> ? V : F extends keyof S ? S[F] : undefined;
+
+/** Extracts Zod output type, defaults to empty object. @internal */
+// biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
+type ZodOutput<T> = T extends ZodType<infer O> ? O : Record<string, any>;
+
+/**
+ * Computes validation targets from a route schema for a given method.
+ * Maps to Hono's internal Input shape used by c.req.valid().
+ * @internal
+ */
+type SchemaToValidationTargets<S extends RouteSchema, M extends HttpMethod> = {
+  param: ZodOutput<ResolveField<S, M, "params">>;
+  query: ZodOutput<ResolveField<S, M, "querystring">>;
+  // biome-ignore lint/suspicious/noExplicitAny: required for dynamic schema types
+  json: S[M] extends { body: ZodType<infer B> } ? B : any;
+  header: ZodOutput<ResolveField<S, M, "headers">>;
+};
+
+/**
+ * Input type for Hono handlers, computed from the route schema.
+ * @internal
+ */
+type SchemaToInput<S extends RouteSchema, M extends HttpMethod> = {
+  in: SchemaToValidationTargets<S, M>;
+  out: SchemaToValidationTargets<S, M>;
+};
+
+// ─── Handler Types ────────────────────────────────────────────────────────────
+
+/**
+ * Type-safe GET handler with full inference from schema.
+ * Provides typed `c.req.valid()` and `c.json()` based on `schema.get`.
  *
- * @template S - The route schema type
- * @template M - The HTTP method type
+ * @template S - The route schema type (typeof schema)
  *
  * @example
  * ```typescript
- * export const get: GetHandler<typeof schema> = async (request, reply) => {
- *   const { id } = request.params; // Typed based on schema.get.params
- *   const { page } = request.query; // Typed based on schema.get.querystring
- *   const { authorization } = request.headers; // Typed based on schema.get.headers
- *   // ...
+ * export const get: GetHandler<typeof schema> = async (c) => {
+ *   const { id } = c.req.valid("param");
+ *   return c.json({ id, title: "Todo" }, 200);
  * };
  * ```
  */
-export type TypedRequest<S extends RouteSchema, M extends HttpMethod> = S[M] extends { auth: false }
-  ? Omit<BaseRequest<S, M>, "ctx">
-  : BaseRequest<S, M> & { ctx: BoilrAuthContext };
+export type GetHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "get">>;
 
 /**
- * Generic route handler type with automatic type inference from schema.
- * Provides type-safe request and response handling.
+ * Type-safe POST handler with full inference from schema.
+ * Provides typed `c.req.valid()` and `c.json()` based on `schema.post`.
  *
- * @template S - The route schema type
- * @template M - The HTTP method type
- * @template Status - The expected response status code (defaults based on method)
+ * @template S - The route schema type (typeof schema)
  *
  * @example
  * ```typescript
- * const handler: RouteHandler<typeof schema, "get"> = async (request, reply) => {
- *   // request and response are fully typed
- *   return { message: "Hello" }; // Must match schema.get.response[200]
+ * export const post: PostHandler<typeof schema> = async (c) => {
+ *   const body = c.req.valid("json");
+ *   return c.json(newItem, 201);
  * };
  * ```
  */
-export type RouteHandler<
-  S extends RouteSchema,
-  M extends HttpMethod,
-  Status extends number = M extends "post" ? 201 : 200,
-> = (
-  request: TypedRequest<S, M>,
-  reply: FastifyReply,
-) => Promise<ExtractResponse<S, M, Status>> | ExtractResponse<S, M, Status>;
+export type PostHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "post">>;
 
 /**
- * Type-safe GET request handler.
- * Automatically infers types from the schema's `get` method configuration.
+ * Type-safe PUT handler with full inference from schema.
  *
- * @template S - The route schema type
+ * @template S - The route schema type (typeof schema)
  *
  * @example
  * ```typescript
- * export const get: GetHandler<typeof schema> = async (request, reply) => {
- *   // Fully typed request based on schema.get
- *   const { id } = request.params;
- *   return await getUserById(id);
+ * export const put: PutHandler<typeof schema> = async (c) => {
+ *   const { id } = c.req.valid("param");
+ *   const body = c.req.valid("json");
+ *   return c.json(updated, 200);
  * };
  * ```
  */
-export type GetHandler<S extends RouteSchema> = RouteHandler<S, "get">;
+export type PutHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "put">>;
 
 /**
- * Type-safe POST request handler.
- * Automatically infers types from the schema's `post` method configuration.
- * Defaults to 201 status code for successful creation.
+ * Type-safe DELETE handler with full inference from schema.
  *
- * @template S - The route schema type
+ * @template S - The route schema type (typeof schema)
  *
  * @example
  * ```typescript
- * export const post: PostHandler<typeof schema> = async (request, reply) => {
- *   // Fully typed request based on schema.post
- *   const userData = request.body;
- *   const newUser = await createUser(userData);
- *   reply.code(201);
- *   return newUser;
+ * export const del: DeleteHandler<typeof schema> = async (c) => {
+ *   const { id } = c.req.valid("param");
+ *   return c.body(null, 204);
  * };
  * ```
  */
-export type PostHandler<S extends RouteSchema> = RouteHandler<S, "post", 201>;
+export type DeleteHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "delete">>;
 
 /**
- * Type-safe PUT request handler.
- * Automatically infers types from the schema's `put` method configuration.
+ * Type-safe PATCH handler with full inference from schema.
  *
- * @template S - The route schema type
- *
- * @example
- * ```typescript
- * export const put: PutHandler<typeof schema> = async (request, reply) => {
- *   const { id } = request.params;
- *   const updates = request.body;
- *   return await updateUser(id, updates);
- * };
- * ```
+ * @template S - The route schema type (typeof schema)
  */
-export type PutHandler<S extends RouteSchema> = RouteHandler<S, "put">;
+export type PatchHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "patch">>;
 
 /**
- * Type-safe DELETE request handler.
- * Automatically infers types from the schema's `delete` method configuration.
+ * Type-safe HEAD handler with full inference from schema.
  *
- * @template S - The route schema type
- *
- * @example
- * ```typescript
- * export const del: DeleteHandler<typeof schema> = async (request, reply) => {
- *   const { id } = request.params;
- *   await deleteUser(id);
- *   reply.code(204);
- *   return null;
- * };
- * ```
+ * @template S - The route schema type (typeof schema)
  */
-export type DeleteHandler<S extends RouteSchema> = RouteHandler<S, "delete">;
+export type HeadHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "head">>;
 
 /**
- * Type-safe PATCH request handler.
- * Automatically infers types from the schema's `patch` method configuration.
+ * Type-safe OPTIONS handler with full inference from schema.
  *
- * @template S - The route schema type
- *
- * @example
- * ```typescript
- * export const patch: PatchHandler<typeof schema> = async (request, reply) => {
- *   const { id } = request.params;
- *   const partialUpdates = request.body;
- *   return await partialUpdateUser(id, partialUpdates);
- * };
- * ```
+ * @template S - The route schema type (typeof schema)
  */
-export type PatchHandler<S extends RouteSchema> = RouteHandler<S, "patch">;
+export type OptionsHandler<S extends RouteSchema> = Handler<BoilrEnv, string, SchemaToInput<S, "options">>;
 
-/**
- * Type-safe HEAD request handler.
- * Automatically infers types from the schema's `head` method configuration.
- *
- * @template S - The route schema type
- */
-export type HeadHandler<S extends RouteSchema> = RouteHandler<S, "head">;
-
-/**
- * Type-safe OPTIONS request handler.
- * Automatically infers types from the schema's `options` method configuration.
- *
- * @template S - The route schema type
- */
-export type OptionsHandler<S extends RouteSchema> = RouteHandler<S, "options">;
+// ─── Utilities ────────────────────────────────────────────────────────────────
 
 /**
  * Utility function for defining route schemas with full TypeScript inference.
- * This function provides better IDE support and type checking for your route schemas.
+ * Provides better IDE support and type checking for your route schemas.
  *
  * @template T - The route schema type
  * @param schema - The route schema configuration
@@ -472,9 +383,9 @@ export type OptionsHandler<S extends RouteSchema> = RouteHandler<S, "options">;
  * });
  * ```
  */
-export function defineSchema<T extends RouteSchema>(schema: T): T {
+export const defineSchema = <T extends RouteSchema>(schema: T): T => {
   return schema;
-}
+};
 
 /**
  * Type for dynamic route path segments.
@@ -511,7 +422,7 @@ export type CatchAllParam<T extends string = string> = T[] | T;
 
 /**
  * Helper function for creating Zod schemas that handle catch-all route parameters.
- * This function creates a union type that accepts either an array or a single value.
+ * Creates a union type that accepts either an array or a single value.
  *
  * @template T - The Zod type for individual elements
  * @param innerType - The Zod schema for individual path segments
@@ -533,6 +444,6 @@ export type CatchAllParam<T extends string = string> = T[] | T;
  * // /files/folder/subfolder/document.pdf (path = ["folder", "subfolder", "document.pdf"])
  * ```
  */
-export function catchAllSchema<T extends z.ZodTypeAny>(innerType: T) {
+export const catchAllSchema = <T extends z.ZodTypeAny>(innerType: T) => {
   return z.union([z.array(innerType), innerType]);
-}
+};
