@@ -1,6 +1,6 @@
 {
   "name": "@boilrjs/core",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Convention-based Fastify framework with batteries included",
   "author": {
     "name": "Rhinolabs Agency",
